@@ -1,5 +1,4 @@
 // Configure math.js
-// Configure math.js
 const mathConfig = { matrix: 'Array' };
 const mathInstance = math.create(mathConfig);
 
@@ -37,20 +36,36 @@ evalBtn.addEventListener('click', () => {
 
     // Handle limit (numeric approximation)
     if (expr.startsWith("limit(")) {
-      // Example: limit(sin(x)/x, x, 0)
       const parts = expr.match(/limit\((.*),\s*(\w+),\s*([^)]+)\)/);
       if (parts) {
         const fn = parts[1];
         const variable = parts[2];
         const point = parseFloat(parts[3]);
 
-        // Evaluate near the point
         const delta = 1e-6;
         const left = mathInstance.evaluate(fn, { [variable]: point - delta });
         const right = mathInstance.evaluate(fn, { [variable]: point + delta });
 
         const approx = (left + right) / 2;
         resultEl.textContent = "≈ " + approx;
+        return;
+      }
+    }
+
+    // Handle triple integral
+    if (expr.startsWith("tripleIntegral(")) {
+      // Example: tripleIntegral(x*y*z, x=0..1, y=0..1, z=0..1, steps=100)
+      const parts = expr.match(/tripleIntegral\((.*),\s*x=(\d+)\.\.(\d+),\s*y=(\d+)\.\.(\d+),\s*z=(\d+)\.\.(\d+),\s*steps=(\d+)\)/);
+      if (parts) {
+        const fnStr = parts[1];
+        const xRange = [parseFloat(parts[2]), parseFloat(parts[3])];
+        const yRange = [parseFloat(parts[4]), parseFloat(parts[5])];
+        const zRange = [parseFloat(parts[6]), parseFloat(parts[7])];
+        const steps = parseInt(parts[8]);
+
+        const f = (x, y, z) => mathInstance.evaluate(fnStr, { x, y, z });
+        const res = tripleIntegral(f, xRange, yRange, zRange, steps);
+        resultEl.textContent = "≈ " + res;
         return;
       }
     }
