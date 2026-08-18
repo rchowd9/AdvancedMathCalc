@@ -73,3 +73,22 @@ function formatResult(res) {
   }
   return String(res);
 }
+
+function tripleIntegral(f, xRange, yRange, zRange, steps) {
+  let sum = 0;
+  const dx = (xRange[1] - xRange[0]) / steps;
+  const dy = (yRange[1] - yRange[0]) / steps;
+  const dz = (zRange[1] - zRange[0]) / steps;
+
+  for (let i = 0; i < steps; i++) {
+    for (let j = 0; j < steps; j++) {
+      for (let k = 0; k < steps; k++) {
+        const x = xRange[0] + i * dx;
+        const y = yRange[0] + j * dy;
+        const z = zRange[0] + k * dz;
+        sum += f(x, y, z) * dx * dy * dz;
+      }
+    }
+  }
+  return sum;
+}
