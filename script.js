@@ -14,35 +14,20 @@ evalBtn.addEventListener('click', () => {
   }
 
   try {
-    // Handle derivative
+    // Handle derivative with step-by-step explanation
     if (expr.startsWith("derivative(")) {
       const parts = expr.match(/derivative\((.*),\s*(\w+)\)/);
       if (parts) {
-        const res = mathInstance.derivative(parts[1], parts[2]);
-        resultEl.textContent = String(res);
+        resultEl.textContent = explainDerivative(parts[1], parts[2]);
         return;
       }
     }
 
-    // Handle integrate (approximate a definite integral over a default interval)
+    // Handle integrate with step-by-step explanation
     if (expr.startsWith("integrate(")) {
       const parts = expr.match(/integrate\((.*),\s*(\w+)\)/);
       if (parts) {
-        const fn = parts[1];
-        const variable = parts[2];
-        const lower = -10;
-        const upper = 10;
-        const steps = 20000;
-        const dx = (upper - lower) / steps;
-
-        let sum = 0;
-        for (let i = 0; i < steps; i++) {
-          const x = lower + (i + 0.5) * dx;
-          const value = mathInstance.evaluate(fn, { [variable]: x });
-          sum += value * dx;
-        }
-
-        resultEl.textContent = "≈ " + formatResult(sum);
+        resultEl.textContent = explainIntegral(parts[1], parts[2]);
         return;
       }
     }
@@ -130,4 +115,20 @@ function tripleIntegral(f, xRange, yRange, zRange, steps) {
     }
   }
   return sum;
+}
+
+function explainDerivative(expr, variable) {
+  let steps = [`Function: f(${variable}) = ${expr}`];
+  const derivative = mathInstance.derivative(expr, variable);
+  steps.push(`Step 1: Differentiate with respect to ${variable}`);
+  steps.push(`Result: f'(${variable}) = ${derivative}`);
+  return steps.join("\n");
+}
+
+function explainIntegral(expr, variable) {
+  let steps = [`Function: f(${variable}) = ${expr}`];
+  const integral = mathInstance.integrate(expr, variable);
+  steps.push(`Step 1: Integrate with respect to ${variable}`);
+  steps.push(`Result: ∫ f(${variable}) d${variable} = ${integral}`);
+  return steps.join("\n");
 }
