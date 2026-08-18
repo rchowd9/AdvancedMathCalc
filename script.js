@@ -92,7 +92,8 @@ evalBtn.addEventListener('click', () => {
 
     // Default evaluation
     const res = mathInstance.evaluate(expr);
-    resultEl.textContent = formatResult(res);
+    const explanation = buildExpressionExplanation(expr, res);
+    resultEl.textContent = `Result: ${formatResult(res)}\n\nStep-by-step explanation:\n${explanation}`;
 
   } catch (err) {
     resultEl.textContent = 'Error: ' + err.message;
@@ -107,6 +108,74 @@ function formatResult(res) {
     return JSON.stringify(res, null, 2);
   }
   return String(res);
+}
+
+function buildExpressionExplanation(expr, result) {
+  const parsed = mathInstance.parse(expr);
+  const steps = [`Expression: ${expr}`];
+
+  function walk(node) {
+    if (!node) return;
+
+    if (node.type === 'ParenthesisNode') {
+      walk(node.content);
+      return;
+    }
+
+    if (node.type === 'OperatorNode') {
+      const left = node.args[0];
+      const right = node.args[1];
+
+      if (left && left.type !== 'ConstantNode') {
+        walk(left);
+      }
+      if (right && right.type !== 'ConstantNode') {
+        walk(right);
+      }
+
+      const leftText = left ? left.toString() : '';
+      const rightText = right ? right.toString() : '';
+      const value = mathInstance.evaluate(node.toString());
+      steps.push(`Step ${steps.length}: ${leftText} ${node.op} ${rightText} = ${formatResult(value)}`);
+      return;
+    }
+
+    if (node.type === 'FunctionNode') {
+      const arg = node.args[0];
+      if (arg && arg.type !== 'ConstantNode') {
+        walk(arg);
+      }
+
+      const value = mathInstance.evaluate(node.toString());
+      steps.push(`Step ${steps.length}: ${node.name}(${arg ? arg.toString() : ''}) = ${formatResult(value)}`);
+      return;
+    }
+
+    if (node.type === 'ArrayNode') {
+      const value = mathInstance.evaluate(node.toString());
+      steps.push(`Step ${steps.length}: ${node.toString()} = ${formatResult(value)}`);
+      return;
+    }
+
+    if (node.type === 'AccessorNode') {
+      const value = mathInstance.evaluate(node.toString());
+      steps.push(`Step ${steps.length}: ${node.toString()} = ${formatResult(value)}`);
+      return;
+    }
+
+    const value = mathInstance.evaluate(node.toString());
+    if (node.toString() !== expr) {
+      steps.push(`Step ${steps.length}: ${node.toString()} = ${formatResult(value)}`);
+    }
+  }
+
+  try {
+    walk(parsed);
+    steps.push(`Final result: ${formatResult(result)}`);
+    return steps.join('\n');
+  } catch (err) {
+    return `Result: ${formatResult(result)}`;
+  }
 }
 
 // Numeric definite integral (midpoint rule)
