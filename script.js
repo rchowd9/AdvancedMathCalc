@@ -14,10 +14,17 @@ evalBtn.addEventListener('click', () => {
   }
 
   try {
-    const res = mathInstance.evaluate(expr);
+    // Parse the expression as a string to preserve symbols like x
+    const res = mathInstance.evaluate(expr, { x: math.symbolicUtils.symbol('x') });
     resultEl.textContent = formatResult(res);
   } catch (err) {
-    resultEl.textContent = 'Error: ' + err.message;
+    try {
+      // Fallback: wrap the input in quotes if direct evaluation fails
+      const res = mathInstance.evaluate(expr.replace(/([a-zA-Z]+)/g, '"$1"'));
+      resultEl.textContent = formatResult(res);
+    } catch (err2) {
+      resultEl.textContent = 'Error: ' + err2.message;
+    }
   }
 });
 
