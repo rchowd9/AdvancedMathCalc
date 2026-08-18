@@ -38,6 +38,9 @@ evalBtn.addEventListener('click', () => {
         resultEl.textContent = `Function: f(${variable}) = ${fn}\nStep 1: Approximate definite integral from ${lower} to ${upper}\nResult: ≈ ${res}`;
         return;
       }
+
+      resultEl.textContent = 'Use definite integral syntax: integrate(expression, variable, lower, upper)';
+      return;
     }
 
     // Handle limit (numeric approximation)
