@@ -24,12 +24,25 @@ evalBtn.addEventListener('click', () => {
       }
     }
 
-    // Handle integrate
+    // Handle integrate (approximate a definite integral over a default interval)
     if (expr.startsWith("integrate(")) {
       const parts = expr.match(/integrate\((.*),\s*(\w+)\)/);
       if (parts) {
-        const res = mathInstance.integrate(parts[1], parts[2]);
-        resultEl.textContent = String(res);
+        const fn = parts[1];
+        const variable = parts[2];
+        const lower = -10;
+        const upper = 10;
+        const steps = 20000;
+        const dx = (upper - lower) / steps;
+
+        let sum = 0;
+        for (let i = 0; i < steps; i++) {
+          const x = lower + (i + 0.5) * dx;
+          const value = mathInstance.evaluate(fn, { [variable]: x });
+          sum += value * dx;
+        }
+
+        resultEl.textContent = "≈ " + formatResult(sum);
         return;
       }
     }
@@ -48,6 +61,17 @@ evalBtn.addEventListener('click', () => {
 
         const approx = (left + right) / 2;
         resultEl.textContent = "≈ " + approx;
+        return;
+      }
+    }
+
+    // Handle eigenvalues
+    if (expr.startsWith("eigenvalues(")) {
+      const parts = expr.match(/eigenvalues\((.*)\)/);
+      if (parts) {
+        const matrix = mathInstance.evaluate(parts[1]);
+        const eig = mathInstance.eigs(matrix);
+        resultEl.textContent = formatResult(eig.values || eig);
         return;
       }
     }
