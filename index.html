@@ -1,11 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Math Calculator</title>
+  <meta charset="UTF-8" />
+  <title>Advanced Math Calculator</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Math.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjs@11.11.0/lib/browser/math.js"></script>
 </head>
 <body>
-    
+  <div class="container">
+    <h1>Advanced Math Calculator</h1>
+
+    <div class="section">
+      <label for="expr">Enter Expression:</label>
+      <textarea id="expr" rows="3" placeholder="Examples: derivative(sin(x), x); integrate(x^2, x); det([[1,2],[3,4]])"></textarea>
+      <button id="evalBtn">Evaluate</button>
+    </div>
+
+    <div class="section">
+      <h2>Result</h2>
+      <pre id="result"></pre>
+    </div>
+
+    <div class="section">
+      <h2>Quick Examples</h2>
+      <ul>
+        <li>derivative(sin(x), x)</li>
+        <li>integrate(x^2, x)</li>
+        <li>limit(sin(x)/x, x, 0)</li>
+        <li>det([[1,2],[3,4]])</li>
+        <li>inv([[1,2],[3,4]])</li>
+        <li>eigenvalues([[2,1],[1,2]])</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
