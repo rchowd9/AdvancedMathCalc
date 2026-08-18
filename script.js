@@ -23,11 +23,19 @@ evalBtn.addEventListener('click', () => {
       }
     }
 
-    // Handle integrate with step-by-step explanation
+    // Handle integrate (numeric definite integral)
     if (expr.startsWith("integrate(")) {
-      const parts = expr.match(/integrate\((.*),\s*(\w+)\)/);
+      // Example: integrate(x^2, x, 0, 1)
+      const parts = expr.match(/integrate\((.*),\s*(\w+),\s*([-\d.]+),\s*([-\d.]+)\)/);
       if (parts) {
-        resultEl.textContent = explainIntegral(parts[1], parts[2]);
+        const fn = parts[1];
+        const variable = parts[2];
+        const lower = parseFloat(parts[3]);
+        const upper = parseFloat(parts[4]);
+        const steps = 1000; // adjust for accuracy
+
+        const res = numericIntegral(fn, variable, lower, upper, steps);
+        resultEl.textContent = `Function: f(${variable}) = ${fn}\nStep 1: Approximate definite integral from ${lower} to ${upper}\nResult: ≈ ${res}`;
         return;
       }
     }
@@ -98,6 +106,21 @@ function formatResult(res) {
   return String(res);
 }
 
+// Numeric definite integral (midpoint rule)
+function numericIntegral(fnStr, variable, lower, upper, steps) {
+  const dx = (upper - lower) / steps;
+  let sum = 0;
+
+  for (let i = 0; i < steps; i++) {
+    const x = lower + (i + 0.5) * dx;
+    const value = mathInstance.evaluate(fnStr, { [variable]: x });
+    sum += value * dx;
+  }
+
+  return sum;
+}
+
+// Triple integral (numeric approximation)
 function tripleIntegral(f, xRange, yRange, zRange, steps) {
   let sum = 0;
   const dx = (xRange[1] - xRange[0]) / steps;
@@ -117,6 +140,7 @@ function tripleIntegral(f, xRange, yRange, zRange, steps) {
   return sum;
 }
 
+// Step-by-step derivative explanation
 function explainDerivative(expr, variable) {
   let steps = [`Function: f(${variable}) = ${expr}`];
   const derivative = mathInstance.derivative(expr, variable);
@@ -125,10 +149,3 @@ function explainDerivative(expr, variable) {
   return steps.join("\n");
 }
 
-function explainIntegral(expr, variable) {
-  let steps = [`Function: f(${variable}) = ${expr}`];
-  const integral = mathInstance.integrate(expr, variable);
-  steps.push(`Step 1: Integrate with respect to ${variable}`);
-  steps.push(`Result: ∫ f(${variable}) d${variable} = ${integral}`);
-  return steps.join("\n");
-}
