@@ -14,17 +14,40 @@ evalBtn.addEventListener('click', () => {
   }
 
   try {
-    // Parse the expression as a string to preserve symbols like x
-    const res = mathInstance.evaluate(expr, { x: math.symbolicUtils.symbol('x') });
-    resultEl.textContent = formatResult(res);
-  } catch (err) {
-    try {
-      // Fallback: wrap the input in quotes if direct evaluation fails
-      const res = mathInstance.evaluate(expr.replace(/([a-zA-Z]+)/g, '"$1"'));
-      resultEl.textContent = formatResult(res);
-    } catch (err2) {
-      resultEl.textContent = 'Error: ' + err2.message;
+    // Special handling for derivative, integrate, limit
+    if (expr.startsWith("derivative(")) {
+      // Example: derivative(sin(x), x)
+      const parts = expr.match(/derivative\((.*),\s*(\w+)\)/);
+      if (parts) {
+        const res = mathInstance.derivative(parts[1], parts[2]);
+        resultEl.textContent = String(res);
+        return;
+      }
     }
+    if (expr.startsWith("integrate(")) {
+      const parts = expr.match(/integrate\((.*),\s*(\w+)\)/);
+      if (parts) {
+        const res = mathInstance.integrate(parts[1], parts[2]);
+        resultEl.textContent = String(res);
+        return;
+      }
+    }
+    if (expr.startsWith("limit(")) {
+      // Example: limit(sin(x)/x, x, 0)
+      const parts = expr.match(/limit\((.*),\s*(\w+),\s*([^)]+)\)/);
+      if (parts) {
+        const res = mathInstance.limit(parts[1], parts[2], parseFloat(parts[3]));
+        resultEl.textContent = String(res);
+        return;
+      }
+    }
+
+    // Default evaluation
+    const res = mathInstance.evaluate(expr);
+    resultEl.textContent = formatResult(res);
+
+  } catch (err) {
+    resultEl.textContent = 'Error: ' + err.message;
   }
 });
 
