@@ -1,4 +1,5 @@
 // Configure math.js
+// Configure math.js
 const mathConfig = { matrix: 'Array' };
 const mathInstance = math.create(mathConfig);
 
@@ -14,9 +15,8 @@ evalBtn.addEventListener('click', () => {
   }
 
   try {
-    // Special handling for derivative, integrate, limit
+    // Handle derivative
     if (expr.startsWith("derivative(")) {
-      // Example: derivative(sin(x), x)
       const parts = expr.match(/derivative\((.*),\s*(\w+)\)/);
       if (parts) {
         const res = mathInstance.derivative(parts[1], parts[2]);
@@ -24,6 +24,8 @@ evalBtn.addEventListener('click', () => {
         return;
       }
     }
+
+    // Handle integrate
     if (expr.startsWith("integrate(")) {
       const parts = expr.match(/integrate\((.*),\s*(\w+)\)/);
       if (parts) {
@@ -32,12 +34,23 @@ evalBtn.addEventListener('click', () => {
         return;
       }
     }
+
+    // Handle limit (numeric approximation)
     if (expr.startsWith("limit(")) {
       // Example: limit(sin(x)/x, x, 0)
       const parts = expr.match(/limit\((.*),\s*(\w+),\s*([^)]+)\)/);
       if (parts) {
-        const res = mathInstance.limit(parts[1], parts[2], parseFloat(parts[3]));
-        resultEl.textContent = String(res);
+        const fn = parts[1];
+        const variable = parts[2];
+        const point = parseFloat(parts[3]);
+
+        // Evaluate near the point
+        const delta = 1e-6;
+        const left = mathInstance.evaluate(fn, { [variable]: point - delta });
+        const right = mathInstance.evaluate(fn, { [variable]: point + delta });
+
+        const approx = (left + right) / 2;
+        resultEl.textContent = "≈ " + approx;
         return;
       }
     }
