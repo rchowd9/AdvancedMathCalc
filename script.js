@@ -44,22 +44,35 @@ evalBtn.addEventListener('click', () => {
     }
 
     // Handle limit (numeric approximation)
-    if (expr.startsWith("limit(")) {
-      const parts = expr.match(/limit\((.*),\s*(\w+),\s*([^)]+)\)/);
-      if (parts) {
-        const fn = parts[1];
-        const variable = parts[2];
-        const point = parseFloat(parts[3]);
+    // Handle limit with step-by-step explanation
+    // Handle limit with step-by-step explanation
+if (expr.startsWith("limit(")) {
+  const parts = expr.match(/limit\((.*),\s*(\w+),\s*([^)]+)\)/);
+  if (parts) {
+    const fn = parts[1];
+    const variable = parts[2];
+    const point = parseFloat(parts[3]);
+    const delta = 1e-6;
 
-        const delta = 1e-6;
-        const left = mathInstance.evaluate(fn, { [variable]: point - delta });
-        const right = mathInstance.evaluate(fn, { [variable]: point + delta });
+    const left = mathInstance.evaluate(fn, { [variable]: point - delta });
+    const right = mathInstance.evaluate(fn, { [variable]: point + delta });
+    const approx = (left + right) / 2;
 
-        const approx = (left + right) / 2;
-        resultEl.textContent = "≈ " + approx;
-        return;
-      }
-    }
+    const steps = [
+      `Function: f(${variable}) = ${fn}`,
+      `Step 1: Approach ${variable} → ${point}`,
+      `Step 2: Evaluate f(${point - delta}) = ${left}`,
+      `Step 3: Evaluate f(${point + delta}) = ${right}`,
+      `Step 4: Average both sides → (${left} + ${right}) / 2`,
+      `Result: ≈ ${approx}`
+    ];
+
+    resultEl.textContent = steps.join("\n");
+    return;
+  }
+}
+
+
 
     // Handle eigenvalues
     if (expr.startsWith("eigenvalues(")) {
@@ -114,69 +127,43 @@ function buildExpressionExplanation(expr, result) {
   const parsed = mathInstance.parse(expr);
   const steps = [`Expression: ${expr}`];
 
-  function walk(node) {
+  function walk(node, depth = 1) {
     if (!node) return;
-
-    if (node.type === 'ParenthesisNode') {
-      walk(node.content);
-      return;
-    }
 
     if (node.type === 'OperatorNode') {
       const left = node.args[0];
       const right = node.args[1];
-
-      if (left && left.type !== 'ConstantNode') {
-        walk(left);
-      }
-      if (right && right.type !== 'ConstantNode') {
-        walk(right);
-      }
-
-      const leftText = left ? left.toString() : '';
-      const rightText = right ? right.toString() : '';
+      walk(left, depth + 1);
+      walk(right, depth + 1);
       const value = mathInstance.evaluate(node.toString());
-      steps.push(`Step ${steps.length}: ${leftText} ${node.op} ${rightText} = ${formatResult(value)}`);
+      steps.push(`Step ${steps.length}: Evaluate ${left.toString()} ${node.op} ${right.toString()} = ${formatResult(value)}`);
       return;
     }
 
     if (node.type === 'FunctionNode') {
       const arg = node.args[0];
-      if (arg && arg.type !== 'ConstantNode') {
-        walk(arg);
-      }
-
+      walk(arg, depth + 1);
       const value = mathInstance.evaluate(node.toString());
-      steps.push(`Step ${steps.length}: ${node.name}(${arg ? arg.toString() : ''}) = ${formatResult(value)}`);
+      steps.push(`Step ${steps.length}: Apply ${node.name}(${arg.toString()}) = ${formatResult(value)}`);
       return;
     }
 
-    if (node.type === 'ArrayNode') {
-      const value = mathInstance.evaluate(node.toString());
-      steps.push(`Step ${steps.length}: ${node.toString()} = ${formatResult(value)}`);
+    if (node.type === 'ConstantNode') {
+      steps.push(`Step ${steps.length}: Constant ${node.value}`);
       return;
     }
 
-    if (node.type === 'AccessorNode') {
-      const value = mathInstance.evaluate(node.toString());
-      steps.push(`Step ${steps.length}: ${node.toString()} = ${formatResult(value)}`);
+    if (node.type === 'SymbolNode') {
+      steps.push(`Step ${steps.length}: Variable ${node.name}`);
       return;
-    }
-
-    const value = mathInstance.evaluate(node.toString());
-    if (node.toString() !== expr) {
-      steps.push(`Step ${steps.length}: ${node.toString()} = ${formatResult(value)}`);
     }
   }
 
-  try {
-    walk(parsed);
-    steps.push(`Final result: ${formatResult(result)}`);
-    return steps.join('\n');
-  } catch (err) {
-    return `Result: ${formatResult(result)}`;
-  }
+  walk(parsed);
+  steps.push(`Final result: ${formatResult(result)}`);
+  return steps.join("\n");
 }
+
 
 // Numeric definite integral (midpoint rule)
 function numericIntegral(fnStr, variable, lower, upper, steps) {
