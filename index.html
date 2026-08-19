@@ -6,6 +6,8 @@
   <link rel="stylesheet" href="style.css" />
   <!-- Math.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/mathjs@11.11.0/lib/browser/math.js"></script>
+  <!-- Plotly.js CDN -->
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 </head>
 <body>
   <div class="container">
@@ -20,6 +22,36 @@
     <div class="section">
       <h2>Result</h2>
       <pre id="result"></pre>
+    </div>
+
+    <div class="section graph-section">
+      <div class="graph-heading">
+        <div>
+          <h2>Graph a Function</h2>
+          <p>Plot a one-variable function over a custom range.</p>
+        </div>
+        <button id="plotBtn" type="button">Plot Function</button>
+      </div>
+      <div class="graph-controls">
+        <label>
+          Function
+          <input id="plotExpr" type="text" value="sin(x)" placeholder="e.g. x^2 - 4" />
+        </label>
+        <label>
+          Variable
+          <input id="plotVariable" type="text" value="x" maxlength="10" />
+        </label>
+        <label>
+          From
+          <input id="plotMin" type="number" value="-10" step="any" />
+        </label>
+        <label>
+          To
+          <input id="plotMax" type="number" value="10" step="any" />
+        </label>
+      </div>
+      <div id="plot" aria-label="Function graph"></div>
+      <p id="plotStatus" class="plot-status" role="status"></p>
     </div>
 
     <div class="section">

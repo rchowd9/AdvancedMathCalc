@@ -41,6 +41,42 @@ textarea {
   font-family: "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
 }
 
+.graph-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.graph-heading p {
+  margin: -8px 0 16px;
+  color: #94a3b8;
+}
+
+.graph-controls {
+  display: grid;
+  grid-template-columns: minmax(180px, 2fr) repeat(3, minmax(80px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.graph-controls label {
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+.graph-controls input {
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 6px;
+  padding: 9px 10px;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  background: #020617;
+  color: #e5e7eb;
+  font: inherit;
+}
+
 button {
   margin-top: 10px;
   padding: 8px 16px;
@@ -63,6 +99,39 @@ pre {
   border: 1px solid #374151;
   overflow-x: auto;
   font-family: "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+}
+
+#plot {
+  width: 100%;
+  min-height: 380px;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.plot-status {
+  min-height: 1.2em;
+  margin: 10px 0 0;
+  color: #93c5fd;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .graph-heading {
+    display: block;
+  }
+
+  .graph-heading button {
+    margin-top: 0;
+  }
+
+  .graph-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .graph-controls label:first-child {
+    grid-column: 1 / -1;
+  }
 }
 
 ul {

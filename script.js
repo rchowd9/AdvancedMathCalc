@@ -5,6 +5,15 @@ const mathInstance = math.create(mathConfig);
 const exprInput = document.getElementById('expr');
 const evalBtn = document.getElementById('evalBtn');
 const resultEl = document.getElementById('result');
+const plotBtn = document.getElementById('plotBtn');
+const plotExprInput = document.getElementById('plotExpr');
+const plotVariableInput = document.getElementById('plotVariable');
+const plotMinInput = document.getElementById('plotMin');
+const plotMaxInput = document.getElementById('plotMax');
+const plotEl = document.getElementById('plot');
+const plotStatusEl = document.getElementById('plotStatus');
+
+plotBtn.addEventListener('click', plotFunction);
 
 evalBtn.addEventListener('click', () => {
   const expr = exprInput.value.trim();
@@ -112,6 +121,78 @@ if (expr.startsWith("limit(")) {
     resultEl.textContent = 'Error: ' + err.message;
   }
 });
+
+function plotFunction() {
+  const expression = plotExprInput.value.trim();
+  const variable = plotVariableInput.value.trim();
+  const lower = Number(plotMinInput.value);
+  const upper = Number(plotMaxInput.value);
+
+  if (!expression || !/^\w+$/.test(variable)) {
+    setPlotStatus('Enter a function and a valid variable name.');
+    return;
+  }
+
+  if (!Number.isFinite(lower) || !Number.isFinite(upper) || lower >= upper) {
+    setPlotStatus('The start of the range must be less than its end.');
+    return;
+  }
+
+  try {
+    const compiled = mathInstance.compile(expression);
+    const pointCount = 500;
+    const step = (upper - lower) / (pointCount - 1);
+    const xValues = [];
+    const yValues = [];
+
+    for (let index = 0; index < pointCount; index += 1) {
+      const x = lower + index * step;
+      let y;
+
+      try {
+        y = compiled.evaluate({ [variable]: x });
+      } catch (error) {
+        y = NaN;
+      }
+
+      xValues.push(x);
+      yValues.push(typeof y === 'number' && Number.isFinite(y) ? y : null);
+    }
+
+    if (!yValues.some((value) => value !== null)) {
+      throw new Error('No real values were found in this range.');
+    }
+
+    Plotly.react(plotEl, [{
+      x: xValues,
+      y: yValues,
+      type: 'scatter',
+      mode: 'lines',
+      connectgaps: false,
+      line: { color: '#60a5fa', width: 3 },
+      hovertemplate: `${variable} = %{x:.4g}<br>f(${variable}) = %{y:.4g}<extra></extra>`
+    }], {
+      title: `f(${variable}) = ${expression}`,
+      paper_bgcolor: 'transparent',
+      plot_bgcolor: '#020617',
+      font: { color: '#e5e7eb' },
+      margin: { t: 48, r: 24, b: 52, l: 58 },
+      xaxis: { title: variable, gridcolor: '#1f2937', zerolinecolor: '#64748b' },
+      yaxis: { title: `f(${variable})`, gridcolor: '#1f2937', zerolinecolor: '#64748b' },
+      hovermode: 'x unified',
+      showlegend: false
+    }, { responsive: true, displaylogo: false });
+
+    setPlotStatus(`Showing ${pointCount} samples from ${lower} to ${upper}.`);
+  } catch (error) {
+    setPlotStatus(`Unable to plot function: ${error.message}`);
+    Plotly.purge(plotEl);
+  }
+}
+
+function setPlotStatus(message) {
+  plotStatusEl.textContent = message;
+}
 
 function formatResult(res) {
   if (Array.isArray(res)) {
