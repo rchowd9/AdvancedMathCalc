@@ -23,7 +23,7 @@ evalBtn.addEventListener('click', () => {
   }
 
   try {
-    // Handle derivative with step-by-step explanation
+    // Derivative
     if (expr.startsWith("derivative(")) {
       const parts = expr.match(/derivative\((.*),\s*(\w+)\)/);
       if (parts) {
@@ -32,58 +32,48 @@ evalBtn.addEventListener('click', () => {
       }
     }
 
-    // Handle integrate (numeric definite integral)
+    // Definite integral
     if (expr.startsWith("integrate(")) {
-      // Example: integrate(x^2, x, 0, 1)
       const parts = expr.match(/integrate\((.*),\s*(\w+),\s*([-\d.]+),\s*([-\d.]+)\)/);
       if (parts) {
         const fn = parts[1];
         const variable = parts[2];
         const lower = parseFloat(parts[3]);
         const upper = parseFloat(parts[4]);
-        const steps = 1000; // adjust for accuracy
-
+        const steps = 1000;
         const res = numericIntegral(fn, variable, lower, upper, steps);
         resultEl.textContent = `Function: f(${variable}) = ${fn}\nStep 1: Approximate definite integral from ${lower} to ${upper}\nResult: ≈ ${res}`;
         return;
       }
-
-      resultEl.textContent = 'Use definite integral syntax: integrate(expression, variable, lower, upper)';
+      resultEl.textContent = 'Use syntax: integrate(expression, variable, lower, upper)';
       return;
     }
 
-    // Handle limit (numeric approximation)
-    // Handle limit with step-by-step explanation
-    // Handle limit with step-by-step explanation
-if (expr.startsWith("limit(")) {
-  const parts = expr.match(/limit\((.*),\s*(\w+),\s*([^)]+)\)/);
-  if (parts) {
-    const fn = parts[1];
-    const variable = parts[2];
-    const point = parseFloat(parts[3]);
-    const delta = 1e-6;
+    // Limit
+    if (expr.startsWith("limit(")) {
+      const parts = expr.match(/limit\((.*),\s*(\w+),\s*([^)]+)\)/);
+      if (parts) {
+        const fn = parts[1];
+        const variable = parts[2];
+        const point = parseFloat(parts[3]);
+        const delta = 1e-6;
+        const left = mathInstance.evaluate(fn, { [variable]: point - delta });
+        const right = mathInstance.evaluate(fn, { [variable]: point + delta });
+        const approx = (left + right) / 2;
+        const steps = [
+          `Function: f(${variable}) = ${fn}`,
+          `Step 1: Approach ${variable} → ${point}`,
+          `Step 2: Evaluate f(${point - delta}) = ${left}`,
+          `Step 3: Evaluate f(${point + delta}) = ${right}`,
+          `Step 4: Average both sides → (${left} + ${right}) / 2`,
+          `Result: ≈ ${approx}`
+        ];
+        resultEl.textContent = steps.join("\n");
+        return;
+      }
+    }
 
-    const left = mathInstance.evaluate(fn, { [variable]: point - delta });
-    const right = mathInstance.evaluate(fn, { [variable]: point + delta });
-    const approx = (left + right) / 2;
-
-    const steps = [
-      `Function: f(${variable}) = ${fn}`,
-      `Step 1: Approach ${variable} → ${point}`,
-      `Step 2: Evaluate f(${point - delta}) = ${left}`,
-      `Step 3: Evaluate f(${point + delta}) = ${right}`,
-      `Step 4: Average both sides → (${left} + ${right}) / 2`,
-      `Result: ≈ ${approx}`
-    ];
-
-    resultEl.textContent = steps.join("\n");
-    return;
-  }
-}
-
-
-
-    // Handle eigenvalues
+    // Eigenvalues
     if (expr.startsWith("eigenvalues(")) {
       const parts = expr.match(/eigenvalues\((.*)\)/);
       if (parts) {
@@ -94,9 +84,55 @@ if (expr.startsWith("limit(")) {
       }
     }
 
-    // Handle triple integral
+    // Linear system solver
+    if (expr.startsWith("solveSystem(")) {
+      const parts = expr.match(/^solveSystem\(\s*(\[[\s\S]*\])\s*,\s*(\[[\s\S]*\])\s*\)$/);
+      if (parts) {
+        const A = mathInstance.evaluate(parts[1]);
+        const b = mathInstance.evaluate(parts[2]);
+        const x = mathInstance.multiply(mathInstance.inv(A), b);
+        resultEl.textContent = `Solution: ${JSON.stringify(x)}`;
+        return;
+      }
+    }
+
+    // Quadratic solver
+    if (expr.startsWith("solveEquation(")) {
+      const parts = expr.match(/solveEquation\((.*)=0,\s*(\w+)\)/);
+      if (parts) {
+        const fn = parts[1];
+        const variable = parts[2];
+        const coeffs = mathInstance.evaluate(`coefficients(${fn})`);
+        if (coeffs.length === 3) {
+          const [a, b, c] = coeffs;
+          const disc = b*b - 4*a*c;
+          const root1 = (-b + Math.sqrt(disc)) / (2*a);
+          const root2 = (-b - Math.sqrt(disc)) / (2*a);
+          resultEl.textContent = `Roots: ${root1}, ${root2}`;
+          return;
+        } else {
+          resultEl.textContent = "Only quadratic equations are supported here.";
+          return;
+        }
+      }
+    }
+
+    // General solver (Newton’s method)
+    if (expr.startsWith("solve(")) {
+      const parts = expr.match(/solve\((.*)=([^,]+),\s*(\w+)\)/);
+      if (parts) {
+        const left = parts[1];
+        const right = parts[2];
+        const variable = parts[3];
+        const fnStr = `(${left}) - (${right})`;
+        const root = newtonSolve(fnStr, variable);
+        resultEl.textContent = `Solution: ${root}`;
+        return;
+      }
+    }
+
+    // Triple integral
     if (expr.startsWith("tripleIntegral(")) {
-      // Example: tripleIntegral(x*y*z, x=0..1, y=0..1, z=0..1, steps=100)
       const parts = expr.match(/tripleIntegral\((.*),\s*x=(\d+)\.\.(\d+),\s*y=(\d+)\.\.(\d+),\s*z=(\d+)\.\.(\d+),\s*steps=(\d+)\)/);
       if (parts) {
         const fnStr = parts[1];
@@ -104,7 +140,6 @@ if (expr.startsWith("limit(")) {
         const yRange = [parseFloat(parts[4]), parseFloat(parts[5])];
         const zRange = [parseFloat(parts[6]), parseFloat(parts[7])];
         const steps = parseInt(parts[8]);
-
         const f = (x, y, z) => mathInstance.evaluate(fnStr, { x, y, z });
         const res = tripleIntegral(f, xRange, yRange, zRange, steps);
         resultEl.textContent = "≈ " + res;
@@ -122,6 +157,18 @@ if (expr.startsWith("limit(")) {
   }
 });
 
+// Newton’s method solver
+function newtonSolve(fnStr, variable, guess = 1) {
+  const f = (x) => mathInstance.evaluate(fnStr, { [variable]: x });
+  const df = (x) => mathInstance.derivative(fnStr, variable).evaluate({ [variable]: x });
+  let x = guess;
+  for (let i = 0; i < 20; i++) {
+    x = x - f(x) / df(x);
+  }
+  return x;
+}
+
+// Plotting
 function plotFunction() {
   const expression = plotExprInput.value.trim();
   const variable = plotVariableInput.value.trim();
@@ -150,13 +197,11 @@ function plotFunction() {
     for (let index = 0; index < pointCount; index += 1) {
       const x = lower + index * step;
       let y;
-
       try {
         y = compiled.evaluate({ [variable]: x });
       } catch (error) {
         y = NaN;
       }
-
       xValues.push(x);
       yValues.push(typeof y === 'number' && Number.isFinite(y) ? y : null);
     }
@@ -170,129 +215,83 @@ function plotFunction() {
       y: yValues,
       type: 'scatter',
       mode: 'lines',
-      connectgaps: false,
-      line: { color: '#60a5fa', width: 3 },
-      hovertemplate: `${variable} = %{x:.4g}<br>f(${variable}) = %{y:.4g}<extra></extra>`
+      line: { color: '#38bdf8', width: 2 }
     }], {
-      title: `f(${variable}) = ${expression}`,
+      margin: { top: 24, right: 24, bottom: 48, left: 56 },
       paper_bgcolor: 'transparent',
       plot_bgcolor: '#020617',
-      font: { color: '#e5e7eb' },
-      margin: { t: 48, r: 24, b: 52, l: 58 },
-      xaxis: { title: variable, gridcolor: '#1f2937', zerolinecolor: '#64748b' },
-      yaxis: { title: `f(${variable})`, gridcolor: '#1f2937', zerolinecolor: '#64748b' },
-      hovermode: 'x unified',
-      showlegend: false
+      font: { color: '#cbd5e1' },
+      xaxis: { title: variable, gridcolor: '#334155', zerolinecolor: '#64748b' },
+      yaxis: { title: expression, gridcolor: '#334155', zerolinecolor: '#64748b' },
+      responsive: true
     }, { responsive: true, displaylogo: false });
-
-    setPlotStatus(`Showing ${pointCount} samples from ${lower} to ${upper}.`);
+    setPlotStatus(`Plotted ${expression} over [${lower}, ${upper}].`);
   } catch (error) {
-    setPlotStatus(`Unable to plot function: ${error.message}`);
     clearPlot();
+    setPlotStatus(`Unable to plot function: ${error.message}`);
   }
 }
 
 function clearPlot() {
-  Plotly.purge(plotEl);
-  plotEl.replaceChildren();
+  if (plotEl && plotEl.data) {
+    Plotly.purge(plotEl);
+  }
 }
 
 function setPlotStatus(message) {
   plotStatusEl.textContent = message;
 }
 
-function formatResult(res) {
-  if (Array.isArray(res)) {
-    return JSON.stringify(res, null, 2);
-  }
-  if (typeof res === 'object') {
-    return JSON.stringify(res, null, 2);
-  }
-  return String(res);
+function explainDerivative(expression, variable) {
+  const derivative = mathInstance.derivative(expression, variable).toString();
+  return `Function: f(${variable}) = ${expression}\nDerivative: f'(${variable}) = ${derivative}`;
 }
 
-function buildExpressionExplanation(expr, result) {
-  const parsed = mathInstance.parse(expr);
-  const steps = [`Expression: ${expr}`];
+function numericIntegral(expression, variable, lower, upper, steps) {
+  const width = (upper - lower) / steps;
+  let total = 0;
 
-  function walk(node, depth = 1) {
-    if (!node) return;
-
-    if (node.type === 'OperatorNode') {
-      const left = node.args[0];
-      const right = node.args[1];
-      walk(left, depth + 1);
-      walk(right, depth + 1);
-      const value = mathInstance.evaluate(node.toString());
-      steps.push(`Step ${steps.length}: Evaluate ${left.toString()} ${node.op} ${right.toString()} = ${formatResult(value)}`);
-      return;
-    }
-
-    if (node.type === 'FunctionNode') {
-      const arg = node.args[0];
-      walk(arg, depth + 1);
-      const value = mathInstance.evaluate(node.toString());
-      steps.push(`Step ${steps.length}: Apply ${node.name}(${arg.toString()}) = ${formatResult(value)}`);
-      return;
-    }
-
-    if (node.type === 'ConstantNode') {
-      steps.push(`Step ${steps.length}: Constant ${node.value}`);
-      return;
-    }
-
-    if (node.type === 'SymbolNode') {
-      steps.push(`Step ${steps.length}: Variable ${node.name}`);
-      return;
-    }
+  for (let index = 0; index <= steps; index += 1) {
+    const x = lower + index * width;
+    const value = mathInstance.evaluate(expression, { [variable]: x });
+    const weight = index === 0 || index === steps ? 1 : index % 2 === 0 ? 2 : 4;
+    total += weight * value;
   }
 
-  walk(parsed);
-  steps.push(`Final result: ${formatResult(result)}`);
-  return steps.join("\n");
+  return (total * width) / 3;
 }
 
+function tripleIntegral(fn, xRange, yRange, zRange, steps) {
+  const xStep = (xRange[1] - xRange[0]) / steps;
+  const yStep = (yRange[1] - yRange[0]) / steps;
+  const zStep = (zRange[1] - zRange[0]) / steps;
+  let total = 0;
 
-// Numeric definite integral (midpoint rule)
-function numericIntegral(fnStr, variable, lower, upper, steps) {
-  const dx = (upper - lower) / steps;
-  let sum = 0;
-
-  for (let i = 0; i < steps; i++) {
-    const x = lower + (i + 0.5) * dx;
-    const value = mathInstance.evaluate(fnStr, { [variable]: x });
-    sum += value * dx;
-  }
-
-  return sum;
-}
-
-// Triple integral (numeric approximation)
-function tripleIntegral(f, xRange, yRange, zRange, steps) {
-  let sum = 0;
-  const dx = (xRange[1] - xRange[0]) / steps;
-  const dy = (yRange[1] - yRange[0]) / steps;
-  const dz = (zRange[1] - zRange[0]) / steps;
-
-  for (let i = 0; i < steps; i++) {
-    for (let j = 0; j < steps; j++) {
-      for (let k = 0; k < steps; k++) {
-        const x = xRange[0] + i * dx;
-        const y = yRange[0] + j * dy;
-        const z = zRange[0] + k * dz;
-        sum += f(x, y, z) * dx * dy * dz;
+  for (let xIndex = 0; xIndex < steps; xIndex += 1) {
+    for (let yIndex = 0; yIndex < steps; yIndex += 1) {
+      for (let zIndex = 0; zIndex < steps; zIndex += 1) {
+        total += fn(
+          xRange[0] + (xIndex + 0.5) * xStep,
+          yRange[0] + (yIndex + 0.5) * yStep,
+          zRange[0] + (zIndex + 0.5) * zStep
+        );
       }
     }
   }
-  return sum;
+
+  return total * xStep * yStep * zStep;
 }
 
-// Step-by-step derivative explanation
-function explainDerivative(expr, variable) {
-  let steps = [`Function: f(${variable}) = ${expr}`];
-  const derivative = mathInstance.derivative(expr, variable);
-  steps.push(`Step 1: Differentiate with respect to ${variable}`);
-  steps.push(`Result: f'(${variable}) = ${derivative}`);
-  return steps.join("\n");
+function formatResult(value) {
+  if (Array.isArray(value)) {
+    return JSON.stringify(value);
+  }
+  if (value && typeof value.toString === 'function') {
+    return value.toString();
+  }
+  return String(value);
 }
 
+function buildExpressionExplanation(expression, result) {
+  return `Evaluate ${expression} using standard mathematical precedence.\nResult: ${formatResult(result)}`;
+}
