@@ -129,11 +129,13 @@ function plotFunction() {
   const upper = Number(plotMaxInput.value);
 
   if (!expression || !/^\w+$/.test(variable)) {
+    clearPlot();
     setPlotStatus('Enter a function and a valid variable name.');
     return;
   }
 
   if (!Number.isFinite(lower) || !Number.isFinite(upper) || lower >= upper) {
+    clearPlot();
     setPlotStatus('The start of the range must be less than its end.');
     return;
   }
@@ -186,8 +188,13 @@ function plotFunction() {
     setPlotStatus(`Showing ${pointCount} samples from ${lower} to ${upper}.`);
   } catch (error) {
     setPlotStatus(`Unable to plot function: ${error.message}`);
-    Plotly.purge(plotEl);
+    clearPlot();
   }
+}
+
+function clearPlot() {
+  Plotly.purge(plotEl);
+  plotEl.replaceChildren();
 }
 
 function setPlotStatus(message) {
