@@ -112,12 +112,33 @@ evalBtn.addEventListener('click', () => {
       }
     }
 
+    if (expr.startsWith("det(")) {
+      const parts = expr.match(/^det\((.*)\)$/s);
+      if (parts) {
+        const matrix = mathInstance.evaluate(parts[1]);
+        solvedMessage = explainDeterminant(matrix);
+        awardProgress(35, 'Matrix genius!');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
     if (expr.startsWith("eigenvalues(")) {
       const parts = expr.match(/eigenvalues\((.*)\)/);
       if (parts) {
         const matrix = mathInstance.evaluate(parts[1]);
-        const eig = mathInstance.eigs(matrix);
-        solvedMessage = formatResult(eig.values || eig);
+        solvedMessage = explainEigenvalues(matrix);
+        awardProgress(35, 'Matrix genius!');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
+    if (expr.startsWith("inv(")) {
+      const parts = expr.match(/^inv\((.*)\)$/s);
+      if (parts) {
+        const matrix = mathInstance.evaluate(parts[1]);
+        solvedMessage = explainInverse(matrix);
         awardProgress(35, 'Matrix genius!');
         resultEl.textContent = solvedMessage;
         return;
@@ -374,6 +395,68 @@ function setPlotStatus(message) {
 function explainDerivative(expression, variable) {
   const derivative = mathInstance.derivative(expression, variable).toString();
   return `Function: f(${variable}) = ${expression}\nDerivative: f'(${variable}) = ${derivative}`;
+}
+
+function explainDeterminant(matrix) {
+  const det = mathInstance.det(matrix);
+  const matrixText = formatMatrix(matrix);
+  const steps = [
+    `Matrix A = ${matrixText}`,
+    'Step 1: Compute det(A)',
+    'Step 2: Use the determinant rule for the matrix size',
+    'Step 3: Simplify the product terms'
+  ];
+
+  if (Array.isArray(matrix) && matrix.length === 2 && matrix[0].length === 2) {
+    const [[a, b], [c, d]] = matrix;
+    steps.push(`Formula: det(A) = ad - bc`);
+    steps.push(`= (${a} × ${d}) - (${b} × ${c})`);
+    steps.push(`= ${a * d} - ${b * c}`);
+  }
+
+  steps.push(`Result: det(A) = ${formatResult(det)}`);
+  return steps.join('\n');
+}
+
+function explainEigenvalues(matrix) {
+  const eigen = mathInstance.eigs(matrix);
+  const eigenValues = Array.isArray(eigen.values) ? eigen.values : [eigen.values];
+  const matrixText = formatMatrix(matrix);
+  const stepList = [
+    `Matrix A = ${matrixText}`,
+    'Step 1: Solve det(A - λI) = 0',
+    'Step 2: Find the characteristic equation',
+    `Step 3: Solve for λ values`
+  ];
+
+  stepList.push(`Eigenvalues: ${formatResult(eigenValues)}`);
+  return stepList.join('\n');
+}
+
+function explainInverse(matrix) {
+  const det = mathInstance.det(matrix);
+  const inverse = mathInstance.inv(matrix);
+  const matrixText = formatMatrix(matrix);
+  const steps = [
+    `Matrix A = ${matrixText}`,
+    `Step 1: Compute det(A) = ${formatResult(det)}`,
+    'Step 2: Check whether det(A) ≠ 0',
+    'Step 3: Form the inverse using the matrix inverse rule',
+    `A⁻¹ = ${formatMatrix(inverse)}`
+  ];
+
+  if (Array.isArray(matrix) && matrix.length === 2 && matrix[0].length === 2) {
+    const [[a, b], [c, d]] = matrix;
+    steps.splice(2, 0, `For a 2×2 matrix: A⁻¹ = 1/(ad - bc) × [[d, -b], [-c, a]]`);
+    steps.push(`= 1/(${a * d - b * c}) × [[${d}, ${-b}], [${-c}, ${a}]]`);
+  }
+
+  steps.push(`Result: A⁻¹ = ${formatMatrix(inverse)}`);
+  return steps.join('\n');
+}
+
+function formatMatrix(matrix) {
+  return JSON.stringify(matrix);
 }
 
 function numericIntegral(expression, variable, lower, upper, steps) {
