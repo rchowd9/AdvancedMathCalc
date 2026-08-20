@@ -2,37 +2,72 @@
 const mathConfig = { matrix: 'Array' };
 const mathInstance = math.create(mathConfig);
 
+const STORAGE_KEY = 'math-quest-save';
+
+const state = loadGameState();
+
 const exprInput = document.getElementById('expr');
 const evalBtn = document.getElementById('evalBtn');
+const clearBtn = document.getElementById('clearBtn');
 const resultEl = document.getElementById('result');
+const statusBadgeEl = document.getElementById('statusBadge');
+const xpValueEl = document.getElementById('xpValue');
+const xpLabelEl = document.getElementById('xpLabel');
+const streakValueEl = document.getElementById('streakValue');
+const levelBadgeEl = document.getElementById('levelBadge');
+const levelValueEl = document.getElementById('levelValue');
+const missionProgressEl = document.getElementById('missionProgress');
 const plotBtn = document.getElementById('plotBtn');
+const randomChallengeBtn = document.getElementById('randomChallengeBtn');
 const plotExprInput = document.getElementById('plotExpr');
 const plotVariableInput = document.getElementById('plotVariable');
 const plotMinInput = document.getElementById('plotMin');
 const plotMaxInput = document.getElementById('plotMax');
 const plotEl = document.getElementById('plot');
 const plotStatusEl = document.getElementById('plotStatus');
+const achievementItems = [...document.querySelectorAll('.achievement')];
+const challengeButtons = [...document.querySelectorAll('.challenge-chip')];
+
+updateGameHud();
 
 plotBtn.addEventListener('click', plotFunction);
+randomChallengeBtn.addEventListener('click', loadRandomChallenge);
+clearBtn.addEventListener('click', () => {
+  exprInput.value = '';
+  resultEl.textContent = 'Fresh board. Pick a challenge and go!';
+  setStatus('Ready', 'ready');
+});
+
+challengeButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    exprInput.value = button.dataset.expression;
+    exprInput.focus();
+    setStatus('Challenge loaded', 'ready');
+  });
+});
 
 evalBtn.addEventListener('click', () => {
   const expr = exprInput.value.trim();
   if (!expr) {
     resultEl.textContent = 'Please enter an expression.';
+    setStatus('Need input', 'warning');
     return;
   }
 
   try {
-    // Derivative
+    let solvedMessage = '';
+
     if (expr.startsWith("derivative(")) {
       const parts = expr.match(/derivative\((.*),\s*(\w+)\)/);
       if (parts) {
-        resultEl.textContent = explainDerivative(parts[1], parts[2]);
+        solvedMessage = explainDerivative(parts[1], parts[2]);
+        const reward = 35;
+        awardProgress(reward, 'Derivative win!');
+        resultEl.textContent = solvedMessage;
         return;
       }
     }
 
-    // Definite integral
     if (expr.startsWith("integrate(")) {
       const parts = expr.match(/integrate\((.*),\s*(\w+),\s*([-\d.]+),\s*([-\d.]+)\)/);
       if (parts) {
@@ -42,14 +77,16 @@ evalBtn.addEventListener('click', () => {
         const upper = parseFloat(parts[4]);
         const steps = 1000;
         const res = numericIntegral(fn, variable, lower, upper, steps);
-        resultEl.textContent = `Function: f(${variable}) = ${fn}\nStep 1: Approximate definite integral from ${lower} to ${upper}\nResult: ≈ ${res}`;
+        solvedMessage = `Function: f(${variable}) = ${fn}\nStep 1: Approximate definite integral from ${lower} to ${upper}\nResult: ≈ ${res}`;
+        awardProgress(40, 'Integral unlocked!');
+        resultEl.textContent = solvedMessage;
         return;
       }
       resultEl.textContent = 'Use syntax: integrate(expression, variable, lower, upper)';
+      setStatus('Syntax check', 'warning');
       return;
     }
 
-    // Limit
     if (expr.startsWith("limit(")) {
       const parts = expr.match(/limit\((.*),\s*(\w+),\s*([^)]+)\)/);
       if (parts) {
@@ -68,35 +105,38 @@ evalBtn.addEventListener('click', () => {
           `Step 4: Average both sides → (${left} + ${right}) / 2`,
           `Result: ≈ ${approx}`
         ];
-        resultEl.textContent = steps.join("\n");
+        solvedMessage = steps.join("\n");
+        awardProgress(30, 'Limit mastered!');
+        resultEl.textContent = solvedMessage;
         return;
       }
     }
 
-    // Eigenvalues
     if (expr.startsWith("eigenvalues(")) {
       const parts = expr.match(/eigenvalues\((.*)\)/);
       if (parts) {
         const matrix = mathInstance.evaluate(parts[1]);
         const eig = mathInstance.eigs(matrix);
-        resultEl.textContent = formatResult(eig.values || eig);
+        solvedMessage = formatResult(eig.values || eig);
+        awardProgress(35, 'Matrix genius!');
+        resultEl.textContent = solvedMessage;
         return;
       }
     }
 
-    // Linear system solver
     if (expr.startsWith("solveSystem(")) {
       const parts = expr.match(/^solveSystem\(\s*(\[[\s\S]*\])\s*,\s*(\[[\s\S]*\])\s*\)$/);
       if (parts) {
         const A = mathInstance.evaluate(parts[1]);
         const b = mathInstance.evaluate(parts[2]);
         const x = mathInstance.multiply(mathInstance.inv(A), b);
-        resultEl.textContent = `Solution: ${JSON.stringify(x)}`;
+        solvedMessage = `Solution: ${JSON.stringify(x)}`;
+        awardProgress(45, 'System solved!');
+        resultEl.textContent = solvedMessage;
         return;
       }
     }
 
-    // Quadratic solver
     if (expr.startsWith("solveEquation(")) {
       const parts = expr.match(/solveEquation\((.*)=0,\s*(\w+)\)/);
       if (parts) {
@@ -105,19 +145,20 @@ evalBtn.addEventListener('click', () => {
         const coeffs = mathInstance.evaluate(`coefficients(${fn})`);
         if (coeffs.length === 3) {
           const [a, b, c] = coeffs;
-          const disc = b*b - 4*a*c;
-          const root1 = (-b + Math.sqrt(disc)) / (2*a);
-          const root2 = (-b - Math.sqrt(disc)) / (2*a);
-          resultEl.textContent = `Roots: ${root1}, ${root2}`;
-          return;
-        } else {
-          resultEl.textContent = "Only quadratic equations are supported here.";
+          const disc = b * b - 4 * a * c;
+          const root1 = (-b + Math.sqrt(disc)) / (2 * a);
+          const root2 = (-b - Math.sqrt(disc)) / (2 * a);
+          solvedMessage = `Roots: ${root1}, ${root2}`;
+          awardProgress(40, 'Equation cracked!');
+          resultEl.textContent = solvedMessage;
           return;
         }
+        resultEl.textContent = 'Only quadratic equations are supported here.';
+        setStatus('Quadratic only', 'warning');
+        return;
       }
     }
 
-    // General solver (Newton’s method)
     if (expr.startsWith("solve(")) {
       const parts = expr.match(/solve\((.*)=([^,]+),\s*(\w+)\)/);
       if (parts) {
@@ -126,12 +167,13 @@ evalBtn.addEventListener('click', () => {
         const variable = parts[3];
         const fnStr = `(${left}) - (${right})`;
         const root = newtonSolve(fnStr, variable);
-        resultEl.textContent = `Solution: ${root}`;
+        solvedMessage = `Solution: ${root}`;
+        awardProgress(40, 'Root found!');
+        resultEl.textContent = solvedMessage;
         return;
       }
     }
 
-    // Triple integral
     if (expr.startsWith("tripleIntegral(")) {
       const parts = expr.match(/tripleIntegral\((.*),\s*x=(\d+)\.\.(\d+),\s*y=(\d+)\.\.(\d+),\s*z=(\d+)\.\.(\d+),\s*steps=(\d+)\)/);
       if (parts) {
@@ -139,23 +181,105 @@ evalBtn.addEventListener('click', () => {
         const xRange = [parseFloat(parts[2]), parseFloat(parts[3])];
         const yRange = [parseFloat(parts[4]), parseFloat(parts[5])];
         const zRange = [parseFloat(parts[6]), parseFloat(parts[7])];
-        const steps = parseInt(parts[8]);
+        const steps = parseInt(parts[8], 10);
         const f = (x, y, z) => mathInstance.evaluate(fnStr, { x, y, z });
         const res = tripleIntegral(f, xRange, yRange, zRange, steps);
-        resultEl.textContent = "≈ " + res;
+        solvedMessage = '≈ ' + res;
+        awardProgress(50, 'Triple integral mastered!');
+        resultEl.textContent = solvedMessage;
         return;
       }
     }
 
-    // Default evaluation
     const res = mathInstance.evaluate(expr);
     const explanation = buildExpressionExplanation(expr, res);
-    resultEl.textContent = `Result: ${formatResult(res)}\n\nStep-by-step explanation:\n${explanation}`;
+    solvedMessage = `Result: ${formatResult(res)}\n\nStep-by-step explanation:\n${explanation}`;
+    awardProgress(25, 'Nice work!');
+    resultEl.textContent = solvedMessage;
 
   } catch (err) {
     resultEl.textContent = 'Error: ' + err.message;
+    setStatus('Oops', 'warning');
   }
 });
+
+function awardProgress(points, statusMessage) {
+  state.xp += points;
+  state.streak += 1;
+  state.completedQuests += 1;
+
+  if (state.completedQuests >= 3) {
+    state.xp += 25;
+    state.completedQuests = 0;
+    state.streak += 1;
+  }
+
+  saveGameState();
+  updateGameHud();
+  setStatus(statusMessage, 'success');
+}
+
+function loadRandomChallenge() {
+  const options = [
+    'derivative(sin(x), x)',
+    'integrate(x^2, x, 0, 1)',
+    'limit(sin(x)/x, x, 0)',
+    'det([[1,2],[3,4]])',
+    'eigenvalues([[2,1],[1,2]])',
+    'solveEquation(x^2 - 4 = 0, x)'
+  ];
+  const randomExpression = options[Math.floor(Math.random() * options.length)];
+  exprInput.value = randomExpression;
+  setStatus('New quest', 'ready');
+}
+
+function setStatus(label, tone) {
+  statusBadgeEl.textContent = label;
+  statusBadgeEl.className = `status-badge ${tone}`;
+}
+
+function updateGameHud() {
+  const level = Math.floor(state.xp / 100) + 1;
+  xpValueEl.textContent = String(state.xp);
+  xpLabelEl.textContent = `${state.xp} XP`;
+  levelValueEl.textContent = String(level);
+  levelBadgeEl.textContent = `Lvl ${level}`;
+  streakValueEl.textContent = String(state.streak);
+  missionProgressEl.textContent = `${state.completedQuests}/3`;
+  renderAchievements();
+}
+
+function renderAchievements() {
+  const level = Math.floor(state.xp / 100) + 1;
+  const earned = {
+    Starter: state.xp >= 25,
+    'Graph Explorer': state.xp >= 50,
+    'Derivative Pro': state.xp >= 100,
+    'Math Master': state.xp >= 250 || level >= 3
+  };
+
+  achievementItems.forEach((item) => {
+    const title = item.querySelector('strong')?.textContent || '';
+    item.classList.toggle('earned', Boolean(earned[title]));
+  });
+}
+
+function loadGameState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    return {
+      xp: Number(saved.xp) || 0,
+      streak: Number(saved.streak) || 1,
+      completedQuests: Number(saved.completedQuests) || 0
+    };
+  } catch (error) {
+    return { xp: 0, streak: 1, completedQuests: 0 };
+  }
+}
+
+function saveGameState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
 
 // Newton’s method solver
 function newtonSolve(fnStr, variable, guess = 1) {
@@ -226,9 +350,14 @@ function plotFunction() {
       responsive: true
     }, { responsive: true, displaylogo: false });
     setPlotStatus(`Plotted ${expression} over [${lower}, ${upper}].`);
+    state.xp += 15;
+    saveGameState();
+    updateGameHud();
+    setStatus('Graph unlocked', 'success');
   } catch (error) {
     clearPlot();
     setPlotStatus(`Unable to plot function: ${error.message}`);
+    setStatus('Plot error', 'warning');
   }
 }
 
