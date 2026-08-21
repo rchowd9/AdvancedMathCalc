@@ -180,6 +180,40 @@ evalBtn.addEventListener('click', () => {
       }
     }
 
+    if (expr.startsWith("findRoots(")) {
+  // Syntax: findRoots(f(x), x, lower, upper)
+  const parts = expr.match(/findRoots\((.*),\s*(\w+),\s*([-\d.]+),\s*([-\d.]+)\)/);
+  if (parts) {
+    const fnStr = parts[1];
+    const variable = parts[2];
+    const lower = parseFloat(parts[3]);
+    const upper = parseFloat(parts[4]);
+    const roots = findRootsInInterval(fnStr, variable, lower, upper);
+    const solvedMessage = `Roots in [${lower}, ${upper}]: ${formatResult(roots)}`;
+    awardProgress(45, 'Multiple roots found!');
+    resultEl.textContent = solvedMessage;
+    return;
+  }
+}
+
+if (expr.startsWith("solveSystemNL(")) {
+  // Syntax: solveSystemNL([eq1, eq2, ...], [x, y, ...], [x0, y0, ...])
+  const parts = expr.match(/^solveSystemNL\(\s*(\[[\s\S]*\])\s*,\s*(\[[\s\S]*\])\s*,\s*(\[[\s\S]*\])\s*\)$/);
+  if (parts) {
+    const equations = mathInstance.evaluate(parts[1]);   // array of strings
+    const variables = mathInstance.evaluate(parts[2]);   // array of variable names
+    const initialGuess = mathInstance.evaluate(parts[3]); // array of numbers
+
+    const solution = solveNonlinearSystem(equations, variables, initialGuess);
+    const solvedMessage = `Nonlinear system solution:\n${variables.map((v, i) => `${v} ≈ ${solution[i]}`).join('\n')}`;
+    awardProgress(55, 'Nonlinear system solved!');
+    resultEl.textContent = solvedMessage;
+    return;
+  }
+}
+
+
+
     if (expr.startsWith("solve(")) {
       const parts = expr.match(/solve\((.*)=([^,]+),\s*(\w+)\)/);
       if (parts) {
@@ -194,6 +228,8 @@ evalBtn.addEventListener('click', () => {
         return;
       }
     }
+
+
 
     if (expr.startsWith("tripleIntegral(")) {
       const parts = expr.match(/tripleIntegral\((.*),\s*x=(\d+)\.\.(\d+),\s*y=(\d+)\.\.(\d+),\s*z=(\d+)\.\.(\d+),\s*steps=(\d+)\)/);
