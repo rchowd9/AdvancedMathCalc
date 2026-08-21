@@ -526,6 +526,52 @@ function findRootsInInterval(fnStr, variable, lower, upper, samples = 200) {
   return roots;
 }
 
+function solveNonlinearSystem(equations, variables, initialGuess) {
+  const maxIter = 20;
+  const eps = 1e-6;
+  let x = [...initialGuess];
+
+  const F = (vec) => equations.map((eq) => {
+    const [left, right] = eq.split('=');
+    const fnStr = `(${left}) - (${right})`;
+    const scope = {};
+    variables.forEach((v, i) => { scope[v] = vec[i]; });
+    return mathInstance.evaluate(fnStr, scope);
+  });
+
+  const jacobian = (vec) => {
+    const n = variables.length;
+    const m = equations.length;
+    const J = Array.from({ length: m }, () => Array(n).fill(0));
+    const f0 = F(vec);
+
+    for (let j = 0; j < n; j++) {
+      const vecPerturbed = [...vec];
+      vecPerturbed[j] += eps;
+      const fPerturbed = F(vecPerturbed);
+      for (let i = 0; i < m; i++) {
+        J[i][j] = (fPerturbed[i] - f0[i]) / eps;
+      }
+    }
+
+    return J;
+  };
+
+  for (let iter = 0; iter < maxIter; iter++) {
+    const fVal = F(x);
+    const J = jacobian(x);
+    const delta = mathInstance.multiply(
+      mathInstance.inv(J),
+      fVal.map((v) => -v)
+    );
+    x = x.map((xi, i) => xi + delta[i]);
+    if (Math.max(...delta.map((d) => Math.abs(d))) < 1e-8) break;
+  }
+
+  return x;
+}
+
+
 
 
 function formatResult(value) {
