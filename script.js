@@ -494,6 +494,40 @@ function tripleIntegral(fn, xRange, yRange, zRange, steps) {
   return total * xStep * yStep * zStep;
 }
 
+function findRootsInInterval(fnStr, variable, lower, upper, samples = 200) {
+  const f = (x) => mathInstance.evaluate(fnStr, { [variable]: x });
+  const roots = [];
+  const step = (upper - lower) / samples;
+  let prevX = lower;
+  let prevY = f(prevX);
+
+  for (let i = 1; i <= samples; i++) {
+    const x = lower + i * step;
+    const y = f(x);
+
+    if (prevY === 0) {
+      roots.push(prevX);
+    } else if (y === 0) {
+      roots.push(x);
+    } else if (prevY * y < 0) {
+      const mid = (prevX + x) / 2;
+      const root = newtonSolve(fnStr, variable, mid);
+      if (!Number.isNaN(root)) {
+        if (!roots.some((r) => Math.abs(r - root) < 1e-4)) {
+          roots.push(root);
+        }
+      }
+    }
+
+    prevX = x;
+    prevY = y;
+  }
+
+  return roots;
+}
+
+
+
 function formatResult(value) {
   if (Array.isArray(value)) {
     return JSON.stringify(value);
