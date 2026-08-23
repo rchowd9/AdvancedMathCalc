@@ -61,6 +61,9 @@
         <button class="challenge-chip" data-expression="integrate(x^2, x, 0, 1)">Integral launch</button>
         <button class="challenge-chip" data-expression="limit(sin(x)/x, x, 0)">Limit test</button>
         <button class="challenge-chip" data-expression="det([[1,2],[3,4]])">Matrix power</button>
+        <button class="challenge-chip" data-expression="taylor(sin(x), x, 0, 4)">Taylor series</button>
+        <button class="challenge-chip" data-expression="stats([4, 8, 15, 16, 23, 42])">Stats check</button>
+        <button class="challenge-chip" data-expression="combinations(6, 3)">Combinatorics</button>
       </div>
     </section>
 
@@ -74,7 +77,7 @@
         </div>
 
         <label for="expr">Enter expression:</label>
-        <textarea id="expr" rows="3" placeholder="Examples: derivative(sin(x), x); integrate(x^2, x, 0, 1); det([[1,2],[3,4]])"></textarea>
+        <textarea id="expr" rows="3" placeholder="Examples: derivative(sin(x), x); taylor(sin(x), x, 0, 4); stats([4,8,15,16,23,42]); combinations(6,3)"></textarea>
 
         <div class="action-row">
           <button id="evalBtn">Solve it!</button>
@@ -117,6 +120,13 @@
             <div>
               <strong>Math Master</strong>
               <small>Earn 250 XP</small>
+            </div>
+          </li>
+          <li class="achievement locked">
+            <span class="badge-icon">🎨</span>
+            <div>
+              <strong>Renaissance Solver</strong>
+              <small>Use 6 different math categories</small>
             </div>
           </li>
         </ul>
@@ -165,18 +175,60 @@
 
     <section class="section examples-panel">
       <h2>Quick examples</h2>
-      <ul>
-        <li>derivative(sin(x), x)</li>
-        <li>integrate(x^2, x, 0, 1)</li>
-        <li>limit(sin(x)/x, x, 0)</li>
-        <li>det([[1,2],[3,4]])</li>
-        <li>inv([[1,2],[3,4]])</li>
-        <li>eigenvalues([[2,1],[1,2]])</li>
-      </ul>
+      <div class="examples-grid">
+        <div class="examples-group">
+          <h3>Calculus</h3>
+          <ul>
+            <li>derivative(sin(x), x)</li>
+            <li>partial(x^2*y + y^3, x)</li>
+            <li>gradient(x^2*y + y^3, [x, y])</li>
+            <li>integrate(x^2, x, 0, 1)</li>
+            <li>limit(sin(x)/x, x, 0)</li>
+            <li>taylor(sin(x), x, 0, 4)</li>
+          </ul>
+        </div>
+        <div class="examples-group">
+          <h3>Algebra & Linear Algebra</h3>
+          <ul>
+            <li>simplify((x+1)^2 - (x^2+2x+1))</li>
+            <li>solveEquation(x^2 - 4 = 0, x)</li>
+            <li>det([[1,2],[3,4]])</li>
+            <li>inv([[1,2],[3,4]])</li>
+            <li>eigenvalues([[2,1],[1,2]])</li>
+          </ul>
+        </div>
+        <div class="examples-group">
+          <h3>Sequences & Statistics</h3>
+          <ul>
+            <li>sum(i^2, i, 1, 10)</li>
+            <li>product(i, i, 1, 6)</li>
+            <li>stats([4, 8, 15, 16, 23, 42])</li>
+          </ul>
+        </div>
+        <div class="examples-group">
+          <h3>Combinatorics & Number Theory</h3>
+          <ul>
+            <li>factorial(6)</li>
+            <li>permutations(6, 3)</li>
+            <li>combinations(6, 3)</li>
+            <li>primeFactors(360)</li>
+            <li>gcd(48, 18)</li>
+            <li>lcm(4, 6)</li>
+          </ul>
+        </div>
+        <div class="examples-group">
+          <h3>Vectors & Units</h3>
+          <ul>
+            <li>dot([1,2,3], [4,5,6])</li>
+            <li>cross([1,0,0], [0,1,0])</li>
+            <li>magnitude([3,4])</li>
+            <li>convert(5 km, mi)</li>
+          </ul>
+        </div>
+      </div>
     </section>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
