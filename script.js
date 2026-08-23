@@ -248,10 +248,202 @@ if (expr.startsWith("solveSystemNL(")) {
       }
     }
 
+    if (expr.startsWith("partial(")) {
+      const parts = expr.match(/^partial\((.*),\s*(\w+)\)$/s);
+      if (parts) {
+        solvedMessage = explainPartialDerivative(parts[1], parts[2]);
+        awardProgress(35, 'Partial derivative unlocked!', 'calculus2');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
+    if (expr.startsWith("gradient(")) {
+      const parts = expr.match(/^gradient\((.+),\s*(\[[^\]]*\])\)$/s);
+      if (parts) {
+        const variables = parts[2].replace(/[[\]]/g, '').split(',').map((v) => v.trim());
+        solvedMessage = explainGradient(parts[1], variables);
+        awardProgress(45, 'Gradient calculated!', 'calculus2');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
+    if (expr.startsWith("taylor(")) {
+      const parts = expr.match(/^taylor\((.*),\s*(\w+),\s*([-\d.]+),\s*(\d+)\)$/s);
+      if (parts) {
+        const fn = parts[1];
+        const variable = parts[2];
+        const point = parseFloat(parts[3]);
+        const order = parseInt(parts[4], 10);
+        solvedMessage = explainTaylorSeries(fn, variable, point, order);
+        awardProgress(50, 'Taylor series unlocked!', 'calculus2');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+      resultEl.textContent = 'Use syntax: taylor(expression, variable, point, order)';
+      setStatus('Syntax check', 'warning');
+      return;
+    }
+
+    if (expr.startsWith("simplify(")) {
+      const parts = expr.match(/^simplify\((.*)\)$/s);
+      if (parts) {
+        solvedMessage = explainSimplify(parts[1]);
+        awardProgress(30, 'Simplified!', 'algebra');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
+    if (expr.startsWith("sum(")) {
+      const parts = expr.match(/^sum\((.*),\s*(\w+),\s*(-?\d+),\s*(-?\d+)\)$/s);
+      if (parts) {
+        const fn = parts[1];
+        const variable = parts[2];
+        const lower = parseInt(parts[3], 10);
+        const upper = parseInt(parts[4], 10);
+        solvedMessage = explainSeries(fn, variable, lower, upper, 'sum');
+        awardProgress(35, 'Summation solved!', 'sequences');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
+    if (expr.startsWith("product(")) {
+      const parts = expr.match(/^product\((.*),\s*(\w+),\s*(-?\d+),\s*(-?\d+)\)$/s);
+      if (parts) {
+        const fn = parts[1];
+        const variable = parts[2];
+        const lower = parseInt(parts[3], 10);
+        const upper = parseInt(parts[4], 10);
+        solvedMessage = explainSeries(fn, variable, lower, upper, 'product');
+        awardProgress(35, 'Product solved!', 'sequences');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
+    if (expr.startsWith("stats(")) {
+      const parts = expr.match(/^stats\((\[[\s\S]*\])\)$/);
+      if (parts) {
+        const data = mathInstance.evaluate(parts[1]);
+        solvedMessage = explainStats(data);
+        awardProgress(40, 'Data analyzed!', 'statistics');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
+    if (expr.startsWith("factorial(")) {
+      const parts = expr.match(/^factorial\((\d+)\)$/);
+      if (parts) {
+        solvedMessage = explainFactorial(parseInt(parts[1], 10));
+        awardProgress(20, 'Factorial found!', 'combinatorics');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
+    if (expr.startsWith("permutations(")) {
+      const parts = expr.match(/^permutations\((\d+),\s*(\d+)\)$/);
+      if (parts) {
+        solvedMessage = explainPermutations(parseInt(parts[1], 10), parseInt(parts[2], 10));
+        awardProgress(30, 'Permutations counted!', 'combinatorics');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
+    if (expr.startsWith("combinations(")) {
+      const parts = expr.match(/^combinations\((\d+),\s*(\d+)\)$/);
+      if (parts) {
+        solvedMessage = explainCombinations(parseInt(parts[1], 10), parseInt(parts[2], 10));
+        awardProgress(30, 'Combinations counted!', 'combinatorics');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
+    if (expr.startsWith("primeFactors(")) {
+      const parts = expr.match(/^primeFactors\((\d+)\)$/);
+      if (parts) {
+        solvedMessage = explainPrimeFactors(parseInt(parts[1], 10));
+        awardProgress(25, 'Factored into primes!', 'numbertheory');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
+    if (expr.startsWith("gcd(")) {
+      const parts = expr.match(/^gcd\((-?\d+),\s*(-?\d+)\)$/);
+      if (parts) {
+        solvedMessage = explainGcdLcm(parseInt(parts[1], 10), parseInt(parts[2], 10), 'gcd');
+        awardProgress(20, 'GCD found!', 'numbertheory');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
+    if (expr.startsWith("lcm(")) {
+      const parts = expr.match(/^lcm\((-?\d+),\s*(-?\d+)\)$/);
+      if (parts) {
+        solvedMessage = explainGcdLcm(parseInt(parts[1], 10), parseInt(parts[2], 10), 'lcm');
+        awardProgress(20, 'LCM found!', 'numbertheory');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
+    if (expr.startsWith("dot(")) {
+      const parts = expr.match(/^dot\((\[[^\]]*\]),\s*(\[[^\]]*\])\)$/);
+      if (parts) {
+        const v1 = mathInstance.evaluate(parts[1]);
+        const v2 = mathInstance.evaluate(parts[2]);
+        solvedMessage = explainVectorOp(v1, v2, 'dot');
+        awardProgress(30, 'Dot product mastered!', 'vectors');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
+    if (expr.startsWith("cross(")) {
+      const parts = expr.match(/^cross\((\[[^\]]*\]),\s*(\[[^\]]*\])\)$/);
+      if (parts) {
+        const v1 = mathInstance.evaluate(parts[1]);
+        const v2 = mathInstance.evaluate(parts[2]);
+        solvedMessage = explainVectorOp(v1, v2, 'cross');
+        awardProgress(35, 'Cross product mastered!', 'vectors');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
+    if (expr.startsWith("magnitude(")) {
+      const parts = expr.match(/^magnitude\((\[[^\]]*\])\)$/);
+      if (parts) {
+        const v = mathInstance.evaluate(parts[1]);
+        solvedMessage = explainMagnitude(v);
+        awardProgress(25, 'Magnitude measured!', 'vectors');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
+    if (expr.startsWith("convert(")) {
+      const parts = expr.match(/^convert\((.*),\s*([a-zA-Z°]+)\)$/);
+      if (parts) {
+        solvedMessage = explainConversion(parts[1].trim(), parts[2].trim());
+        awardProgress(20, 'Units converted!', 'units');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
     const res = mathInstance.evaluate(expr);
     const explanation = buildExpressionExplanation(expr, res);
     solvedMessage = `Result: ${formatResult(res)}\n\nStep-by-step explanation:\n${explanation}`;
-    awardProgress(25, 'Nice work!');
+    awardProgress(25, 'Nice work!', 'arithmetic');
     resultEl.textContent = solvedMessage;
 
   } catch (err) {
@@ -260,10 +452,11 @@ if (expr.startsWith("solveSystemNL(")) {
   }
 });
 
-function awardProgress(points, statusMessage) {
+function awardProgress(points, statusMessage, category = 'general') {
   state.xp += points;
   state.streak += 1;
   state.completedQuests += 1;
+  state.categoriesUsed[category] = true;
 
   if (state.completedQuests >= 3) {
     state.xp += 25;
@@ -283,7 +476,23 @@ function loadRandomChallenge() {
     'limit(sin(x)/x, x, 0)',
     'det([[1,2],[3,4]])',
     'eigenvalues([[2,1],[1,2]])',
-    'solveEquation(x^2 - 4 = 0, x)'
+    'solveEquation(x^2 - 4 = 0, x)',
+    'partial(x^2*y + y^3, x)',
+    'gradient(x^2*y + y^3, [x, y])',
+    'taylor(sin(x), x, 0, 4)',
+    'simplify((x+1)^2 - (x^2+2x+1))',
+    'sum(i^2, i, 1, 10)',
+    'product(i, i, 1, 6)',
+    'stats([4, 8, 15, 16, 23, 42])',
+    'permutations(6, 3)',
+    'combinations(6, 3)',
+    'primeFactors(360)',
+    'gcd(48, 18)',
+    'lcm(4, 6)',
+    'dot([1,2,3], [4,5,6])',
+    'cross([1,0,0], [0,1,0])',
+    'magnitude([3,4])',
+    'convert(5 km, mi)'
   ];
   const randomExpression = options[Math.floor(Math.random() * options.length)];
   exprInput.value = randomExpression;
@@ -308,11 +517,13 @@ function updateGameHud() {
 
 function renderAchievements() {
   const level = Math.floor(state.xp / 100) + 1;
+  const categoryCount = Object.keys(state.categoriesUsed).length;
   const earned = {
     Starter: state.xp >= 25,
     'Graph Explorer': state.xp >= 50,
     'Derivative Pro': state.xp >= 100,
-    'Math Master': state.xp >= 250 || level >= 3
+    'Math Master': state.xp >= 250 || level >= 3,
+    'Renaissance Solver': categoryCount >= 6
   };
 
   achievementItems.forEach((item) => {
@@ -327,10 +538,13 @@ function loadGameState() {
     return {
       xp: Number(saved.xp) || 0,
       streak: Number(saved.streak) || 1,
-      completedQuests: Number(saved.completedQuests) || 0
+      completedQuests: Number(saved.completedQuests) || 0,
+      categoriesUsed: (saved.categoriesUsed && typeof saved.categoriesUsed === 'object')
+        ? saved.categoriesUsed
+        : {}
     };
   } catch (error) {
-    return { xp: 0, streak: 1, completedQuests: 0 };
+    return { xp: 0, streak: 1, completedQuests: 0, categoriesUsed: {} };
   }
 }
 
@@ -622,4 +836,287 @@ function formatResult(value) {
 
 function buildExpressionExplanation(expression, result) {
   return `Evaluate ${expression} using standard mathematical precedence.\nResult: ${formatResult(result)}`;
+}
+
+// ---------- Multivariable calculus ----------
+
+function explainPartialDerivative(expression, variable) {
+  const derivative = mathInstance.derivative(expression, variable).toString();
+  return [
+    `Function: f(...) = ${expression}`,
+    `Step 1: Treat every variable except "${variable}" as a constant`,
+    `Step 2: Differentiate with respect to ${variable}`,
+    `Result: ∂f/∂${variable} = ${derivative}`
+  ].join('\n');
+}
+
+function explainGradient(expression, variables) {
+  const steps = [`Function: f(${variables.join(', ')}) = ${expression}`, 'Step 1: Differentiate with respect to each variable in turn'];
+  const components = variables.map((variable) => {
+    const derivative = mathInstance.derivative(expression, variable).toString();
+    steps.push(`  ∂f/∂${variable} = ${derivative}`);
+    return derivative;
+  });
+  steps.push(`Result: ∇f = [ ${components.join(', ')} ]`);
+  return steps.join('\n');
+}
+
+function explainTaylorSeries(expression, variable, point, order) {
+  const terms = computeTaylorSeries(expression, variable, point, order);
+  const steps = [`Function: f(${variable}) = ${expression}`, `Expansion point: ${variable} = ${point}`];
+
+  terms.forEach((term) => {
+    steps.push(`Step ${term.order + 1}: f${'′'.repeat(Math.min(term.order, 3))}${term.order > 3 ? `^(${term.order})` : ''}(${point}) = ${formatResult(term.derivativeAtPoint)}`);
+  });
+
+  const polynomial = buildTaylorPolynomialString(terms, variable, point);
+  steps.push(`Step ${terms.length + 1}: Combine terms as Σ [ f⁽ⁿ⁾(${point}) / n! ] × (${variable} - ${point})ⁿ`);
+  steps.push(`Result: T(${variable}) ≈ ${polynomial}`);
+  return steps.join('\n');
+}
+
+function computeTaylorSeries(expression, variable, point, order) {
+  const terms = [];
+  let derivativeNode = mathInstance.parse(expression);
+
+  for (let k = 0; k <= order; k += 1) {
+    if (k > 0) {
+      derivativeNode = mathInstance.derivative(derivativeNode, variable);
+    }
+    const derivativeAtPoint = derivativeNode.evaluate({ [variable]: point });
+    const coefficient = derivativeAtPoint / mathInstance.factorial(k);
+    terms.push({ order: k, derivativeAtPoint, coefficient });
+  }
+
+  return terms;
+}
+
+function buildTaylorPolynomialString(terms, variable, point) {
+  const pieces = terms
+    .filter((term) => Math.abs(term.coefficient) > 1e-10)
+    .map((term) => {
+      const coeff = Number(term.coefficient.toFixed(6));
+      if (term.order === 0) {
+        return `${coeff}`;
+      }
+      const base = point === 0 ? `${variable}` : `(${variable} - ${point})`;
+      const power = term.order === 1 ? base : `${base}^${term.order}`;
+      return `${coeff}·${power}`;
+    });
+
+  return pieces.length ? pieces.join(' + ').replace(/\+ -/g, '- ') : '0';
+}
+
+// ---------- Symbolic simplification ----------
+
+function explainSimplify(expression) {
+  const simplified = mathInstance.simplify(expression).toString();
+  return [
+    `Original expression: ${expression}`,
+    'Step 1: Apply algebraic simplification rules (combine like terms, reduce powers, cancel factors)',
+    `Result: ${simplified}`
+  ].join('\n');
+}
+
+// ---------- Sequences and series ----------
+
+function explainSeries(expression, variable, lower, upper, mode) {
+  const isSum = mode === 'sum';
+  const terms = [];
+  let total = isSum ? 0 : 1;
+
+  for (let i = lower; i <= upper; i += 1) {
+    const value = mathInstance.evaluate(expression, { [variable]: i });
+    terms.push(value);
+    total = isSum ? total + value : total * value;
+  }
+
+  const symbol = isSum ? 'Σ' : '∏';
+  const label = isSum ? 'Sum' : 'Product';
+  const displayTerms = terms.length > 10
+    ? [...terms.slice(0, 4).map(formatResult), '...', ...terms.slice(-2).map(formatResult)]
+    : terms.map(formatResult);
+
+  return [
+    `${symbol} [${variable}=${lower} to ${upper}] (${expression})`,
+    `Step 1: Evaluate the expression for each ${variable} from ${lower} to ${upper}`,
+    `Terms: ${displayTerms.join(', ')}`,
+    `Step 2: ${isSum ? 'Add' : 'Multiply'} all ${terms.length} term(s) together`,
+    `Result: ${label} = ${formatResult(total)}`
+  ].join('\n');
+}
+
+// ---------- Statistics ----------
+
+function explainStats(data) {
+  const n = data.length;
+  const mean = mathInstance.mean(data);
+  const median = mathInstance.median(data);
+  const variance = mathInstance.variance(data);
+  const stdDev = mathInstance.std(data);
+  const min = mathInstance.min(data);
+  const max = mathInstance.max(data);
+  const mode = computeMode(data);
+
+  return [
+    `Dataset (n = ${n}): [${data.join(', ')}]`,
+    `Step 1: Mean = (Σx) / n = ${formatResult(mean)}`,
+    `Step 2: Sort and find the middle value(s) → Median = ${formatResult(median)}`,
+    `Step 3: Variance = Σ(x - mean)² / n = ${formatResult(variance)}`,
+    `Step 4: Standard deviation = √variance = ${formatResult(stdDev)}`,
+    `Step 5: Range = max - min = ${formatResult(max)} - ${formatResult(min)} = ${formatResult(max - min)}`,
+    `Mode: ${mode ? mode.join(', ') : 'No repeated values'}`,
+    `Result: mean ≈ ${formatResult(mean)}, median = ${formatResult(median)}, std dev ≈ ${formatResult(stdDev)}`
+  ].join('\n');
+}
+
+function computeMode(data) {
+  const frequency = {};
+  let maxFrequency = 0;
+
+  data.forEach((value) => {
+    frequency[value] = (frequency[value] || 0) + 1;
+    maxFrequency = Math.max(maxFrequency, frequency[value]);
+  });
+
+  if (maxFrequency <= 1) return null;
+  return Object.keys(frequency)
+    .filter((key) => frequency[key] === maxFrequency)
+    .map(Number);
+}
+
+// ---------- Combinatorics ----------
+
+function explainFactorial(n) {
+  const result = mathInstance.factorial(n);
+  const chain = n <= 12
+    ? Array.from({ length: n }, (_, i) => n - i).join(' × ') || '1'
+    : `${n} × (${n - 1})! `;
+  return [
+    `Compute: ${n}!`,
+    `Step 1: ${n}! = ${chain}`,
+    `Result: ${n}! = ${formatResult(result)}`
+  ].join('\n');
+}
+
+function explainPermutations(n, r) {
+  const result = mathInstance.permutations(n, r);
+  return [
+    `Compute: P(${n}, ${r}) — number of ordered arrangements of ${r} items from ${n}`,
+    `Formula: P(n, r) = n! / (n - r)!`,
+    `Step 1: ${n}! / ${n - r}!`,
+    `Result: P(${n}, ${r}) = ${formatResult(result)}`
+  ].join('\n');
+}
+
+function explainCombinations(n, r) {
+  const result = mathInstance.combinations(n, r);
+  return [
+    `Compute: C(${n}, ${r}) — number of unordered groups of ${r} items from ${n}`,
+    `Formula: C(n, r) = n! / (r! × (n - r)!)`,
+    `Step 1: ${n}! / (${r}! × ${n - r}!)`,
+    `Result: C(${n}, ${r}) = ${formatResult(result)}`
+  ].join('\n');
+}
+
+// ---------- Number theory ----------
+
+function explainPrimeFactors(n) {
+  const factors = primeFactorize(n);
+  const grouped = groupFactors(factors);
+  return [
+    `Factor: ${n}`,
+    'Step 1: Divide repeatedly by the smallest possible prime',
+    `Step 2: Continue until the remaining factor is 1`,
+    `Prime factors: ${factors.join(' × ')}`,
+    `Result: ${n} = ${grouped}`
+  ].join('\n');
+}
+
+function primeFactorize(n) {
+  const factors = [];
+  let num = Math.abs(Math.trunc(n));
+  let divisor = 2;
+
+  while (num > 1) {
+    while (num % divisor === 0) {
+      factors.push(divisor);
+      num /= divisor;
+    }
+    divisor += 1;
+    if (divisor * divisor > num && num > 1) {
+      factors.push(num);
+      break;
+    }
+  }
+
+  return factors.length ? factors : [n];
+}
+
+function groupFactors(factors) {
+  const counts = {};
+  factors.forEach((f) => { counts[f] = (counts[f] || 0) + 1; });
+  return Object.entries(counts)
+    .map(([base, exp]) => (exp > 1 ? `${base}^${exp}` : `${base}`))
+    .join(' × ');
+}
+
+function explainGcdLcm(a, b, mode) {
+  const isGcd = mode === 'gcd';
+  const result = isGcd ? mathInstance.gcd(a, b) : mathInstance.lcm(a, b);
+  const factorsA = primeFactorize(a);
+  const factorsB = primeFactorize(b);
+  return [
+    `Compute: ${isGcd ? 'GCD' : 'LCM'}(${a}, ${b})`,
+    `Step 1: Prime factorize ${a} → ${factorsA.join(' × ')}`,
+    `Step 2: Prime factorize ${b} → ${factorsB.join(' × ')}`,
+    `Step 3: ${isGcd ? 'Take the shared prime factors at their lowest powers' : 'Take all prime factors at their highest powers'}`,
+    `Result: ${isGcd ? 'GCD' : 'LCM'}(${a}, ${b}) = ${formatResult(result)}`
+  ].join('\n');
+}
+
+// ---------- Vectors ----------
+
+function explainVectorOp(v1, v2, mode) {
+  if (mode === 'dot') {
+    const result = mathInstance.dot(v1, v2);
+    return [
+      `Vectors: a = [${v1.join(', ')}], b = [${v2.join(', ')}]`,
+      'Formula: a · b = Σ (aᵢ × bᵢ)',
+      `Step 1: ${v1.map((val, i) => `(${val} × ${v2[i]})`).join(' + ')}`,
+      `Result: a · b = ${formatResult(result)}`
+    ].join('\n');
+  }
+
+  const result = mathInstance.cross(v1, v2);
+  return [
+    `Vectors: a = [${v1.join(', ')}], b = [${v2.join(', ')}]`,
+    'Formula: a × b uses the 3×3 determinant expansion of the standard basis vectors',
+    'Step 1: Expand along the top row of the basis/vector matrix',
+    `Result: a × b = ${formatResult(result)}`
+  ].join('\n');
+}
+
+function explainMagnitude(v) {
+  const result = mathInstance.norm(v);
+  const squares = v.map((val) => `${val}²`).join(' + ');
+  return [
+    `Vector: v = [${v.join(', ')}]`,
+    'Formula: |v| = √(v₁² + v₂² + ... + vₙ²)',
+    `Step 1: √(${squares})`,
+    `Result: |v| = ${formatResult(result)}`
+  ].join('\n');
+}
+
+// ---------- Unit conversion ----------
+
+function explainConversion(sourceExpression, targetUnit) {
+  const sourceValue = mathInstance.evaluate(sourceExpression);
+  const converted = mathInstance.evaluate(`${sourceExpression} to ${targetUnit}`);
+  return [
+    `Convert: ${sourceExpression} → ${targetUnit}`,
+    `Step 1: Start with ${formatResult(sourceValue)}`,
+    `Step 2: Apply the conversion factor to ${targetUnit}`,
+    `Result: ${formatResult(converted)}`
+  ].join('\n');
 }
