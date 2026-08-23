@@ -413,7 +413,30 @@ pre {
 }
 
 .examples-panel h2 {
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.examples-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.examples-group h3 {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--primary-2);
+}
+
+.examples-group ul {
+  margin: 0;
+}
+
+.examples-group li {
+  font-family: "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85rem;
 }
 
 ul {
@@ -472,4 +495,3 @@ li {
     width: 100%;
   }
 }
-
