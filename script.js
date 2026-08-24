@@ -248,6 +248,57 @@ if (expr.startsWith("solveSystemNL(")) {
       }
     }
 
+    if (expr.startsWith("volumeOfRevolution(")) {
+      const parts = expr.match(/^volumeOfRevolution\((.*),\s*(\w+),\s*([-\d.]+),\s*([-\d.]+)\)$/s);
+      if (parts) {
+        const fn = parts[1];
+        const variable = parts[2];
+        const lower = parseFloat(parts[3]);
+        const upper = parseFloat(parts[4]);
+        solvedMessage = explainVolumeOfRevolution(fn, variable, lower, upper);
+        awardProgress(45, 'Volume of revolution solved!', 'geometry');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+      resultEl.textContent = 'Use syntax: volumeOfRevolution(expression, variable, lower, upper)';
+      setStatus('Syntax check', 'warning');
+      return;
+    }
+
+    if (expr.startsWith("surfaceOfRevolution(")) {
+      const parts = expr.match(/^surfaceOfRevolution\((.*),\s*(\w+),\s*([-\d.]+),\s*([-\d.]+)\)$/s);
+      if (parts) {
+        const fn = parts[1];
+        const variable = parts[2];
+        const lower = parseFloat(parts[3]);
+        const upper = parseFloat(parts[4]);
+        solvedMessage = explainSurfaceOfRevolution(fn, variable, lower, upper);
+        awardProgress(50, 'Surface of revolution solved!', 'geometry');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+      resultEl.textContent = 'Use syntax: surfaceOfRevolution(expression, variable, lower, upper)';
+      setStatus('Syntax check', 'warning');
+      return;
+    }
+
+    if (expr.startsWith("arcLength(")) {
+      const parts = expr.match(/^arcLength\((.*),\s*(\w+),\s*([-\d.]+),\s*([-\d.]+)\)$/s);
+      if (parts) {
+        const fn = parts[1];
+        const variable = parts[2];
+        const lower = parseFloat(parts[3]);
+        const upper = parseFloat(parts[4]);
+        solvedMessage = explainArcLength(fn, variable, lower, upper);
+        awardProgress(40, 'Boundary length found!', 'geometry');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+      resultEl.textContent = 'Use syntax: arcLength(expression, variable, lower, upper)';
+      setStatus('Syntax check', 'warning');
+      return;
+    }
+
     if (expr.startsWith("partial(")) {
       const parts = expr.match(/^partial\((.*),\s*(\w+)\)$/s);
       if (parts) {
@@ -492,7 +543,10 @@ function loadRandomChallenge() {
     'dot([1,2,3], [4,5,6])',
     'cross([1,0,0], [0,1,0])',
     'magnitude([3,4])',
-    'convert(5 km, mi)'
+    'convert(5 km, mi)',
+    'volumeOfRevolution(x^2, x, 0, 2)',
+    'surfaceOfRevolution(x^2, x, 0, 2)',
+    'arcLength(x^2, x, 0, 2)'
   ];
   const randomExpression = options[Math.floor(Math.random() * options.length)];
   exprInput.value = randomExpression;
@@ -836,6 +890,78 @@ function formatResult(value) {
 
 function buildExpressionExplanation(expression, result) {
   return `Evaluate ${expression} using standard mathematical precedence.\nResult: ${formatResult(result)}`;
+}
+
+// ---------- Volume, surface area, and boundary (solids/curves of revolution) ----------
+
+function explainVolumeOfRevolution(fn, variable, lower, upper) {
+  const integrand = `(${fn})^2`;
+  const integralValue = numericIntegral(integrand, variable, lower, upper, 1000);
+
+  if (!Number.isFinite(integralValue)) {
+    return singularityMessage(fn, variable, lower, upper);
+  }
+
+  const volume = Math.PI * integralValue;
+
+  return [
+    `Function: f(${variable}) = ${fn}, revolved around the ${variable}-axis from ${variable} = ${lower} to ${upper}`,
+    `Formula (disk method): V = π ∫ [f(${variable})]² d${variable}`,
+    `Step 1: Square the function → [f(${variable})]² = (${fn})²`,
+    `Step 2: Integrate numerically from ${lower} to ${upper} → ∫ ≈ ${formatResult(integralValue)}`,
+    `Step 3: Multiply by π`,
+    `Result: V ≈ ${formatResult(volume)}`
+  ].join('\n');
+}
+
+function explainSurfaceOfRevolution(fn, variable, lower, upper) {
+  const derivative = mathInstance.derivative(fn, variable).toString();
+  const integrand = `(${fn}) * sqrt(1 + (${derivative})^2)`;
+  const integralValue = numericIntegral(integrand, variable, lower, upper, 1000);
+
+  if (!Number.isFinite(integralValue)) {
+    return singularityMessage(fn, variable, lower, upper);
+  }
+
+  const area = 2 * Math.PI * integralValue;
+
+  return [
+    `Function: f(${variable}) = ${fn}, revolved around the ${variable}-axis from ${variable} = ${lower} to ${upper}`,
+    `Formula: SA = 2π ∫ f(${variable}) · √(1 + [f'(${variable})]²) d${variable}`,
+    `Step 1: Differentiate → f'(${variable}) = ${derivative}`,
+    `Step 2: Build the integrand f(${variable}) · √(1 + f'(${variable})²)`,
+    `Step 3: Integrate numerically from ${lower} to ${upper} → ∫ ≈ ${formatResult(integralValue)}`,
+    `Step 4: Multiply by 2π`,
+    `Result: SA ≈ ${formatResult(area)}`
+  ].join('\n');
+}
+
+function explainArcLength(fn, variable, lower, upper) {
+  const derivative = mathInstance.derivative(fn, variable).toString();
+  const integrand = `sqrt(1 + (${derivative})^2)`;
+  const length = numericIntegral(integrand, variable, lower, upper, 1000);
+
+  if (!Number.isFinite(length)) {
+    return singularityMessage(fn, variable, lower, upper);
+  }
+
+  return [
+    `Function: f(${variable}) = ${fn}, boundary traced from ${variable} = ${lower} to ${upper}`,
+    `Formula: L = ∫ √(1 + [f'(${variable})]²) d${variable}`,
+    `Step 1: Differentiate → f'(${variable}) = ${derivative}`,
+    `Step 2: Build the integrand √(1 + f'(${variable})²)`,
+    `Step 3: Integrate numerically from ${lower} to ${upper}`,
+    `Result: L ≈ ${formatResult(length)}`
+  ].join('\n');
+}
+
+function singularityMessage(fn, variable, lower, upper) {
+  return [
+    `Function: f(${variable}) = ${fn} on [${lower}, ${upper}]`,
+    `This function or its derivative is undefined or unbounded somewhere in that interval`,
+    '(e.g. a vertical tangent or division by zero at an endpoint).',
+    'Try a slightly narrower interval, or a function that stays smooth across the whole range.'
+  ].join('\n');
 }
 
 // ---------- Multivariable calculus ----------
