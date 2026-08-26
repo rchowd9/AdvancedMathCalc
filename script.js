@@ -248,6 +248,24 @@ if (expr.startsWith("solveSystemNL(")) {
       }
     }
 
+    if (expr.startsWith("washerVolume(")) {
+      const parts = expr.match(/^washerVolume\((.*),\s*(.*),\s*(\w+),\s*([-\d.]+),\s*([-\d.]+)\)$/s);
+      if (parts) {
+        const outer = parts[1];
+        const inner = parts[2];
+        const variable = parts[3];
+        const lower = parseFloat(parts[4]);
+        const upper = parseFloat(parts[5]);
+        solvedMessage = explainWasherVolume(outer, inner, variable, lower, upper);
+        awardProgress(45, 'Washer method solved!', 'geometry');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+      resultEl.textContent = 'Use syntax: washerVolume(outer, inner, variable, lower, upper)';
+      setStatus('Syntax check', 'warning');
+      return;
+    }
+
     if (expr.startsWith("volumeOfRevolution(")) {
       const parts = expr.match(/^volumeOfRevolution\((.*),\s*(\w+),\s*([-\d.]+),\s*([-\d.]+)\)$/s);
       if (parts) {
@@ -545,6 +563,7 @@ function loadRandomChallenge() {
     'magnitude([3,4])',
     'convert(5 km, mi)',
     'volumeOfRevolution(x^2, x, 0, 2)',
+    'washerVolume(x + 2, x, x, 0, 2)',
     'surfaceOfRevolution(x^2, x, 0, 2)',
     'arcLength(x^2, x, 0, 2)'
   ];
@@ -910,6 +929,27 @@ function explainVolumeOfRevolution(fn, variable, lower, upper) {
     `Step 1: Square the function → [f(${variable})]² = (${fn})²`,
     `Step 2: Integrate numerically from ${lower} to ${upper} → ∫ ≈ ${formatResult(integralValue)}`,
     `Step 3: Multiply by π`,
+    `Result: V ≈ ${formatResult(volume)}`
+  ].join('\n');
+}
+
+function explainWasherVolume(outer, inner, variable, lower, upper) {
+  const integrand = `(${outer})^2 - (${inner})^2`;
+  const integralValue = numericIntegral(integrand, variable, lower, upper, 1000);
+
+  if (!Number.isFinite(integralValue)) {
+    return singularityMessage(`${outer} and ${inner}`, variable, lower, upper);
+  }
+
+  const volume = Math.PI * integralValue;
+
+  return [
+    `Outer radius: R(${variable}) = ${outer}`,
+    `Inner radius: r(${variable}) = ${inner}, from ${variable} = ${lower} to ${upper}`,
+    'Formula (washer method): V = π ∫ [R(x)² - r(x)²] dx',
+    `Step 1: Build the washer integrand → (${outer})² - (${inner})²`,
+    `Step 2: Integrate numerically from ${lower} to ${upper} → ∫ ≈ ${formatResult(integralValue)}`,
+    'Step 3: Multiply by π',
     `Result: V ≈ ${formatResult(volume)}`
   ].join('\n');
 }
