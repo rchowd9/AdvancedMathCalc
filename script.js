@@ -946,7 +946,7 @@ function explainWasherVolume(outer, inner, variable, lower, upper) {
   return [
     `Outer radius: R(${variable}) = ${outer}`,
     `Inner radius: r(${variable}) = ${inner}, from ${variable} = ${lower} to ${upper}`,
-    'Formula (washer method): V = π ∫ [R(x)² - r(x)²] dx',
+    `Formula (washer method): V = π ∫ [R(${variable})² - r(${variable})²] d${variable}`,
     `Step 1: Build the washer integrand → (${outer})² - (${inner})²`,
     `Step 2: Integrate numerically from ${lower} to ${upper} → ∫ ≈ ${formatResult(integralValue)}`,
     'Step 3: Multiply by π',
