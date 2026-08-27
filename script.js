@@ -1,6 +1,11 @@
 // Configure math.js
 const mathConfig = { matrix: 'Array' };
 const mathInstance = math.create(mathConfig);
+mathInstance.import({
+  arcsin: (value) => mathInstance.asin(value),
+  arccos: (value) => mathInstance.acos(value),
+  arctan: (value) => mathInstance.atan(value)
+});
 
 const STORAGE_KEY = 'math-quest-save';
 

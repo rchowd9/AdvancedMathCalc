@@ -10,6 +10,7 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 
 ### Calculus
 - Derivatives — `derivative(f, x)`
+- Inverse trigonometric functions — `arcsin(x)`, `arccos(x)`, `arctan(x)`
 - Partial derivatives — `partial(f, x)`
 - Gradients — `gradient(f, [x, y])`
 - Numeric definite integrals — `integrate(f, x, a, b)`
