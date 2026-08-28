@@ -69,6 +69,13 @@ evalBtn.addEventListener('click', () => {
       return;
     }
 
+    if (/^(directProof|proofByInduction|induction|contrapositive|proofByContradiction|contradiction)\(/i.test(expr)) {
+      solvedMessage = solveProofMode(expr);
+      awardProgress(45, 'Proof method applied!', 'proofs');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
     if (expr.startsWith("derivative(")) {
       const parts = expr.match(/derivative\((.*),\s*(\w+)\)/);
       if (parts) {
