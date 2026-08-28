@@ -92,6 +92,49 @@ evalBtn.addEventListener('click', () => {
       return;
     }
 
+    if (expr.startsWith("doubleIntegral(")) {
+      const parts = expr.match(/^doubleIntegral\((.*),\s*x=(.+?)\.\.(.+?),\s*y=(.+?)\.\.(.+?),\s*steps=(\d+)\)$/s);
+      if (parts) {
+        const fn = parts[1].trim();
+        const xLower = parseFloat(parts[2]);
+        const xUpper = parseFloat(parts[3]);
+        const yLower = parseFloat(parts[4]);
+        const yUpper = parseFloat(parts[5]);
+        const steps = parseInt(parts[6], 10);
+        const result = numericDoubleIntegral(fn, 'x', xLower, xUpper, 'y', yLower, yUpper, steps);
+        solvedMessage = `Double integral: ∬ f(x,y) dA over x ∈ [${xLower}, ${xUpper}] and y ∈ [${yLower}, ${yUpper}]\nFunction: f(x,y) = ${fn}\nResult: ≈ ${formatResult(result)}`;
+        awardProgress(50, 'Double integral solved!');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+      resultEl.textContent = 'Use syntax: doubleIntegral(expression, x=lower..upper, y=lower..upper, steps=n)';
+      setStatus('Syntax check', 'warning');
+      return;
+    }
+
+    if (expr.startsWith("stokesTheorem(")) {
+      const parts = expr.match(/^stokesTheorem\(\s*(\[[\s\S]*?\])\s*,\s*(\[[\s\S]*?\])\s*,\s*(\w+)\s*,\s*(\w+)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*(?:,\s*steps=(\d+))?\s*\)$/s);
+      if (parts) {
+        const field = mathInstance.evaluate(parts[1]);
+        const normal = mathInstance.evaluate(parts[2]);
+        const xVar = parts[3];
+        const yVar = parts[4];
+        const xLower = parseFloat(parts[5]);
+        const xUpper = parseFloat(parts[6]);
+        const yLower = parseFloat(parts[7]);
+        const yUpper = parseFloat(parts[8]);
+        const steps = parseInt(parts[9] || '40', 10);
+        const result = stokesSurfaceIntegral(field, normal, xVar, yVar, xLower, xUpper, yLower, yUpper, steps);
+        solvedMessage = `Stokes' theorem: ∮ F·dr = ∬ (curl F)·n dS\nField F = ${formatResult(field)}\nNormal n = ${formatResult(normal)}\nRegion: ${xVar} ∈ [${xLower}, ${xUpper}], ${yVar} ∈ [${yLower}, ${yUpper}]\nResult: ≈ ${formatResult(result)}`;
+        awardProgress(60, 'Stokes theorem unlocked!');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+      resultEl.textContent = 'Use syntax: stokesTheorem([P, Q, R], [nx, ny, nz], x, y, xMin, xMax, yMin, yMax, steps=40)';
+      setStatus('Syntax check', 'warning');
+      return;
+    }
+
     if (expr.startsWith("limit(")) {
       const parts = expr.match(/limit\((.*),\s*(\w+),\s*([^)]+)\)/);
       if (parts) {
@@ -799,6 +842,51 @@ function numericIntegral(expression, variable, lower, upper, steps) {
   }
 
   return (total * width) / 3;
+}
+
+function numericDoubleIntegral(expression, xVar, xLower, xUpper, yVar, yLower, yUpper, steps) {
+  const xStep = (xUpper - xLower) / steps;
+  const yStep = (yUpper - yLower) / steps;
+  let total = 0;
+
+  for (let xIndex = 0; xIndex < steps; xIndex += 1) {
+    const x = xLower + (xIndex + 0.5) * xStep;
+    for (let yIndex = 0; yIndex < steps; yIndex += 1) {
+      const y = yLower + (yIndex + 0.5) * yStep;
+      total += mathInstance.evaluate(expression, { [xVar]: x, [yVar]: y });
+    }
+  }
+
+  return total * xStep * yStep;
+}
+
+function stokesSurfaceIntegral(field, normal, xVar, yVar, xLower, xUpper, yLower, yUpper, steps) {
+  const [P, Q, R] = field;
+  const [nx, ny, nz] = normal;
+  const xStep = (xUpper - xLower) / steps;
+  const yStep = (yUpper - yLower) / steps;
+  let total = 0;
+
+  for (let xIndex = 0; xIndex < steps; xIndex += 1) {
+    const x = xLower + (xIndex + 0.5) * xStep;
+    for (let yIndex = 0; yIndex < steps; yIndex += 1) {
+      const y = yLower + (yIndex + 0.5) * yStep;
+      const scope = { [xVar]: x, [yVar]: y, x, y, z: 0 };
+      const dRdx = mathInstance.derivative(R, xVar).evaluate(scope);
+      const dRdy = mathInstance.derivative(R, yVar).evaluate(scope);
+      const dQdx = mathInstance.derivative(Q, xVar).evaluate(scope);
+      const dQdy = mathInstance.derivative(Q, yVar).evaluate(scope);
+      const dPdx = mathInstance.derivative(P, xVar).evaluate(scope);
+      const dPdy = mathInstance.derivative(P, yVar).evaluate(scope);
+      const curlX = dRdy - mathInstance.derivative(Q, 'z').evaluate({ ...scope, z: 0 });
+      const curlY = mathInstance.derivative(P, 'z').evaluate({ ...scope, z: 0 }) - dRdx;
+      const curlZ = dQdx - dPdy;
+      const flux = curlX * nx + curlY * ny + curlZ * nz;
+      total += flux;
+    }
+  }
+
+  return total * xStep * yStep;
 }
 
 function tripleIntegral(fn, xRange, yRange, zRange, steps) {
