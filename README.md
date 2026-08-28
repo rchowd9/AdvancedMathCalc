@@ -171,6 +171,7 @@ To: 10
 ├── index.html
 ├── style.css
 ├── script.js
+├── proof.js
 └── README.md
 ```
 
@@ -184,6 +185,20 @@ cd YOUR_REPO_NAME
 ```
 
 Open `index.html` in your browser — no build step required.
+
+### Proofs and Stokes' theorem
+
+Use `proof(...)` or `prove(...)` to check an equality with step-by-step output:
+
+```
+proof((x + 1)^2 = x^2 + 2*x + 1)
+```
+
+Stokes' theorem keeps field components symbolic, so variables are allowed in the vector field:
+
+```
+stokesTheorem([y, -x, 0], [0, 0, 1], x, y, 0, 1, 0, 2, steps=40)
+```
 
 ## 🌐 Deploying to GitHub Pages
 
