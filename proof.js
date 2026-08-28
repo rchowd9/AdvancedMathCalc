@@ -140,7 +140,7 @@ function splitTopLevel(statement) {
   let depth = 0;
   for (let index = 0; index < statement.length; index += 1) {
     if ('(['.includes(statement[index])) depth += 1;
-    if (')]' .includes(statement[index])) depth -= 1;
+    if ([')', ']'].includes(statement[index])) depth -= 1;
     if (statement[index] === ',' && depth === 0) {
       parts.push(statement.slice(start, index).trim());
       start = index + 1;

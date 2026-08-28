@@ -110,6 +110,16 @@ limit(sin(x)/x, x, 0)
 simplify((x+1)^2 - (x^2+2x+1))
 ```
 
+**Proof methods**
+```
+directProof(x^2 + 2*x + 1 = (x + 1)^2)
+proofByInduction(n^2 = n^2, n, 0)
+contrapositive(x > 2 => x^2 > 4)
+proofByContradiction((x + 1)^2 = x^2 + 2*x + 1)
+```
+
+Induction takes an equality, its variable, and its base value. Contrapositive transforms an implication using `=>`; direct and contradiction modes accept equalities.
+
 **Linear System Solver**
 ```
 solveSystem([[2,3],[4,-1]], [7,5])
