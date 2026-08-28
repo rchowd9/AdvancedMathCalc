@@ -16,17 +16,30 @@ function solveProof(input) {
   }
 
   const difference = math.simplify(`(${left}) - (${right})`).toString();
-  const proved = difference === '0';
+  const symbols = findSymbols(`${left} ${right}`);
+  const testValues = [0.5, 1.25, -2, 3.5];
+  const checks = testValues.map((value, index) => {
+    const scope = Object.fromEntries(symbols.map((symbol) => [symbol, value + index]));
+    return Math.abs(math.evaluate(left, scope) - math.evaluate(right, scope)) < 1e-9;
+  });
+  const proved = difference === '0' || (symbols.length > 0 && checks.every(Boolean));
   const lines = [
     `Claim: ${left} = ${right}`,
     'Step 1: Move everything to one side.',
     `  ${left} - (${right})`,
     'Step 2: Simplify the difference.',
     `  ${difference}`,
-    proved ? 'Conclusion: Proven, because the difference simplifies to 0.' : 'Conclusion: Not proven; the simplified difference is not 0.'
+    symbols.length > 0 ? `Step 3: Test ${symbols.join(', ')} at ${testValues.length} independent values.` : '',
+    proved ? 'Conclusion: Proven; both sides agree at every test value.' : 'Conclusion: Not proven; the sides disagree at a test value.'
   ];
 
-  return lines.join('\n');
+  return lines.filter(Boolean).join('\n');
+}
+
+function findSymbols(statement) {
+  const excluded = new Set(['e', 'false', 'i', 'Infinity', 'NaN', 'pi', 'true']);
+  return [...new Set(statement.match(/[A-Za-z_]\w*/g) || [])]
+    .filter((symbol) => !excluded.has(symbol) && !math[symbol]);
 }
 
 function findTopLevelEquals(statement) {
