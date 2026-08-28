@@ -62,6 +62,13 @@ evalBtn.addEventListener('click', () => {
   try {
     let solvedMessage = '';
 
+    if (expr.startsWith('proof(') || expr.startsWith('prove(')) {
+      solvedMessage = solveProof(expr);
+      awardProgress(40, 'Proof verified!', 'proofs');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
     if (expr.startsWith("derivative(")) {
       const parts = expr.match(/derivative\((.*),\s*(\w+)\)/);
       if (parts) {
@@ -115,7 +122,7 @@ evalBtn.addEventListener('click', () => {
     if (expr.startsWith("stokesTheorem(")) {
       const parts = expr.match(/^stokesTheorem\(\s*(\[[\s\S]*?\])\s*,\s*(\[[\s\S]*?\])\s*,\s*(\w+)\s*,\s*(\w+)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*(?:,\s*steps=(\d+))?\s*\)$/s);
       if (parts) {
-        const field = mathInstance.evaluate(parts[1]);
+        const field = parseVectorExpressions(parts[1]);
         const normal = mathInstance.evaluate(parts[2]);
         const xVar = parts[3];
         const yVar = parts[4];
@@ -858,6 +865,11 @@ function numericDoubleIntegral(expression, xVar, xLower, xUpper, yVar, yLower, y
   }
 
   return total * xStep * yStep;
+}
+
+function parseVectorExpressions(vectorText) {
+  const node = mathInstance.parse(vectorText);
+  return node.items.map((item) => item.toString());
 }
 
 function stokesSurfaceIntegral(field, normal, xVar, yVar, xLower, xUpper, yLower, yUpper, steps) {
