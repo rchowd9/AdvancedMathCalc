@@ -25,9 +25,13 @@ const missionProgressEl = document.getElementById('missionProgress');
 const plotBtn = document.getElementById('plotBtn');
 const randomChallengeBtn = document.getElementById('randomChallengeBtn');
 const plotExprInput = document.getElementById('plotExpr');
+const plotExpr2Input = document.getElementById('plotExpr2');
 const plotVariableInput = document.getElementById('plotVariable');
 const plotMinInput = document.getElementById('plotMin');
 const plotMaxInput = document.getElementById('plotMax');
+const showDerivativeToggle = document.getElementById('showDerivativeToggle');
+const showGridToggle = document.getElementById('showGridToggle');
+const clearPlotBtn = document.getElementById('clearPlotBtn');
 const plotEl = document.getElementById('plot');
 const plotStatusEl = document.getElementById('plotStatus');
 const achievementItems = [...document.querySelectorAll('.achievement')];
@@ -36,6 +40,10 @@ const challengeButtons = [...document.querySelectorAll('.challenge-chip')];
 updateGameHud();
 
 plotBtn.addEventListener('click', plotFunction);
+clearPlotBtn.addEventListener('click', () => {
+  clearPlot();
+  setPlotStatus('Graph cleared.');
+});
 randomChallengeBtn.addEventListener('click', loadRandomChallenge);
 clearBtn.addEventListener('click', () => {
   exprInput.value = '';
@@ -701,9 +709,12 @@ function newtonSolve(fnStr, variable, guess = 1) {
 // Plotting
 function plotFunction() {
   const expression = plotExprInput.value.trim();
+  const secondExpression = plotExpr2Input.value.trim();
   const variable = plotVariableInput.value.trim();
   const lower = Number(plotMinInput.value);
   const upper = Number(plotMaxInput.value);
+  const showDerivative = showDerivativeToggle.checked;
+  const showGrid = showGridToggle.checked;
 
   if (!expression || !/^\w+$/.test(variable)) {
     clearPlot();
@@ -718,45 +729,81 @@ function plotFunction() {
   }
 
   try {
-    const compiled = mathInstance.compile(expression);
+    const traces = [];
     const pointCount = 500;
     const step = (upper - lower) / (pointCount - 1);
-    const xValues = [];
-    const yValues = [];
 
-    for (let index = 0; index < pointCount; index += 1) {
-      const x = lower + index * step;
-      let y;
-      try {
-        y = compiled.evaluate({ [variable]: x });
-      } catch (error) {
-        y = NaN;
+    function buildTrace(fnText, color, lineDash = 'solid', name = fnText) {
+      const compiled = mathInstance.compile(fnText);
+      const xValues = [];
+      const yValues = [];
+
+      for (let index = 0; index < pointCount; index += 1) {
+        const x = lower + index * step;
+        let y;
+        try {
+          y = compiled.evaluate({ [variable]: x });
+        } catch (error) {
+          y = NaN;
+        }
+        xValues.push(x);
+        yValues.push(typeof y === 'number' && Number.isFinite(y) ? y : null);
       }
-      xValues.push(x);
-      yValues.push(typeof y === 'number' && Number.isFinite(y) ? y : null);
+
+      const validPoints = yValues.some((value) => value !== null);
+      if (!validPoints) {
+        throw new Error(`No real values were found for ${fnText} in this range.`);
+      }
+
+      return {
+        x: xValues,
+        y: yValues,
+        type: 'scatter',
+        mode: 'lines',
+        name,
+        line: { color, width: 2.5, dash: lineDash }
+      };
     }
 
-    if (!yValues.some((value) => value !== null)) {
-      throw new Error('No real values were found in this range.');
+    traces.push(buildTrace(expression, '#38bdf8', 'solid', expression));
+
+    if (secondExpression) {
+      traces.push(buildTrace(secondExpression, '#a78bfa', 'solid', secondExpression));
     }
 
-    Plotly.react(plotEl, [{
-      x: xValues,
-      y: yValues,
-      type: 'scatter',
-      mode: 'lines',
-      line: { color: '#38bdf8', width: 2 }
-    }], {
+    if (showDerivative) {
+      try {
+        const derivativeExpr = mathInstance.derivative(expression, variable).toString();
+        traces.push(buildTrace(derivativeExpr, '#fbbf24', 'dash', `d/d${variable} (${expression})`));
+      } catch (error) {
+        setPlotStatus(`Derivative overlay skipped: ${error.message}`);
+      }
+    }
+
+    Plotly.react(plotEl, traces, {
       margin: { top: 24, right: 24, bottom: 48, left: 56 },
       paper_bgcolor: 'transparent',
       plot_bgcolor: '#020617',
       font: { color: '#cbd5e1' },
-      xaxis: { title: variable, gridcolor: '#334155', zerolinecolor: '#64748b' },
-      yaxis: { title: expression, gridcolor: '#334155', zerolinecolor: '#64748b' },
+      xaxis: {
+        title: variable,
+        gridcolor: showGrid ? '#334155' : 'rgba(148, 163, 184, 0.15)',
+        zerolinecolor: '#64748b',
+        showgrid: showGrid
+      },
+      yaxis: {
+        title: 'y',
+        gridcolor: showGrid ? '#334155' : 'rgba(148, 163, 184, 0.15)',
+        zerolinecolor: '#64748b',
+        showgrid: showGrid
+      },
+      legend: { orientation: 'h', y: 1.2 },
       responsive: true
     }, { responsive: true, displaylogo: false });
-    setPlotStatus(`Plotted ${expression} over [${lower}, ${upper}].`);
-    state.xp += 15;
+
+    const plotted = secondExpression ? `${expression} and ${secondExpression}` : expression;
+    setPlotStatus(`Plotted ${plotted} over [${lower}, ${upper}]${showDerivative ? ' with derivative overlay' : ''}.`);
+    state.xp += 20;
     saveGameState();
     updateGameHud();
     setStatus('Graph unlocked', 'success');

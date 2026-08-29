@@ -158,15 +158,22 @@
       <div class="graph-heading">
         <div>
           <p class="eyebrow">Graph mode</p>
-          <h2>Plot a function</h2>
+          <h2>Plot functions</h2>
         </div>
-        <button id="plotBtn" type="button">Plot it!</button>
+        <div class="action-row compact-row">
+          <button id="plotBtn" type="button">Plot it!</button>
+          <button id="clearPlotBtn" class="ghost-btn" type="button">Clear graph</button>
+        </div>
       </div>
 
       <div class="graph-controls">
         <label>
-          Function
+          Function 1
           <input id="plotExpr" type="text" value="sin(x)" placeholder="e.g. x^2 - 4" />
+        </label>
+        <label>
+          Function 2 (optional)
+          <input id="plotExpr2" type="text" placeholder="e.g. cos(x)" />
         </label>
         <label>
           Variable
@@ -179,6 +186,17 @@
         <label>
           To
           <input id="plotMax" type="number" value="10" step="any" />
+        </label>
+      </div>
+
+      <div class="graph-toggle-row">
+        <label class="toggle-inline">
+          <input id="showDerivativeToggle" type="checkbox" />
+          Show derivative of Function 1
+        </label>
+        <label class="toggle-inline">
+          <input id="showGridToggle" type="checkbox" checked />
+          Show grid
         </label>
       </div>
 
