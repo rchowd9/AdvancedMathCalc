@@ -113,12 +113,21 @@ simplify((x+1)^2 - (x^2+2x+1))
 **Proof methods**
 ```
 directProof(x^2 + 2*x + 1 = (x + 1)^2)
-proofByInduction(n^2 = n^2, n, 0)
+proofByInduction((n + 1)^2 = n^2 + 2*n + 1, n, 0)
 contrapositive(x > 2 => x^2 > 4)
 proofByContradiction((x + 1)^2 = x^2 + 2*x + 1)
 ```
 
 Induction takes an equality, its variable, and its base value. Contrapositive transforms an implication using `=>`; direct and contradiction modes accept equalities.
+
+**Famous proof themes**
+- Pythagorean theorem: $a^2 + b^2 = c^2$
+- Fundamental theorem of arithmetic: every integer greater than 1 has a unique prime factorization
+- Euclid's theorem: there are infinitely many primes
+- Fermat's little theorem: $a^p \equiv a \pmod p$
+- Gödel's incompleteness theorem: any sufficiently strong consistent formal system is incomplete
+- Cantor's diagonal argument: the real numbers are uncountable
+- Turing's halting theorem: no general algorithm can decide whether every program halts
 
 **Linear System Solver**
 ```
