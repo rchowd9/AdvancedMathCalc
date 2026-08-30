@@ -1,11 +1,6 @@
 // Configure math.js
 const mathConfig = { matrix: 'Array' };
 const mathInstance = math.create(mathConfig);
-mathInstance.import({
-  arcsin: (value) => mathInstance.asin(value),
-  arccos: (value) => mathInstance.acos(value),
-  arctan: (value) => mathInstance.atan(value)
-});
 
 const STORAGE_KEY = 'math-quest-save';
 
@@ -25,13 +20,9 @@ const missionProgressEl = document.getElementById('missionProgress');
 const plotBtn = document.getElementById('plotBtn');
 const randomChallengeBtn = document.getElementById('randomChallengeBtn');
 const plotExprInput = document.getElementById('plotExpr');
-const plotExpr2Input = document.getElementById('plotExpr2');
 const plotVariableInput = document.getElementById('plotVariable');
 const plotMinInput = document.getElementById('plotMin');
 const plotMaxInput = document.getElementById('plotMax');
-const showDerivativeToggle = document.getElementById('showDerivativeToggle');
-const showGridToggle = document.getElementById('showGridToggle');
-const clearPlotBtn = document.getElementById('clearPlotBtn');
 const plotEl = document.getElementById('plot');
 const plotStatusEl = document.getElementById('plotStatus');
 const achievementItems = [...document.querySelectorAll('.achievement')];
@@ -40,10 +31,6 @@ const challengeButtons = [...document.querySelectorAll('.challenge-chip')];
 updateGameHud();
 
 plotBtn.addEventListener('click', plotFunction);
-clearPlotBtn.addEventListener('click', () => {
-  clearPlot();
-  setPlotStatus('Graph cleared.');
-});
 randomChallengeBtn.addEventListener('click', loadRandomChallenge);
 clearBtn.addEventListener('click', () => {
   exprInput.value = '';
@@ -70,16 +57,17 @@ evalBtn.addEventListener('click', () => {
   try {
     let solvedMessage = '';
 
-    if (expr.startsWith('proof(') || expr.startsWith('prove(')) {
+    if (expr.startsWith("proof(") || expr.startsWith("prove(")) {
       solvedMessage = solveProof(expr);
-      awardProgress(40, 'Proof verified!', 'proofs');
+      awardProgress(45, 'Proof complete!', 'proofs');
       resultEl.textContent = solvedMessage;
       return;
     }
 
-    if (/^(directProof|proofByInduction|induction|contrapositive|proofByContradiction|contradiction)\(/i.test(expr)) {
+    const proofNameMatch = expr.match(/^([a-zA-Z]+)\(/);
+    if (proofNameMatch && PROOF_MODE_NAMES.has(proofNameMatch[1].toLowerCase())) {
       solvedMessage = solveProofMode(expr);
-      awardProgress(45, 'Proof method applied!', 'proofs');
+      awardProgress(45, 'Proof complete!', 'proofs');
       resultEl.textContent = solvedMessage;
       return;
     }
@@ -110,49 +98,6 @@ evalBtn.addEventListener('click', () => {
         return;
       }
       resultEl.textContent = 'Use syntax: integrate(expression, variable, lower, upper)';
-      setStatus('Syntax check', 'warning');
-      return;
-    }
-
-    if (expr.startsWith("doubleIntegral(")) {
-      const parts = expr.match(/^doubleIntegral\((.*),\s*x=(.+?)\.\.(.+?),\s*y=(.+?)\.\.(.+?),\s*steps=(\d+)\)$/s);
-      if (parts) {
-        const fn = parts[1].trim();
-        const xLower = parseFloat(parts[2]);
-        const xUpper = parseFloat(parts[3]);
-        const yLower = parseFloat(parts[4]);
-        const yUpper = parseFloat(parts[5]);
-        const steps = parseInt(parts[6], 10);
-        const result = numericDoubleIntegral(fn, 'x', xLower, xUpper, 'y', yLower, yUpper, steps);
-        solvedMessage = `Double integral: ∬ f(x,y) dA over x ∈ [${xLower}, ${xUpper}] and y ∈ [${yLower}, ${yUpper}]\nFunction: f(x,y) = ${fn}\nResult: ≈ ${formatResult(result)}`;
-        awardProgress(50, 'Double integral solved!');
-        resultEl.textContent = solvedMessage;
-        return;
-      }
-      resultEl.textContent = 'Use syntax: doubleIntegral(expression, x=lower..upper, y=lower..upper, steps=n)';
-      setStatus('Syntax check', 'warning');
-      return;
-    }
-
-    if (expr.startsWith("stokesTheorem(")) {
-      const parts = expr.match(/^stokesTheorem\(\s*(\[[\s\S]*?\])\s*,\s*(\[[\s\S]*?\])\s*,\s*(\w+)\s*,\s*(\w+)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*(?:,\s*steps=(\d+))?\s*\)$/s);
-      if (parts) {
-        const field = parseVectorExpressions(parts[1]);
-        const normal = mathInstance.evaluate(parts[2]);
-        const xVar = parts[3];
-        const yVar = parts[4];
-        const xLower = parseFloat(parts[5]);
-        const xUpper = parseFloat(parts[6]);
-        const yLower = parseFloat(parts[7]);
-        const yUpper = parseFloat(parts[8]);
-        const steps = parseInt(parts[9] || '40', 10);
-        const result = stokesSurfaceIntegral(field, normal, xVar, yVar, xLower, xUpper, yLower, yUpper, steps);
-        solvedMessage = `Stokes' theorem: ∮ F·dr = ∬ (curl F)·n dS\nField F = ${formatResult(field)}\nNormal n = ${formatResult(normal)}\nRegion: ${xVar} ∈ [${xLower}, ${xUpper}], ${yVar} ∈ [${yLower}, ${yUpper}]\nResult: ≈ ${formatResult(result)}`;
-        awardProgress(60, 'Stokes theorem unlocked!');
-        resultEl.textContent = solvedMessage;
-        return;
-      }
-      resultEl.textContent = 'Use syntax: stokesTheorem([P, Q, R], [nx, ny, nz], x, y, xMin, xMax, yMin, yMax, steps=40)';
       setStatus('Syntax check', 'warning');
       return;
     }
@@ -316,24 +261,6 @@ if (expr.startsWith("solveSystemNL(")) {
         resultEl.textContent = solvedMessage;
         return;
       }
-    }
-
-    if (expr.startsWith("washerVolume(")) {
-      const parts = expr.match(/^washerVolume\((.*),\s*(.*),\s*(\w+),\s*([-\d.]+),\s*([-\d.]+)\)$/s);
-      if (parts) {
-        const outer = parts[1];
-        const inner = parts[2];
-        const variable = parts[3];
-        const lower = parseFloat(parts[4]);
-        const upper = parseFloat(parts[5]);
-        solvedMessage = explainWasherVolume(outer, inner, variable, lower, upper);
-        awardProgress(45, 'Washer method solved!', 'geometry');
-        resultEl.textContent = solvedMessage;
-        return;
-      }
-      resultEl.textContent = 'Use syntax: washerVolume(outer, inner, variable, lower, upper)';
-      setStatus('Syntax check', 'warning');
-      return;
     }
 
     if (expr.startsWith("volumeOfRevolution(")) {
@@ -633,9 +560,18 @@ function loadRandomChallenge() {
     'magnitude([3,4])',
     'convert(5 km, mi)',
     'volumeOfRevolution(x^2, x, 0, 2)',
-    'washerVolume(x + 2, x, x, 0, 2)',
     'surfaceOfRevolution(x^2, x, 0, 2)',
-    'arcLength(x^2, x, 0, 2)'
+    'arcLength(x^2, x, 0, 2)',
+    'proof((x + 1)^2 = x^2 + 2*x + 1)',
+    'proofByInduction(2^n >= n + 1, n, 0)',
+    'contrapositive(n^2 % 2 = 0 => n % 2 = 0)',
+    'proofByContradiction(x + 1 = x)',
+    'proveInequality(x^2 + 1 >= 2*x)',
+    'proofByBiconditional(n % 2 = 0 <=> n^2 % 2 = 0)',
+    'proofByCases(n^2 % 2 = 0, n, [2,4,6,8], [1,3,5,7])',
+    'proofByExhaustion(n^2 >= n, n, [0,1,2,3,4])',
+    'disprove(x^2 >= x)',
+    'proofByDivisibility(n^3 - n, 6, n, 1)'
   ];
   const randomExpression = options[Math.floor(Math.random() * options.length)];
   exprInput.value = randomExpression;
@@ -709,12 +645,9 @@ function newtonSolve(fnStr, variable, guess = 1) {
 // Plotting
 function plotFunction() {
   const expression = plotExprInput.value.trim();
-  const secondExpression = plotExpr2Input.value.trim();
   const variable = plotVariableInput.value.trim();
   const lower = Number(plotMinInput.value);
   const upper = Number(plotMaxInput.value);
-  const showDerivative = showDerivativeToggle.checked;
-  const showGrid = showGridToggle.checked;
 
   if (!expression || !/^\w+$/.test(variable)) {
     clearPlot();
@@ -729,81 +662,45 @@ function plotFunction() {
   }
 
   try {
-    const traces = [];
+    const compiled = mathInstance.compile(expression);
     const pointCount = 500;
     const step = (upper - lower) / (pointCount - 1);
+    const xValues = [];
+    const yValues = [];
 
-    function buildTrace(fnText, color, lineDash = 'solid', name = fnText) {
-      const compiled = mathInstance.compile(fnText);
-      const xValues = [];
-      const yValues = [];
-
-      for (let index = 0; index < pointCount; index += 1) {
-        const x = lower + index * step;
-        let y;
-        try {
-          y = compiled.evaluate({ [variable]: x });
-        } catch (error) {
-          y = NaN;
-        }
-        xValues.push(x);
-        yValues.push(typeof y === 'number' && Number.isFinite(y) ? y : null);
-      }
-
-      const validPoints = yValues.some((value) => value !== null);
-      if (!validPoints) {
-        throw new Error(`No real values were found for ${fnText} in this range.`);
-      }
-
-      return {
-        x: xValues,
-        y: yValues,
-        type: 'scatter',
-        mode: 'lines',
-        name,
-        line: { color, width: 2.5, dash: lineDash }
-      };
-    }
-
-    traces.push(buildTrace(expression, '#38bdf8', 'solid', expression));
-
-    if (secondExpression) {
-      traces.push(buildTrace(secondExpression, '#a78bfa', 'solid', secondExpression));
-    }
-
-    if (showDerivative) {
+    for (let index = 0; index < pointCount; index += 1) {
+      const x = lower + index * step;
+      let y;
       try {
-        const derivativeExpr = mathInstance.derivative(expression, variable).toString();
-        traces.push(buildTrace(derivativeExpr, '#fbbf24', 'dash', `d/d${variable} (${expression})`));
+        y = compiled.evaluate({ [variable]: x });
       } catch (error) {
-        setPlotStatus(`Derivative overlay skipped: ${error.message}`);
+        y = NaN;
       }
+      xValues.push(x);
+      yValues.push(typeof y === 'number' && Number.isFinite(y) ? y : null);
     }
 
-    Plotly.react(plotEl, traces, {
+    if (!yValues.some((value) => value !== null)) {
+      throw new Error('No real values were found in this range.');
+    }
+
+    Plotly.react(plotEl, [{
+      x: xValues,
+      y: yValues,
+      type: 'scatter',
+      mode: 'lines',
+      line: { color: '#38bdf8', width: 2 }
+    }], {
       margin: { top: 24, right: 24, bottom: 48, left: 56 },
       paper_bgcolor: 'transparent',
       plot_bgcolor: '#020617',
       font: { color: '#cbd5e1' },
-      xaxis: {
-        title: variable,
-        gridcolor: showGrid ? '#334155' : 'rgba(148, 163, 184, 0.15)',
-        zerolinecolor: '#64748b',
-        showgrid: showGrid
-      },
-      yaxis: {
-        title: 'y',
-        gridcolor: showGrid ? '#334155' : 'rgba(148, 163, 184, 0.15)',
-        zerolinecolor: '#64748b',
-        showgrid: showGrid
-      },
-      legend: { orientation: 'h', y: 1.2 },
+      xaxis: { title: variable, gridcolor: '#334155', zerolinecolor: '#64748b' },
+      yaxis: { title: expression, gridcolor: '#334155', zerolinecolor: '#64748b' },
       responsive: true
     }, { responsive: true, displaylogo: false });
-
-    const plotted = secondExpression ? `${expression} and ${secondExpression}` : expression;
-    setPlotStatus(`Plotted ${plotted} over [${lower}, ${upper}]${showDerivative ? ' with derivative overlay' : ''}.`);
-    state.xp += 20;
+    setPlotStatus(`Plotted ${expression} over [${lower}, ${upper}].`);
+    state.xp += 15;
     saveGameState();
     updateGameHud();
     setStatus('Graph unlocked', 'success');
@@ -903,56 +800,6 @@ function numericIntegral(expression, variable, lower, upper, steps) {
   }
 
   return (total * width) / 3;
-}
-
-function numericDoubleIntegral(expression, xVar, xLower, xUpper, yVar, yLower, yUpper, steps) {
-  const xStep = (xUpper - xLower) / steps;
-  const yStep = (yUpper - yLower) / steps;
-  let total = 0;
-
-  for (let xIndex = 0; xIndex < steps; xIndex += 1) {
-    const x = xLower + (xIndex + 0.5) * xStep;
-    for (let yIndex = 0; yIndex < steps; yIndex += 1) {
-      const y = yLower + (yIndex + 0.5) * yStep;
-      total += mathInstance.evaluate(expression, { [xVar]: x, [yVar]: y });
-    }
-  }
-
-  return total * xStep * yStep;
-}
-
-function parseVectorExpressions(vectorText) {
-  const node = mathInstance.parse(vectorText);
-  return node.items.map((item) => item.toString());
-}
-
-function stokesSurfaceIntegral(field, normal, xVar, yVar, xLower, xUpper, yLower, yUpper, steps) {
-  const [P, Q, R] = field;
-  const [nx, ny, nz] = normal;
-  const xStep = (xUpper - xLower) / steps;
-  const yStep = (yUpper - yLower) / steps;
-  let total = 0;
-
-  for (let xIndex = 0; xIndex < steps; xIndex += 1) {
-    const x = xLower + (xIndex + 0.5) * xStep;
-    for (let yIndex = 0; yIndex < steps; yIndex += 1) {
-      const y = yLower + (yIndex + 0.5) * yStep;
-      const scope = { [xVar]: x, [yVar]: y, x, y, z: 0 };
-      const dRdx = mathInstance.derivative(R, xVar).evaluate(scope);
-      const dRdy = mathInstance.derivative(R, yVar).evaluate(scope);
-      const dQdx = mathInstance.derivative(Q, xVar).evaluate(scope);
-      const dQdy = mathInstance.derivative(Q, yVar).evaluate(scope);
-      const dPdx = mathInstance.derivative(P, xVar).evaluate(scope);
-      const dPdy = mathInstance.derivative(P, yVar).evaluate(scope);
-      const curlX = dRdy - mathInstance.derivative(Q, 'z').evaluate({ ...scope, z: 0 });
-      const curlY = mathInstance.derivative(P, 'z').evaluate({ ...scope, z: 0 }) - dRdx;
-      const curlZ = dQdx - dPdy;
-      const flux = curlX * nx + curlY * ny + curlZ * nz;
-      total += flux;
-    }
-  }
-
-  return total * xStep * yStep;
 }
 
 function tripleIntegral(fn, xRange, yRange, zRange, steps) {
@@ -1088,27 +935,6 @@ function explainVolumeOfRevolution(fn, variable, lower, upper) {
     `Step 1: Square the function → [f(${variable})]² = (${fn})²`,
     `Step 2: Integrate numerically from ${lower} to ${upper} → ∫ ≈ ${formatResult(integralValue)}`,
     `Step 3: Multiply by π`,
-    `Result: V ≈ ${formatResult(volume)}`
-  ].join('\n');
-}
-
-function explainWasherVolume(outer, inner, variable, lower, upper) {
-  const integrand = `(${outer})^2 - (${inner})^2`;
-  const integralValue = numericIntegral(integrand, variable, lower, upper, 1000);
-
-  if (!Number.isFinite(integralValue)) {
-    return singularityMessage(`${outer} and ${inner}`, variable, lower, upper);
-  }
-
-  const volume = Math.PI * integralValue;
-
-  return [
-    `Outer radius: R(${variable}) = ${outer}`,
-    `Inner radius: r(${variable}) = ${inner}, from ${variable} = ${lower} to ${upper}`,
-    `Formula (washer method): V = π ∫ [R(${variable})² - r(${variable})²] d${variable}`,
-    `Step 1: Build the washer integrand → (${outer})² - (${inner})²`,
-    `Step 2: Integrate numerically from ${lower} to ${upper} → ∫ ≈ ${formatResult(integralValue)}`,
-    'Step 3: Multiply by π',
     `Result: V ≈ ${formatResult(volume)}`
   ].join('\n');
 }
