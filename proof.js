@@ -1,4 +1,5 @@
 // Symbolic proof helpers for the calculator.
+// Loaded as its own module (proof.js) and called from script.js's main dispatch.
 
 const PROOF_MODE_NAMES = new Set([
   'directproof',
@@ -12,7 +13,6 @@ const PROOF_MODE_NAMES = new Set([
   'disprove',
   'proofbydivisibility', 'divisibility'
 ]);
-
 
 function solveProof(input) {
   const match = input.match(/^(?:proof|prove)\(\s*([\s\S]*)\s*\)$/);
@@ -28,6 +28,7 @@ function solveProofMode(input) {
 
   const mode = match[1].toLowerCase();
   const argumentsList = splitTopLevel(match[2]);
+
   if (mode === 'directproof') {
     return solveEqualityProof(argumentsList.join(', '), 'Direct proof');
   }
@@ -39,6 +40,24 @@ function solveProofMode(input) {
   }
   if (mode === 'proofbycontradiction' || mode === 'contradiction') {
     return solveContradictionProof(argumentsList.join(', '));
+  }
+  if (mode === 'proveinequality' || mode === 'inequality') {
+    return solveInequalityProof(argumentsList.join(', '));
+  }
+  if (mode === 'proofbybiconditional' || mode === 'biconditional') {
+    return solveBiconditionalProof(argumentsList.join(', '));
+  }
+  if (mode === 'proofbycases' || mode === 'cases') {
+    return solveCasesProof(argumentsList);
+  }
+  if (mode === 'proofbyexhaustion' || mode === 'exhaustion') {
+    return solveExhaustionProof(argumentsList);
+  }
+  if (mode === 'disprove') {
+    return solveDisproof(argumentsList.join(', '));
+  }
+  if (mode === 'proofbydivisibility' || mode === 'divisibility') {
+    return solveDivisibilityProof(argumentsList);
   }
 
   throw new Error('Unknown proof method.');
@@ -57,12 +76,12 @@ function solveEqualityProof(statement, method) {
     throw new Error('Both sides of the equality are required.');
   }
 
-  const difference = math.simplify(`(${left}) - (${right})`).toString();
+  const difference = mathInstance.simplify(`(${left}) - (${right})`).toString();
   const symbols = findSymbols(`${left} ${right}`);
   const testValues = [0.5, 1.25, -2, 3.5];
   const checks = testValues.map((value, index) => {
     const scope = Object.fromEntries(symbols.map((symbol) => [symbol, value + index]));
-    return Math.abs(math.evaluate(left, scope) - math.evaluate(right, scope)) < 1e-9;
+    return Math.abs(mathInstance.evaluate(left, scope) - mathInstance.evaluate(right, scope)) < 1e-9;
   });
   const proved = difference === '0' || (symbols.length > 0 && checks.every(Boolean));
   const lines = [
@@ -132,7 +151,7 @@ function solveContradictionProof(statement) {
   }
   const left = statement.slice(0, equalsIndex).trim();
   const right = statement.slice(equalsIndex + 1).trim();
-  const difference = math.simplify(`(${left}) - (${right})`).toString();
+  const difference = mathInstance.simplify(`(${left}) - (${right})`).toString();
   return [
     'Method: Proof by contradiction',
     `Claim: ${left} = ${right}`,
@@ -144,8 +163,328 @@ function solveContradictionProof(statement) {
   ].join('\n');
 }
 
+// ---------- New proof types ----------
+
+function solveInequalityProof(statement) {
+  const comparison = parseComparison(statement);
+  if (!comparison || comparison.operator === '=') {
+    throw new Error('Use proveInequality(left op right) with op as <, >, <=, or >=, e.g. proveInequality(x^2 + 1 >= 2*x)');
+  }
+
+  const { left, right, operator } = comparison;
+  const symbols = findSymbols(`${left} ${right}`);
+  if (symbols.length === 0) {
+    throw new Error('The inequality needs at least one variable to test.');
+  }
+
+  const difference = mathInstance.simplify(`(${left}) - (${right})`).toString();
+  const testValues = [0.5, 1.25, -2, 3.5, 10, -10];
+  const checks = testValues.map((value) => {
+    const scope = Object.fromEntries(symbols.map((symbol) => [symbol, value]));
+    return compareValues(mathInstance.evaluate(left, scope), mathInstance.evaluate(right, scope), operator);
+  });
+  const proved = checks.every(Boolean);
+
+  return [
+    'Method: Direct proof of an inequality',
+    `Claim: ${left} ${operator} ${right}`,
+    'Step 1: Move everything to one side.',
+    `  ${left} - (${right})`,
+    'Step 2: Simplify the difference.',
+    `  ${difference}`,
+    `Step 3: Test ${symbols.join(', ')} at ${testValues.length} independent values (${testValues.join(', ')}).`,
+    proved ? 'Conclusion: Proven; the inequality holds at every test value.' : 'Conclusion: Not proven; the inequality fails at a test value.'
+  ].join('\n');
+}
+
+function solveBiconditionalProof(statement) {
+  const biconditionalIndex = findTopLevelBiconditional(statement);
+  if (biconditionalIndex < 0) {
+    throw new Error('Use proofByBiconditional(P <=> Q)');
+  }
+  const left = statement.slice(0, biconditionalIndex).trim();
+  const right = statement.slice(biconditionalIndex + 3).trim();
+
+  return [
+    'Method: Proof of a biconditional (if and only if)',
+    `Claim: ${left} <=> ${right}`,
+    'A biconditional requires both directions to be shown:',
+    `Forward direction: If ${left}, then ${right}.`,
+    `  Contrapositive check: If ${negateProposition(right)}, then ${negateProposition(left)}.`,
+    `Backward direction: If ${right}, then ${left}.`,
+    `  Contrapositive check: If ${negateProposition(left)}, then ${negateProposition(right)}.`,
+    'Conclusion: Once both the forward and backward implications are established (directly or via their contrapositives), the biconditional holds.'
+  ].join('\n');
+}
+
+function solveCasesProof(argumentsList) {
+  if (argumentsList.length < 4) {
+    throw new Error('Use proofByCases(claim, variable, [case1Values], [case2Values], ...)');
+  }
+  const claim = argumentsList[0];
+  const variable = argumentsList[1].trim();
+  if (!/^\w+$/.test(variable)) {
+    throw new Error('The case variable must be a simple name.');
+  }
+  const comparison = parseComparison(claim);
+  if (!comparison) {
+    throw new Error('Proof by cases needs an equality or inequality claim.');
+  }
+
+  const caseArgs = argumentsList.slice(2);
+  const caseResults = caseArgs.map((caseArg, index) => {
+    let values;
+    try {
+      values = mathInstance.evaluate(caseArg);
+    } catch (error) {
+      throw new Error(`Case ${index + 1} must be a list of numbers, like [2, 4, 6].`);
+    }
+    if (!Array.isArray(values) || values.length === 0) {
+      throw new Error(`Case ${index + 1} must be a non-empty list of numbers.`);
+    }
+    const allPass = values.every((value) => testComparisonAt(comparison, variable, value));
+    return { index: index + 1, values, allPass };
+  });
+
+  const overall = caseResults.every((c) => c.allPass);
+
+  return [
+    'Method: Proof by cases',
+    `Claim: ${claim}`,
+    `Step 1: Partition ${variable} into ${caseResults.length} cases.`,
+    ...caseResults.map((c) => `  Case ${c.index}: ${variable} \u2208 {${c.values.join(', ')}} \u2192 ${c.allPass ? 'claim holds' : 'claim fails'}`),
+    overall ? 'Conclusion: The claim holds across every tested case.' : 'Conclusion: Not proven; at least one case fails.'
+  ].join('\n');
+}
+
+function solveExhaustionProof(argumentsList) {
+  if (argumentsList.length < 3) {
+    throw new Error('Use proofByExhaustion(claim, variable, [v1, v2, ...])');
+  }
+  const claim = argumentsList[0];
+  const variable = argumentsList[1].trim();
+  if (!/^\w+$/.test(variable)) {
+    throw new Error('The variable must be a simple name.');
+  }
+
+  let values;
+  try {
+    values = mathInstance.evaluate(argumentsList[2]);
+  } catch (error) {
+    throw new Error('The domain must be a list of numbers, like [1, 2, 3, 4].');
+  }
+  if (!Array.isArray(values) || values.length === 0) {
+    throw new Error('Provide a non-empty finite list of values to exhaust.');
+  }
+
+  const comparison = parseComparison(claim);
+  if (!comparison) {
+    throw new Error('Proof by exhaustion needs an equality or inequality claim.');
+  }
+
+  const checks = values.map((value) => ({ value, holds: testComparisonAt(comparison, variable, value) }));
+  const allHold = checks.every((c) => c.holds);
+
+  return [
+    'Method: Proof by exhaustion',
+    `Claim: ${claim}`,
+    `Step 1: The domain of ${variable} is finite: {${values.join(', ')}}.`,
+    'Step 2: Check the claim at every value in that domain.',
+    ...checks.map((c) => `  ${variable} = ${c.value}: ${c.holds ? 'holds' : 'fails'}`),
+    allHold ? 'Conclusion: The claim holds for every value in the finite domain, so it is proven.' : 'Conclusion: Not proven; the claim fails for at least one value.'
+  ].join('\n');
+}
+
+function solveDisproof(statement) {
+  const comparison = parseComparison(statement);
+  if (!comparison) {
+    throw new Error('Use disprove(left = right) or disprove(left op right) with an equality or inequality.');
+  }
+  const symbols = findSymbols(`${comparison.left} ${comparison.right}`);
+  if (symbols.length === 0) {
+    throw new Error('Disproof search needs at least one variable.');
+  }
+
+  const variable = symbols[0];
+  const sampleValues = [];
+  for (let value = -10; value <= 10; value += 0.5) {
+    sampleValues.push(Number(value.toFixed(2)));
+  }
+
+  let counterexample = null;
+  for (const value of sampleValues) {
+    let holds;
+    try {
+      holds = testComparisonAt(comparison, variable, value);
+    } catch (error) {
+      continue;
+    }
+    if (!holds) {
+      counterexample = value;
+      break;
+    }
+  }
+
+  const lines = [
+    'Method: Disproof by counterexample',
+    `Claim: ${comparison.left} ${comparison.operator} ${comparison.right}`,
+    `Step 1: Search values of ${variable} looking for one where the claim fails.`
+  ];
+
+  if (counterexample !== null) {
+    const leftValue = mathInstance.evaluate(comparison.left, { [variable]: counterexample });
+    const rightValue = mathInstance.evaluate(comparison.right, { [variable]: counterexample });
+    lines.push(`Step 2: At ${variable} = ${counterexample}: left side = ${formatResult(leftValue)}, right side = ${formatResult(rightValue)}.`);
+    lines.push(`Conclusion: Disproven \u2014 ${variable} = ${counterexample} is a counterexample.`);
+  } else {
+    lines.push(`Step 2: No counterexample found for ${variable} across [-10, 10] in steps of 0.5.`);
+    lines.push('Conclusion: No counterexample found in the tested range; this does not prove the claim is true, only that this search did not break it.');
+  }
+
+  return lines.join('\n');
+}
+
+function solveDivisibilityProof(argumentsList) {
+  if (argumentsList.length < 4) {
+    throw new Error('Use proofByDivisibility(expression, divisor, variable, baseValue)');
+  }
+  const expression = argumentsList[0];
+  const divisor = Number(argumentsList[1]);
+  const variable = argumentsList[2].trim();
+  const baseValue = Number(argumentsList[3]);
+  if (!Number.isFinite(divisor) || divisor === 0) {
+    throw new Error('The divisor must be a nonzero number.');
+  }
+  if (!/^\w+$/.test(variable) || !Number.isFinite(baseValue)) {
+    throw new Error('The variable must be a name and baseValue must be numeric.');
+  }
+
+  const remainderAt = (value) => {
+    const result = mathInstance.evaluate(expression, { [variable]: value });
+    const remainder = ((result % divisor) + divisor) % divisor;
+    return { result, remainder };
+  };
+
+  const base = { value: baseValue, ...remainderAt(baseValue) };
+  const successors = [baseValue + 1, baseValue + 2, baseValue + 3].map((value) => ({ value, ...remainderAt(value) }));
+  const baseHolds = Math.abs(base.remainder) < 1e-9;
+  const successorsHold = successors.every((s) => Math.abs(s.remainder) < 1e-9);
+
+  return [
+    `Method: Proof by divisibility (induction-style) on ${variable}`,
+    `Claim: ${divisor} divides (${expression}) for all ${variable} \u2265 ${baseValue}`,
+    `Step 1: Base case, ${variable} = ${baseValue}: (${expression}) = ${formatResult(base.result)}, remainder mod ${divisor} = ${formatResult(base.remainder)} \u2192 ${baseHolds ? 'divisible' : 'not divisible'}.`,
+    `Step 2: Check successor values ${successors.map((s) => s.value).join(', ')}:`,
+    ...successors.map((s) => `  ${variable} = ${s.value}: remainder mod ${divisor} = ${formatResult(s.remainder)} \u2192 ${Math.abs(s.remainder) < 1e-9 ? 'divisible' : 'not divisible'}`),
+    baseHolds && successorsHold ? 'Conclusion: The base case and successor checks support the divisibility claim.' : 'Conclusion: The divisibility checks failed; the claim is not proven.'
+  ].join('\n');
+}
+
+// ---------- Shared comparison helpers ----------
+
+function parseComparison(statement) {
+  const equalsIndex = findTopLevelEquals(statement);
+  if (equalsIndex >= 0) {
+    return {
+      left: statement.slice(0, equalsIndex).trim(),
+      right: statement.slice(equalsIndex + 1).trim(),
+      operator: '='
+    };
+  }
+  const comparison = findTopLevelComparison(statement);
+  if (comparison) {
+    return {
+      left: statement.slice(0, comparison.index).trim(),
+      right: statement.slice(comparison.index + comparison.operator.length).trim(),
+      operator: comparison.operator
+    };
+  }
+  return null;
+}
+
+function testComparisonAt(comparison, variable, value) {
+  const scope = { [variable]: value };
+  const leftValue = mathInstance.evaluate(comparison.left, scope);
+  const rightValue = mathInstance.evaluate(comparison.right, scope);
+  return compareValues(leftValue, rightValue, comparison.operator);
+}
+
+function compareValues(a, b, operator) {
+  const epsilon = 1e-9;
+  switch (operator) {
+    case '=': return Math.abs(a - b) < epsilon;
+    case '>=': return a >= b - epsilon;
+    case '<=': return a <= b + epsilon;
+    case '>': return a > b;
+    case '<': return a < b;
+    default: throw new Error(`Unsupported operator: ${operator}`);
+  }
+}
+
+function findTopLevelComparison(statement) {
+  let depth = 0;
+  let quote = '';
+
+  for (let index = 0; index < statement.length; index += 1) {
+    const character = statement[index];
+    if (quote) {
+      if (character === quote && statement[index - 1] !== '\\') quote = '';
+      continue;
+    }
+    if (character === '"' || character === "'") {
+      quote = character;
+      continue;
+    }
+    if (character === '(' || character === '[') {
+      depth += 1;
+      continue;
+    }
+    if (character === ')' || character === ']') {
+      depth -= 1;
+      continue;
+    }
+    if (depth === 0) {
+      const twoChar = statement.slice(index, index + 2);
+      if (twoChar === '>=' || twoChar === '<=') return { index, operator: twoChar };
+      if (character === '>' || character === '<') return { index, operator: character };
+    }
+  }
+
+  return null;
+}
+
+function findTopLevelBiconditional(statement) {
+  let depth = 0;
+  let quote = '';
+
+  for (let index = 0; index < statement.length - 2; index += 1) {
+    const character = statement[index];
+    if (quote) {
+      if (character === quote && statement[index - 1] !== '\\') quote = '';
+      continue;
+    }
+    if (character === '"' || character === "'") {
+      quote = character;
+      continue;
+    }
+    if (character === '(' || character === '[') {
+      depth += 1;
+      continue;
+    }
+    if (character === ')' || character === ']') {
+      depth -= 1;
+      continue;
+    }
+    if (depth === 0 && statement.slice(index, index + 3) === '<=>') {
+      return index;
+    }
+  }
+
+  return -1;
+}
+
 function evaluateEquality(left, right, variable, value) {
-  return Math.abs(math.evaluate(left, { [variable]: value }) - math.evaluate(right, { [variable]: value })) < 1e-9;
+  return Math.abs(mathInstance.evaluate(left, { [variable]: value }) - mathInstance.evaluate(right, { [variable]: value })) < 1e-9;
 }
 
 function splitTopLevel(statement) {
@@ -168,7 +507,7 @@ function findTopLevelArrow(statement) {
   let depth = 0;
   for (let index = 0; index < statement.length - 1; index += 1) {
     if ('(['.includes(statement[index])) depth += 1;
-    if (')]' .includes(statement[index])) depth -= 1;
+    if (')]'.includes(statement[index])) depth -= 1;
     if (statement.slice(index, index + 2) === '=>' && depth === 0) return index;
   }
   return -1;
@@ -186,7 +525,7 @@ function negateProposition(proposition) {
 function findSymbols(statement) {
   const excluded = new Set(['e', 'false', 'i', 'Infinity', 'NaN', 'pi', 'true']);
   return [...new Set(statement.match(/[A-Za-z_]\w*/g) || [])]
-    .filter((symbol) => !excluded.has(symbol) && !math[symbol]);
+    .filter((symbol) => !excluded.has(symbol) && !mathInstance[symbol]);
 }
 
 function findTopLevelEquals(statement) {
@@ -208,6 +547,10 @@ function findTopLevelEquals(statement) {
     } else if (character === ')' || character === ']') {
       depth -= 1;
     } else if (character === '=' && depth === 0) {
+      const previous = statement[index - 1];
+      if (previous === '<' || previous === '>') {
+        continue;
+      }
       return index;
     }
   }
