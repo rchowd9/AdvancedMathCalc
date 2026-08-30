@@ -1,5 +1,19 @@
 // Symbolic proof helpers for the calculator.
 
+const PROOF_MODE_NAMES = new Set([
+  'directproof',
+  'proofbyinduction', 'induction',
+  'contrapositive',
+  'proofbycontradiction', 'contradiction',
+  'proveinequality', 'inequality',
+  'proofbybiconditional', 'biconditional',
+  'proofbycases', 'cases',
+  'proofbyexhaustion', 'exhaustion',
+  'disprove',
+  'proofbydivisibility', 'divisibility'
+]);
+
+
 function solveProof(input) {
   const match = input.match(/^(?:proof|prove)\(\s*([\s\S]*)\s*\)$/);
   const statement = match ? match[1].trim() : input.trim();
