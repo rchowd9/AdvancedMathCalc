@@ -1,7 +1,7 @@
 // Symbolic proof helpers for the calculator.
 // Loaded as its own module (proof.js) and called from script.js's main dispatch.
 
-const PROOF_MODE_NAMES = new Set([
+window.PROOF_MODE_NAMES = new Set([
   'directproof',
   'proofbyinduction', 'induction',
   'contrapositive',
