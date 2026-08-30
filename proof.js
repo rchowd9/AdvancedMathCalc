@@ -23,7 +23,7 @@ function solveProof(input) {
 function solveProofMode(input) {
   const match = input.match(/^([a-zA-Z]+)\(\s*([\s\S]*)\s*\)$/);
   if (!match) {
-    throw new Error('Use directProof, proofByInduction, contrapositive, or proofByContradiction.');
+    throw new Error('Use directProof, proofByInduction, contrapositive, proofByContradiction, proveInequality, proofByBiconditional, proofByCases, proofByExhaustion, disprove, or proofByDivisibility.');
   }
 
   const mode = match[1].toLowerCase();
