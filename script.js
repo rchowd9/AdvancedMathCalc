@@ -65,7 +65,8 @@ evalBtn.addEventListener('click', () => {
     }
 
     const proofNameMatch = expr.match(/^([a-zA-Z]+)\(/);
-    if (proofNameMatch && PROOF_MODE_NAMES.has(proofNameMatch[1].toLowerCase())) {
+    const proofModeNames = window.PROOF_MODE_NAMES ?? new Set();
+    if (proofNameMatch && proofModeNames.has(proofNameMatch[1].toLowerCase())) {
       solvedMessage = solveProofMode(expr);
       awardProgress(45, 'Proof complete!', 'proofs');
       resultEl.textContent = solvedMessage;
