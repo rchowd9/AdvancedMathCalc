@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/mathjs@11.11.0/lib/browser/math.js"></script>
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-  <script src="proof.js"></script>
 </head>
 <body>
   <div class="app-shell">
@@ -59,9 +58,6 @@
 
       <div class="challenge-list" aria-label="Quick math challenges">
         <button class="challenge-chip" data-expression="derivative(sin(x), x)">Derivative drill</button>
-        <button class="challenge-chip" data-expression="arcsin(1)">Inverse sine</button>
-        <button class="challenge-chip" data-expression="arccos(0)">Inverse cosine</button>
-        <button class="challenge-chip" data-expression="arctan(1)">Inverse tangent</button>
         <button class="challenge-chip" data-expression="integrate(x^2, x, 0, 1)">Integral launch</button>
         <button class="challenge-chip" data-expression="limit(sin(x)/x, x, 0)">Limit test</button>
         <button class="challenge-chip" data-expression="det([[1,2],[3,4]])">Matrix power</button>
@@ -69,14 +65,7 @@
         <button class="challenge-chip" data-expression="stats([4, 8, 15, 16, 23, 42])">Stats check</button>
         <button class="challenge-chip" data-expression="combinations(6, 3)">Combinatorics</button>
         <button class="challenge-chip" data-expression="volumeOfRevolution(x^2, x, 0, 2)">Solid of revolution</button>
-        <button class="challenge-chip" data-expression="doubleIntegral(x*y, x=0..1, y=0..2, steps=40)">Double integral</button>
-        <button class="challenge-chip" data-expression="stokesTheorem([y, -x, 0], [0, 0, 1], x, y, 0, 1, 0, 2, steps=40)">Stokes' theorem</button>
-        <button class="challenge-chip" data-expression="proof((a + b)^2 = a^2 + 2*a*b + b^2)">Binomial proof</button>
-        <button class="challenge-chip" data-expression="proof((x - 1)*(x + 1) = x^2 - 1)">Difference of squares</button>
-        <button class="challenge-chip" data-expression="proofByInduction((n + 1)^2 = n^2 + 2*n + 1, n, 0)">Induction classic</button>
-        <button class="challenge-chip" data-expression="contrapositive(consistentSystem => incompleteTheory)">Gödel's theorem</button>
-        <button class="challenge-chip" data-expression="proofByContradiction((x + 1)^2 = x^2 + 2*x + 1)">Contradiction check</button>
-        <button class="challenge-chip" data-expression="tripleIntegral(x*y*z, x=0..1, y=0..2, z=0..3, steps=40)">Triple integral</button>
+        <button class="challenge-chip" data-expression="proof((x + 1)^2 = x^2 + 2*x + 1)">Proof drill</button>
       </div>
     </section>
 
@@ -158,22 +147,15 @@
       <div class="graph-heading">
         <div>
           <p class="eyebrow">Graph mode</p>
-          <h2>Plot functions</h2>
+          <h2>Plot a function</h2>
         </div>
-        <div class="action-row compact-row">
-          <button id="plotBtn" type="button">Plot it!</button>
-          <button id="clearPlotBtn" class="ghost-btn" type="button">Clear graph</button>
-        </div>
+        <button id="plotBtn" type="button">Plot it!</button>
       </div>
 
       <div class="graph-controls">
         <label>
-          Function 1
+          Function
           <input id="plotExpr" type="text" value="sin(x)" placeholder="e.g. x^2 - 4" />
-        </label>
-        <label>
-          Function 2 (optional)
-          <input id="plotExpr2" type="text" placeholder="e.g. cos(x)" />
         </label>
         <label>
           Variable
@@ -189,17 +171,6 @@
         </label>
       </div>
 
-      <div class="graph-toggle-row">
-        <label class="toggle-inline">
-          <input id="showDerivativeToggle" type="checkbox" />
-          Show derivative of Function 1
-        </label>
-        <label class="toggle-inline">
-          <input id="showGridToggle" type="checkbox" checked />
-          Show grid
-        </label>
-      </div>
-
       <div id="plot" aria-label="Function graph"></div>
       <p id="plotStatus" class="plot-status" role="status"></p>
     </section>
@@ -211,15 +182,11 @@
           <h3>Calculus</h3>
           <ul>
             <li>derivative(sin(x), x)</li>
-            <li>arcsin(1), arccos(0), arctan(1)</li>
             <li>partial(x^2*y + y^3, x)</li>
             <li>gradient(x^2*y + y^3, [x, y])</li>
             <li>integrate(x^2, x, 0, 1)</li>
             <li>limit(sin(x)/x, x, 0)</li>
             <li>taylor(sin(x), x, 0, 4)</li>
-            <li>doubleIntegral(x*y, x=0..1, y=0..2, steps=40)</li>
-            <li>stokesTheorem([y, -x, 0], [0, 0, 1], x, y, 0, 1, 0, 2, steps=40)</li>
-            <li>tripleIntegral(x*y*z, x=0..1, y=0..2, z=0..3, steps=40)</li>
           </ul>
         </div>
         <div class="examples-group">
@@ -261,13 +228,27 @@
           </ul>
         </div>
         <div class="examples-group">
-          <h3>Volume, Surface Area and Boundary</h3>
+          <h3>Volume, Surface Area & Boundary</h3>
           <ul>
             <li>volumeOfRevolution(x^2, x, 0, 2)</li>
-            <li>washerVolume(x + 2, x, x, 0, 2)</li>
             <li>surfaceOfRevolution(x^2, x, 0, 2)</li>
             <li>arcLength(x^2, x, 0, 2)</li>
-          </ul>      
+          </ul>
+        </div>
+        <div class="examples-group">
+          <h3>Proofs</h3>
+          <ul>
+            <li>proof((x + 1)^2 = x^2 + 2*x + 1)</li>
+            <li>proofByInduction(2^n >= n + 1, n, 0)</li>
+            <li>contrapositive(n^2 % 2 = 0 =&gt; n % 2 = 0)</li>
+            <li>proofByContradiction(x + 1 = x)</li>
+            <li>proveInequality(x^2 + 1 >= 2*x)</li>
+            <li>proofByBiconditional(n % 2 = 0 &lt;=&gt; n^2 % 2 = 0)</li>
+            <li>proofByCases(n^2 % 2 = 0, n, [2,4,6,8], [1,3,5,7])</li>
+            <li>proofByExhaustion(n^2 &gt;= n, n, [0,1,2,3,4])</li>
+            <li>disprove(x^2 &gt;= x)</li>
+            <li>proofByDivisibility(n^3 - n, 6, n, 1)</li>
+          </ul>
         </div>
       </div>
     </section>
