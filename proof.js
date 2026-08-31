@@ -11,7 +11,9 @@ window.PROOF_MODE_NAMES = new Set([
   'proofbycases', 'cases',
   'proofbyexhaustion', 'exhaustion',
   'disprove',
-  'proofbydivisibility', 'divisibility'
+  'proofbydivisibility', 'divisibility',
+  'pigeonholeprinciple', 'pigeonhole',
+  'combinatorialproof', 'combinatorial'
 ]);
 
 function solveProof(input) {
@@ -58,6 +60,12 @@ function solveProofMode(input) {
   }
   if (mode === 'proofbydivisibility' || mode === 'divisibility') {
     return solveDivisibilityProof(argumentsList);
+  }
+  if (mode === 'pigeonholeprinciple' || mode === 'pigeonhole') {
+    return solvePigeonholeProof(argumentsList);
+  }
+  if (mode === 'combinatorialproof' || mode === 'combinatorial') {
+    return solveCombinatorialProof(argumentsList);
   }
 
   throw new Error('Unknown proof method.');
