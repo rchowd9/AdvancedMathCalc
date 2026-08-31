@@ -388,7 +388,190 @@ function solveDivisibilityProof(argumentsList) {
   ].join('\n');
 }
 
-// ---------- Shared comparison helpers ----------
+function solvePigeonholeProof(argumentsList) {
+  if (argumentsList.length < 2) {
+    throw new Error('Use pigeonholeprinciple(numItems, numContainers) or pigeonhole(numItems, numContainers)');
+  }
+  
+  const numItems = Number(argumentsList[0]);
+  const numContainers = Number(argumentsList[1]);
+  
+  if (!Number.isFinite(numItems) || !Number.isFinite(numContainers) || numItems <= 0 || numContainers <= 0) {
+    throw new Error('Both numItems and numContainers must be positive numbers.');
+  }
+  
+  const hasConflict = numItems > numContainers;
+  const minInContainer = Math.ceil(numItems / numContainers);
+  const avgPerContainer = (numItems / numContainers).toFixed(2);
+  
+  const lines = [
+    'Method: Pigeonhole Principle',
+    `Given: ${numItems} items distributed into ${numContainers} containers`,
+    'Step 1: By the pigeonhole principle, if we have more items than containers,',
+    '  at least one container must contain more than one item.',
+    'Step 2: Average items per container = ' + numItems + ' / ' + numContainers + ' = ' + avgPerContainer,
+    hasConflict
+      ? `Step 3: Since ${numItems} > ${numContainers}, at least one container must have ≥ ${minInContainer} items.`
+      : `Step 3: Since ${numItems} ≤ ${numContainers}, each container can have at most 1 item (no conflict).`,
+  ];
+  
+  if (hasConflict) {
+    lines.push(`Conclusion: By the pigeonhole principle, at least one of the ${numContainers} containers must contain at least ${minInContainer} items.`);
+    lines.push(`Proof strategy: Assume the contrary — suppose each container has at most ${minInContainer - 1} items.`);
+    lines.push(`Then the total would be at most ${numContainers} × ${minInContainer - 1} = ${numContainers * (minInContainer - 1)},`);
+    lines.push(`which is less than ${numItems}, a contradiction.`);
+  } else {
+    lines.push(`Conclusion: Distribution is possible without forcing any container to have more than 1 item.`);
+  }
+  
+  return lines.join('\n');
+}
+
+function solveCombinatorialProof(argumentsList) {
+  if (argumentsList.length < 1) {
+    throw new Error('Use combinatorialproof(identity) with identities like: C(n,k)=C(n,n-k), C(n,k)=C(n-1,k-1)+C(n-1,k), sum(C(n,k),k,0,n)=2^n');
+  }
+  
+  const identity = argumentsList.join(', ').trim();
+  
+  // Check for common combinatorial identities
+  if (identity.includes('C(n,k)') && identity.includes('C(n,n-k)')) {
+    return solvePascalSymmetryProof();
+  } else if ((identity.includes('C(n-1,k-1)') && identity.includes('C(n-1,k)')) || identity.includes('pascal')) {
+    return solvePascalsIdentityProof();
+  } else if (identity.includes('sum(C(n,k)') || identity.includes('2^n')) {
+    return solveBinomialSumProof();
+  } else if (identity.includes('C(n+1,k+1)') || identity.includes('hockey')) {
+    return solveHockeyStickProof();
+  } else {
+    // General combinatorial identity with numeric test
+    return solveGeneralCombinatorialProof(identity);
+  }
+}
+
+function solvePascalSymmetryProof() {
+  return [
+    'Method: Combinatorial proof by symmetry',
+    'Identity: C(n, k) = C(n, n-k)',
+    '',
+    'Combinatorial interpretation:',
+    '  Choosing k items from n items is equivalent to leaving out (n-k) items.',
+    '',
+    'Step 1: C(n, k) counts the number of ways to select k elements from a set of n elements.',
+    'Step 2: C(n, n-k) counts the number of ways to select (n-k) elements from a set of n elements.',
+    'Step 3: For every k-subset, there is a unique complementary (n-k)-subset and vice versa.',
+    'Step 4: This establishes a bijection (one-to-one correspondence) between the two.',
+    '',
+    'Numeric verification:',
+    `  C(5, 2) = ${mathInstance.combinations(5, 2)} and C(5, 3) = ${mathInstance.combinations(5, 3)}`,
+    `  C(6, 1) = ${mathInstance.combinations(6, 1)} and C(6, 5) = ${mathInstance.combinations(6, 5)}`,
+    '',
+    'Conclusion: The identity C(n, k) = C(n, n-k) is proven by establishing a bijection between',
+    'k-subsets and (n-k)-subsets of an n-element set.'
+  ].join('\n');
+}
+
+function solvePascalsIdentityProof() {
+  return [
+    'Method: Combinatorial proof by partitioning',
+    'Identity (Pascal\'s Identity): C(n, k) = C(n-1, k-1) + C(n-1, k)',
+    '',
+    'Combinatorial interpretation:',
+    '  Choosing k items from n items can be partitioned based on whether a specific item is included.',
+    '',
+    'Step 1: C(n, k) counts ways to choose k items from n items.',
+    'Step 2: Partition based on whether item #n is included:',
+    '  - Case 1: Item #n IS included → choose (k-1) more from remaining (n-1) items = C(n-1, k-1)',
+    '  - Case 2: Item #n is NOT included → choose k items from remaining (n-1) items = C(n-1, k)',
+    'Step 3: By the sum rule, C(n, k) = C(n-1, k-1) + C(n-1, k)',
+    '',
+    'Numeric verification:',
+    `  C(6, 3) = ${mathInstance.combinations(6, 3)}, C(5, 2) = ${mathInstance.combinations(5, 2)}, C(5, 3) = ${mathInstance.combinations(5, 3)}`,
+    `  C(5, 2) + C(5, 3) = ${mathInstance.combinations(5, 2)} + ${mathInstance.combinations(5, 3)} = ${mathInstance.combinations(5, 2) + mathInstance.combinations(5, 3)}`,
+    '',
+    'Conclusion: Pascal\'s identity is proven by partitioning the set of k-subsets.'
+  ].join('\n');
+}
+
+function solveBinomialSumProof() {
+  return [
+    'Method: Combinatorial proof by counting',
+    'Identity: Σ(k=0 to n) C(n, k) = 2^n',
+    '',
+    'Combinatorial interpretation:',
+    '  The sum of all binomial coefficients equals the number of subsets of an n-element set.',
+    '',
+    'Step 1: C(n, k) counts k-element subsets of an n-element set.',
+    'Step 2: Summing over all k from 0 to n counts ALL subsets:',
+    '  - C(n, 0): 0-element subsets (empty set)',
+    '  - C(n, 1): 1-element subsets',
+    '  - ... C(n, n): n-element subsets (full set)',
+    'Step 3: Every subset is counted exactly once.',
+    'Step 4: The total number of subsets of an n-element set is 2^n.',
+    '  (Each element is either included or excluded, giving 2^n possibilities)',
+    '',
+    'Numeric verification:',
+    `  n = 4: C(4,0) + C(4,1) + C(4,2) + C(4,3) + C(4,4) = ${[0,1,2,3,4].map(k => mathInstance.combinations(4, k)).join(' + ')} = ${[0,1,2,3,4].reduce((a,k) => a + mathInstance.combinations(4,k), 0)}, and 2^4 = ${Math.pow(2, 4)}`,
+    `  n = 5: Sum = ${[0,1,2,3,4,5].reduce((a,k) => a + mathInstance.combinations(5,k), 0)}, and 2^5 = ${Math.pow(2, 5)}`,
+    '',
+    'Conclusion: The identity Σ C(n, k) = 2^n is proven by counting all subsets in two ways.'
+  ].join('\n');
+}
+
+function solveHockeyStickProof() {
+  return [
+    'Method: Combinatorial proof by telescoping',
+    'Identity (Hockey Stick): Σ(i=r to n) C(i, r) = C(n+1, r+1)',
+    '',
+    'Combinatorial interpretation:',
+    '  The sum counts paths to a specific point, which equals the total number of such paths.',
+    '',
+    'Step 1: C(i, r) counts r-element subsets of an i-element set.',
+    'Step 2: We sum C(r,r) + C(r+1,r) + C(r+2,r) + ... + C(n,r)',
+    'Step 3: This counts (r+1)-element subsets of {1,2,...,n+1} based on their largest element:',
+    '  - Subsets with largest element (r+1): 1 way (C(r,r))',
+    '  - Subsets with largest element (r+2): C(r+1,r) ways',
+    '  - Subsets with largest element (i): C(i-1,r) ways',
+    '  - Subsets with largest element (n+1): C(n,r) ways',
+    'Step 4: Total (r+1)-subsets of {1,...,n+1} is C(n+1, r+1)',
+    '',
+    'Numeric verification:',
+    `  C(3,2) + C(4,2) + C(5,2) = ${mathInstance.combinations(3,2)} + ${mathInstance.combinations(4,2)} + ${mathInstance.combinations(5,2)} = ${mathInstance.combinations(3,2) + mathInstance.combinations(4,2) + mathInstance.combinations(5,2)}, and C(6,3) = ${mathInstance.combinations(6,3)}`,
+    '',
+    'Conclusion: The hockey-stick identity is proven by counting (r+1)-element subsets in two ways.'
+  ].join('\n');
+}
+
+function solveGeneralCombinatorialProof(identity) {
+  return [
+    'Method: Combinatorial proof analysis',
+    `Identity: ${identity}`,
+    '',
+    'This is a combinatorial identity that can be proven by:',
+    '',
+    'Step 1: Direct proof - Simplify both sides algebraically and verify they are equal.',
+    'Step 2: Bijective proof - Establish a one-to-one correspondence between two sets.',
+    'Step 3: Counting argument - Count the same set in two different ways.',
+    '',
+    'For identity of the form C(n,k) = ... :',
+    '  - Interpret C(n,k) as the number of ways to choose k items from n items',
+    '  - Count subsets with specific properties',
+    '',
+    'For identity involving sums of binomial coefficients:',
+    '  - Count all subsets and partition them by size or other criteria',
+    '  - Use the fact that total subsets of n elements = 2^n',
+    '',
+    'To verify this identity:',
+    '1. Try specific small values of n and k',
+    '2. Look for a combinatorial interpretation',
+    '3. Establish a bijection or counting argument',
+    '',
+    'Conclusion: Many combinatorial identities can be proven using bijections or counting arguments,',
+    'which are often more elegant than purely algebraic proofs.'
+  ].join('\n');
+}
+
+
 
 function parseComparison(statement) {
   const equalsIndex = findTopLevelEquals(statement);

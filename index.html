@@ -66,6 +66,8 @@
         <button class="challenge-chip" data-expression="combinations(6, 3)">Combinatorics</button>
         <button class="challenge-chip" data-expression="volumeOfRevolution(x^2, x, 0, 2)">Solid of revolution</button>
         <button class="challenge-chip" data-expression="proof((x + 1)^2 = x^2 + 2*x + 1)">Proof drill</button>
+        <button class="challenge-chip" data-expression="pigeonhole(100, 50)">Pigeonhole principle</button>
+        <button class="challenge-chip" data-expression="combinatorial(C(n,k)=C(n,n-k))">Combinatorial proof</button>
       </div>
     </section>
 
@@ -79,7 +81,7 @@
         </div>
 
         <label for="expr">Enter expression:</label>
-        <textarea id="expr" rows="3" placeholder="Examples: derivative(sin(x), x); taylor(sin(x), x, 0, 4); stats([4,8,15,16,23,42]); combinations(6,3)"></textarea>
+        <textarea id="expr" rows="3" placeholder="Examples: derivative(sin(x), x); taylor(sin(x), x, 0, 4); proof((x+1)^2=x^2+2*x+1); pigeonhole(100,50); combinatorial(C(n,k)=C(n,n-k))"></textarea>
 
         <div class="action-row">
           <button id="evalBtn">Solve it!</button>

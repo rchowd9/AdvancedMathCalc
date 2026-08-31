@@ -48,6 +48,18 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 - Greatest common divisor — `gcd(a, b)`
 - Least common multiple — `lcm(a, b)`
 
+### Proof Methods
+- Direct proof — `directProof(statement)`
+- Proof by induction — `proofByInduction(statement, variable, baseValue)`
+- Proof by contrapositive — `contrapositive(P => Q)`
+- Proof by contradiction — `proofByContradiction(statement)`
+- Proof by cases — `proofByCases(claim, variable, cases...)`
+- Proof by exhaustion — `proofByExhaustion(claim, variable, domain)`
+- Proof by divisibility — `proofByDivisibility(expr, divisor, variable, baseValue)`
+- Disproof by counterexample — `disprove(statement)`
+- Pigeonhole principle — `pigeonholeprinciple(numItems, numContainers)`
+- Combinatorial proofs — `combinatorialproof(identity)` with support for Pascal's identity, binomial sum, symmetry proofs, and hockey-stick identity
+
 ### Vectors & Units
 - Dot product — `dot(v1, v2)`
 - Cross product — `cross(v1, v2)`
@@ -116,9 +128,12 @@ directProof(x^2 + 2*x + 1 = (x + 1)^2)
 proofByInduction((n + 1)^2 = n^2 + 2*n + 1, n, 0)
 contrapositive(x > 2 => x^2 > 4)
 proofByContradiction((x + 1)^2 = x^2 + 2*x + 1)
+pigeonhole(100, 50)
+combinatorial(C(n,k)=C(n,n-k))
 ```
 
-Induction takes an equality, its variable, and its base value. Contrapositive transforms an implication using `=>`; direct and contradiction modes accept equalities.
+Induction takes an equality, its variable, and its base value. Contrapositive transforms an implication using `=>`; direct and contradiction modes accept equalities. Pigeonhole principle takes the number of items and containers. Combinatorial proofs support identities like Pascal's identity, binomial sum, and symmetry properties.
+
 
 **Famous proof themes**
 - Pythagorean theorem: $a^2 + b^2 = c^2$
