@@ -1070,16 +1070,17 @@ function explainTaylorSeries(expression, variable, point, order) {
 }
 
 function explainMaclaurin(fn, variable, order) {
-  let terms = [];
-  for (let n = 0; n <= order; n++) {
-    const derivative = mathInstance.derivative(fn, variable, { simplify: true }).nth(n);
-    const valueAtZero = derivative.evaluate({ [variable]: 0 });
-    const term = `${valueAtZero}/${n}! * ${variable}^${n}`;
-    terms.push(term);
-  }
+  const terms = computeTaylorSeries(fn, variable, 0, order);
+  const steps = [`Function: f(${variable}) = ${fn}`, `Expansion point: ${variable} = 0 (Maclaurin series)`];
 
-  return `Maclaurin series for f(${variable}) = ${fn} up to order ${order}:\n` +
-         `f(${variable}) ≈ ${terms.join(' + ')}`;
+  terms.forEach((term) => {
+    steps.push(`Step ${term.order + 1}: f${'′'.repeat(Math.min(term.order, 3))}${term.order > 3 ? `^(${term.order})` : ''}(0) = ${formatResult(term.derivativeAtPoint)}`);
+  });
+
+  const polynomial = buildTaylorPolynomialString(terms, variable, 0);
+  steps.push(`Step ${terms.length + 1}: Combine terms as Σ [ f⁽ⁿ⁾(0) / n! ] × ${variable}ⁿ`);
+  steps.push(`Result: f(${variable}) ≈ ${polynomial}`);
+  return steps.join('\n');
 }
 
 
