@@ -1044,6 +1044,20 @@ function explainTaylorSeries(expression, variable, point, order) {
   return steps.join('\n');
 }
 
+function explainMaclaurin(fn, variable, order) {
+  let terms = [];
+  for (let n = 0; n <= order; n++) {
+    const derivative = mathInstance.derivative(fn, variable, { simplify: true }).nth(n);
+    const valueAtZero = derivative.evaluate({ [variable]: 0 });
+    const term = `${valueAtZero}/${n}! * ${variable}^${n}`;
+    terms.push(term);
+  }
+
+  return `Maclaurin series for f(${variable}) = ${fn} up to order ${order}:\n` +
+         `f(${variable}) ≈ ${terms.join(' + ')}`;
+}
+
+
 function computeTaylorSeries(expression, variable, point, order) {
   const terms = [];
   let derivativeNode = mathInstance.parse(expression);
