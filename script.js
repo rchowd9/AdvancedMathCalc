@@ -369,6 +369,31 @@ if (expr.startsWith("solveSystemNL(")) {
   return;
 }
 
+if (expr.startsWith("powerSeries(")) {
+  // Syntax: powerSeries([coeffs], variable, center, order)
+  const parts = expr.match(/^powerSeries\(\s*(
+
+\[[^\]
+
+]*\]
+
+)\s*,\s*(\w+)\s*,\s*([-\d.]+)\s*,\s*(\d+)\s*\)$/);
+  if (parts) {
+    const coeffs = mathInstance.evaluate(parts[1]);   // array of coefficients
+    const variable = parts[2];
+    const center = parseFloat(parts[3]);
+    const order = parseInt(parts[4], 10);
+
+    const solvedMessage = explainPowerSeries(coeffs, variable, center, order);
+    awardProgress(45, 'Power series expanded!', 'calculus2');
+    resultEl.textContent = solvedMessage;
+    return;
+  }
+  resultEl.textContent = 'Use syntax: powerSeries([coeffs], variable, center, order)';
+  setStatus('Syntax check', 'warning');
+  return;
+}
+
 
     if (expr.startsWith("simplify(")) {
       const parts = expr.match(/^simplify\((.*)\)$/s);
