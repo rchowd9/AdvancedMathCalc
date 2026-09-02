@@ -353,6 +353,23 @@ if (expr.startsWith("solveSystemNL(")) {
       return;
     }
 
+    if (expr.startsWith("maclaurin(")) {
+  const parts = expr.match(/^maclaurin\((.*),\s*(\w+),\s*(\d+)\)$/s);
+  if (parts) {
+    const fn = parts[1];
+    const variable = parts[2];
+    const order = parseInt(parts[3], 10);
+    solvedMessage = explainMaclaurin(fn, variable, order);
+    awardProgress(45, 'Maclaurin series unlocked!', 'calculus2');
+    resultEl.textContent = solvedMessage;
+    return;
+  }
+  resultEl.textContent = 'Use syntax: maclaurin(expression, variable, order)';
+  setStatus('Syntax check', 'warning');
+  return;
+}
+
+
     if (expr.startsWith("simplify(")) {
       const parts = expr.match(/^simplify\((.*)\)$/s);
       if (parts) {
