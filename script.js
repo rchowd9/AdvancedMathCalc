@@ -394,6 +394,13 @@ if (expr.startsWith("powerSeries(")) {
   return;
 }
 
+if (expr === 'explain power series' || expr === 'powerSeriesConcept()' || expr === 'powerSeriesExplain()') {
+  const solvedMessage = explainPowerSeriesConcept();
+  awardProgress(25, 'Concept unlocked!', 'education');
+  resultEl.textContent = solvedMessage;
+  return;
+}
+
 
     if (expr.startsWith("simplify(")) {
       const parts = expr.match(/^simplify\((.*)\)$/s);
@@ -1113,6 +1120,101 @@ function buildTaylorPolynomialString(terms, variable, point) {
     });
 
   return pieces.length ? pieces.join(' + ').replace(/\+ -/g, '- ') : '0';
+}
+
+function explainPowerSeries(coeffs, variable, center, order) {
+  // Power series: f(x) = c₀ + c₁(x - a) + c₂(x - a)² + ... + cₙ(x - a)ⁿ
+  const steps = [
+    `Coefficients: c = [${coeffs.map(c => formatResult(c)).join(', ')}]`,
+    `Center: ${variable} = ${center}`,
+    `Maximum order: ${order}`,
+    'Step 1: Build the power series expansion'
+  ];
+
+  const termCount = Math.min(coeffs.length, order + 1);
+  const termStrings = [];
+
+  for (let n = 0; n < termCount; n++) {
+    if (Math.abs(coeffs[n]) > 1e-10) {
+      const coeff = formatResult(coeffs[n]);
+      if (n === 0) {
+        termStrings.push(`${coeff}`);
+      } else if (n === 1) {
+        const base = center === 0 ? variable : `(${variable} - ${center})`;
+        termStrings.push(`${coeff}·${base}`);
+      } else {
+        const base = center === 0 ? variable : `(${variable} - ${center})`;
+        termStrings.push(`${coeff}·${base}^${n}`);
+      }
+    }
+  }
+
+  steps.push(`Step 2: List the terms up to order ${order}`);
+  steps.push(`Terms: ${termStrings.join(' + ').replace(/\+ -/g, '- ')}`);
+  steps.push(`Step 3: Construct the series formula`);
+  steps.push(`Formula: f(${variable}) = Σ [n=0 to ${termCount - 1}] cₙ(${variable} - ${center})ⁿ`);
+  steps.push(`Result: f(${variable}) ≈ ${termStrings.join(' + ').replace(/\+ -/g, '- ') || '0'}`);
+
+  return steps.join('\n');
+}
+
+function explainPowerSeriesConcept() {
+  return [
+    '═══════════════════════════════════',
+    '      What is a Power Series?',
+    '═══════════════════════════════════',
+    '',
+    'A power series is an infinite polynomial-like function centered at a point a:',
+    '',
+    '    f(x) = c₀ + c₁(x - a) + c₂(x - a)² + c₃(x - a)³ + ...',
+    '',
+    'Where:',
+    '  • cₙ are the coefficients',
+    '  • a is the center of the series',
+    '  • x is the variable',
+    '  • n ranges from 0 to ∞',
+    '',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    'Key Properties:',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    '',
+    '1. Radius of Convergence (R):',
+    '   The series converges for |x - a| < R and may converge at the endpoints',
+    '',
+    '2. Taylor Series Connection:',
+    '   If f is differentiable, cₙ = f⁽ⁿ⁾(a) / n!',
+    '   This creates a power series representation of the function',
+    '',
+    '3. Maclaurin Series:',
+    '   Special case when a = 0',
+    '',
+    '4. Uses:',
+    '   • Approximate functions for computation',
+    '   • Solve differential equations',
+    '   • Analyze function behavior near a point',
+    '   • Perform integration/differentiation term-by-term',
+    '',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    'Classic Examples:',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    '',
+    '  Exponential: e^x = 1 + x + x²/2! + x³/3! + x⁴/4! + ...',
+    '',
+    '  Sine:        sin(x) = x - x³/3! + x⁵/5! - x⁷/7! + ...',
+    '',
+    '  Cosine:      cos(x) = 1 - x²/2! + x⁴/4! - x⁶/6! + ...',
+    '',
+    '  Geometric:   1/(1-x) = 1 + x + x² + x³ + ... (for |x| < 1)',
+    '',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    'How to Use:',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    '',
+    'Syntax: powerSeries([c0, c1, c2, ...], variable, center, maxOrder)',
+    '',
+    'Example: powerSeries([1, 2, 0.5], x, 0, 2)',
+    'Result: 1 + 2x + 0.5x²'
+  ].join('\n');
 }
 
 // ---------- Symbolic simplification ----------
