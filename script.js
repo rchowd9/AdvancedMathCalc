@@ -354,53 +354,46 @@ if (expr.startsWith("solveSystemNL(")) {
     }
 
     if (expr.startsWith("maclaurin(")) {
-  const parts = expr.match(/^maclaurin\((.*),\s*(\w+),\s*(\d+)\)$/s);
-  if (parts) {
-    const fn = parts[1];
-    const variable = parts[2];
-    const order = parseInt(parts[3], 10);
-    solvedMessage = explainMaclaurin(fn, variable, order);
-    awardProgress(45, 'Maclaurin series unlocked!', 'calculus2');
-    resultEl.textContent = solvedMessage;
-    return;
-  }
-  resultEl.textContent = 'Use syntax: maclaurin(expression, variable, order)';
-  setStatus('Syntax check', 'warning');
-  return;
-}
+      const parts = expr.match(/^maclaurin\((.*),\s*(\w+),\s*(\d+)\)$/s);
+      if (parts) {
+        const fn = parts[1];
+        const variable = parts[2];
+        const order = parseInt(parts[3], 10);
+        solvedMessage = explainMaclaurin(fn, variable, order);
+        awardProgress(45, 'Maclaurin series unlocked!', 'calculus2');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+      resultEl.textContent = 'Use syntax: maclaurin(expression, variable, order)';
+      setStatus('Syntax check', 'warning');
+      return;
+    }
 
-if (expr.startsWith("powerSeries(")) {
-  // Syntax: powerSeries([coeffs], variable, center, order)
-  const parts = expr.match(/^powerSeries\(\s*(
+    if (expr.startsWith("powerSeries(")) {
+      // Syntax: powerSeries([coeffs], variable, center, order)
+      const parts = expr.match(/^powerSeries\(\s*(\[[^\]]*\])\s*,\s*(\w+)\s*,\s*([-\d.]+)\s*,\s*(\d+)\s*\)$/s);
+      if (parts) {
+        const coeffs = mathInstance.evaluate(parts[1]);   // array of coefficients
+        const variable = parts[2];
+        const center = parseFloat(parts[3]);
+        const order = parseInt(parts[4], 10);
 
-\[[^\]
+        solvedMessage = explainPowerSeries(coeffs, variable, center, order);
+        awardProgress(45, 'Power series expanded!', 'calculus2');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+      resultEl.textContent = 'Use syntax: powerSeries([coeffs], variable, center, order)';
+      setStatus('Syntax check', 'warning');
+      return;
+    }
 
-]*\]
-
-)\s*,\s*(\w+)\s*,\s*([-\d.]+)\s*,\s*(\d+)\s*\)$/);
-  if (parts) {
-    const coeffs = mathInstance.evaluate(parts[1]);   // array of coefficients
-    const variable = parts[2];
-    const center = parseFloat(parts[3]);
-    const order = parseInt(parts[4], 10);
-
-    const solvedMessage = explainPowerSeries(coeffs, variable, center, order);
-    awardProgress(45, 'Power series expanded!', 'calculus2');
-    resultEl.textContent = solvedMessage;
-    return;
-  }
-  resultEl.textContent = 'Use syntax: powerSeries([coeffs], variable, center, order)';
-  setStatus('Syntax check', 'warning');
-  return;
-}
-
-if (expr === 'explain power series' || expr === 'powerSeriesConcept()' || expr === 'powerSeriesExplain()') {
-  const solvedMessage = explainPowerSeriesConcept();
-  awardProgress(25, 'Concept unlocked!', 'education');
-  resultEl.textContent = solvedMessage;
-  return;
-}
-
+    if (expr === 'explain power series' || expr === 'powerSeriesConcept()' || expr === 'powerSeriesExplain()') {
+      solvedMessage = explainPowerSeriesConcept();
+      awardProgress(25, 'Concept unlocked!', 'education');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
 
     if (expr.startsWith("simplify(")) {
       const parts = expr.match(/^simplify\((.*)\)$/s);
