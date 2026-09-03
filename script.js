@@ -84,6 +84,22 @@ evalBtn.addEventListener('click', () => {
       }
     }
 
+    if (expr.startsWith("chain(")) {
+  const parts = expr.match(/^chain\((.*),\s*(\w+)\)$/s);
+  if (parts) {
+    const composite = parts[1];
+    const variable = parts[2];
+    solvedMessage = explainChainRule(composite, variable);
+    awardProgress(40, 'Chain rule applied!', 'calculus2');
+    resultEl.textContent = solvedMessage;
+    return;
+  }
+  resultEl.textContent = 'Use syntax: chain(f(g(x)), x)';
+  setStatus('Syntax check', 'warning');
+  return;
+}
+
+
     if (expr.startsWith("integrate(")) {
       const parts = expr.match(/integrate\((.*),\s*(\w+),\s*([-\d.]+),\s*([-\d.]+)\)/);
       if (parts) {
