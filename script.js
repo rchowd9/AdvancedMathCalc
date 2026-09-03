@@ -1504,6 +1504,61 @@ function explainQuotientRule(f, g, variable) {
          `Simplified: ${result}`;
 }
 
+function explainLHopital(f, g, variable, point) {
+  const steps = [
+    "Method: L'Hôpital's Rule",
+    `Limit as ${variable} → ${point} of [${f}] / [${g}]`
+  ];
+
+  let currentF = f;
+  let currentG = g;
+  const MAX_ITERATIONS = 6;
+
+  for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration += 1) {
+    const fValue = safeEvaluateAt(currentF, variable, point);
+    const gValue = safeEvaluateAt(currentG, variable, point);
+
+    if (Number.isNaN(fValue) || Number.isNaN(gValue)) {
+      steps.push(`Step ${iteration}: Could not evaluate f or g at ${variable} = ${point} (domain error).`);
+      return steps.join('\n');
+    }
+
+    const isZeroOverZero = Math.abs(fValue) < 1e-9 && Math.abs(gValue) < 1e-9;
+    const isInfOverInf = !Number.isFinite(fValue) && !Number.isFinite(gValue);
+
+    if (!isZeroOverZero && !isInfOverInf) {
+      if (Math.abs(gValue) < 1e-9) {
+        steps.push(`Step ${iteration}: f(${point}) = ${formatResult(fValue)}, g(${point}) = ${formatResult(gValue)} — not an indeterminate form, and the denominator is zero, so the limit does not exist (or is ±∞).`);
+        return steps.join('\n');
+      }
+      steps.push(`Step ${iteration}: f(${point}) = ${formatResult(fValue)}, g(${point}) = ${formatResult(gValue)} — no longer indeterminate.`);
+      const limitValue = fValue / gValue;
+      steps.push(`Result: The limit evaluates directly to ${formatResult(limitValue)}`);
+      return steps.join('\n');
+    }
+
+    steps.push(`Step ${iteration}: At ${variable} = ${point}, f = ${formatResult(fValue)}, g = ${formatResult(gValue)} → indeterminate form (${isZeroOverZero ? '0/0' : '∞/∞'}).`);
+    const fPrime = mathInstance.derivative(currentF, variable).toString();
+    const gPrime = mathInstance.derivative(currentG, variable).toString();
+    steps.push(`  Differentiate numerator and denominator: f' = ${fPrime}, g' = ${gPrime}`);
+
+    currentF = fPrime;
+    currentG = gPrime;
+  }
+
+  steps.push(`Result: Still indeterminate after ${MAX_ITERATIONS} applications of L'Hôpital's rule; the limit may need a different technique.`);
+  return steps.join('\n');
+}
+
+function safeEvaluateAt(expression, variable, point) {
+  try {
+    const value = mathInstance.evaluate(expression, { [variable]: point });
+    return typeof value === 'number' ? value : NaN;
+  } catch (error) {
+    return NaN;
+  }
+}
+
 
 
 
