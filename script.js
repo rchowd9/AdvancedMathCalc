@@ -1483,6 +1483,25 @@ function explainQuotientRule(f, g, variable) {
          `Simplified: ${result}`;
 }
 
+if (expr.startsWith("lhopital(")) {
+  const parts = expr.match(/^lhopital\((.*),\s*(.*),\s*(\w+),\s*([-\d.]+)\)$/s);
+  if (parts) {
+    const f = parts[1];
+    const g = parts[2];
+    const variable = parts[3];
+    const point = parseFloat(parts[4]);
+
+    solvedMessage = explainLHopital(f, g, variable, point);
+    awardProgress(45, 'L’Hôpital applied!', 'calculus2');
+    resultEl.textContent = solvedMessage;
+    return;
+  }
+  resultEl.textContent = 'Use syntax: lhopital(f(x), g(x), x, point)';
+  setStatus('Syntax check', 'warning');
+  return;
+}
+
+
 
 
 // ---------- Unit conversion ----------
