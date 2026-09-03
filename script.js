@@ -1469,6 +1469,21 @@ function explainChainRule(expr, variable) {
   return `Chain Rule:\nGiven f(${variable}) = ${expr}\nDerivative: f'(${variable}) = ${derivative}`;
 }
 
+function explainQuotientRule(f, g, variable) {
+  const fPrime = mathInstance.derivative(f, variable).toString();
+  const gPrime = mathInstance.derivative(g, variable).toString();
+  const result = `(${g} * ${fPrime} - ${f} * ${gPrime}) / (${g})^2`;
+
+  return `Quotient Rule:\n` +
+         `f(x) = ${f}\n` +
+         `g(x) = ${g}\n` +
+         `f'(x) = ${fPrime}\n` +
+         `g'(x) = ${gPrime}\n` +
+         `Result: (${g})*f'(x) - (${f})*g'(x) all over (${g})^2\n` +
+         `Simplified: ${result}`;
+}
+
+
 
 // ---------- Unit conversion ----------
 
