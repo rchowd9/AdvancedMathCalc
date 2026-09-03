@@ -1465,8 +1465,29 @@ function explainMagnitude(v) {
 }
 
 function explainChainRule(expr, variable) {
-  const derivative = mathInstance.derivative(expr, variable).toString();
-  return `Chain Rule:\nGiven f(${variable}) = ${expr}\nDerivative: f'(${variable}) = ${derivative}`;
+  try {
+    const derivative = mathInstance.derivative(expr, variable).toString();
+    return `Chain Rule:\nGiven f(${variable}) = ${expr}\nDerivative: f'(${variable}) = ${derivative}`;
+  } catch (error) {
+    // mathInstance.derivative only knows concrete functions (sin, cos, exp, ...).
+    // For an abstract composition like f(g(x)), fall back to the general symbolic rule
+    // instead of surfacing mathjs's "Function is not supported" error.
+    const match = expr.match(/^([A-Za-z_]\w*)\(([\s\S]+)\)$/);
+    if (match) {
+      const outer = match[1];
+      const inner = match[2];
+      return [
+        'Chain Rule (symbolic form):',
+        `"${expr}" pairs an outer function "${outer}" with an inner function "${inner}", both left abstract rather than as concrete math.js functions.`,
+        `d/d${variable} [${outer}(${inner})] = ${outer}'(${inner}) · d/d${variable}[${inner}]`,
+        '',
+        `In words: differentiate the outer function (leaving the inner function's argument untouched), then multiply by the derivative of the inner function.`,
+        '',
+        `For a fully computed derivative, try a concrete example instead, e.g. chain(sin(x^2), x).`
+      ].join('\n');
+    }
+    throw error;
+  }
 }
 
 function explainQuotientRule(f, g, variable) {
@@ -1481,24 +1502,6 @@ function explainQuotientRule(f, g, variable) {
          `g'(x) = ${gPrime}\n` +
          `Result: (${g})*f'(x) - (${f})*g'(x) all over (${g})^2\n` +
          `Simplified: ${result}`;
-}
-
-if (expr.startsWith("lhopital(")) {
-  const parts = expr.match(/^lhopital\((.*),\s*(.*),\s*(\w+),\s*([-\d.]+)\)$/s);
-  if (parts) {
-    const f = parts[1];
-    const g = parts[2];
-    const variable = parts[3];
-    const point = parseFloat(parts[4]);
-
-    solvedMessage = explainLHopital(f, g, variable, point);
-    awardProgress(45, 'L’Hôpital applied!', 'calculus2');
-    resultEl.textContent = solvedMessage;
-    return;
-  }
-  resultEl.textContent = 'Use syntax: lhopital(f(x), g(x), x, point)';
-  setStatus('Syntax check', 'warning');
-  return;
 }
 
 
