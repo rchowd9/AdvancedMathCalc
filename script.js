@@ -1464,6 +1464,12 @@ function explainMagnitude(v) {
   ].join('\n');
 }
 
+function explainChainRule(expr, variable) {
+  const derivative = mathInstance.derivative(expr, variable).toString();
+  return `Chain Rule:\nGiven f(${variable}) = ${expr}\nDerivative: f'(${variable}) = ${derivative}`;
+}
+
+
 // ---------- Unit conversion ----------
 
 function explainConversion(sourceExpression, targetUnit) {
