@@ -99,6 +99,23 @@ evalBtn.addEventListener('click', () => {
   return;
 }
 
+if (expr.startsWith("quotient(")) {
+  const parts = expr.match(/^quotient\((.*),\s*(.*),\s*(\w+)\)$/s);
+  if (parts) {
+    const f = parts[1];
+    const g = parts[2];
+    const variable = parts[3];
+    solvedMessage = explainQuotientRule(f, g, variable);
+    awardProgress(40, 'Quotient rule applied!', 'calculus2');
+    resultEl.textContent = solvedMessage;
+    return;
+  }
+  resultEl.textContent = 'Use syntax: quotient(f(x), g(x), x)';
+  setStatus('Syntax check', 'warning');
+  return;
+}
+
+
 
     if (expr.startsWith("integrate(")) {
       const parts = expr.match(/integrate\((.*),\s*(\w+),\s*([-\d.]+),\s*([-\d.]+)\)/);
