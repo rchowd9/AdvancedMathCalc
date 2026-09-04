@@ -64,6 +64,14 @@ function solveProofMode(input) {
   if (mode === 'pigeonholeprinciple' || mode === 'pigeonhole') {
     return solvePigeonholeProof(argumentsList);
   }
+  if (mode === 'recurrence') {
+  return solveRecurrenceProof(argumentsList);
+}
+
+if (mode === 'structuralinduction') {
+  return solveStructuralInductionProof(argumentsList);
+}
+
   if (mode === 'combinatorialproof' || mode === 'combinatorial') {
     return solveCombinatorialProof(argumentsList);
   }
