@@ -1030,14 +1030,19 @@ function explainStokesTheorem(F, surface) {
 }
 
 function explainIntegrationByParts(u, dv, variable) {
+  // Differentiate u
   const du = mathInstance.derivative(u, variable).toString();
-  const v = mathInstance.integrate(dv, variable).toString();
+
+  // Approximate v = ∫ dv dx using numeric integration
+  const vApprox = numericIntegral(dv, variable, 0, 1, 500); 
+  // (You can adjust bounds or let user specify them)
+
   return [
     "Integration by Parts:",
     `u = ${u}, dv = ${dv}`,
-    `du = ${du}, v = ∫${dv} d${variable} = ${v}`,
+    `du = ${du}, v ≈ ${vApprox}`,
     "Formula: ∫ u dv = u·v - ∫ v du",
-    `Result: ${u} * ${v} - ∫(${v}) * (${du}) d${variable}`
+    `Result: ${u} * (${vApprox}) - ∫(${vApprox}) * (${du}) d${variable}`
   ].join("\n");
 }
 
