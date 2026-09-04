@@ -349,6 +349,23 @@ if (expr.startsWith("stokes(")) {
   return;
 }
 
+if (expr.startsWith("integrationByParts(")) {
+  // Syntax: integrationByParts(u, dv, variable)
+  const parts = expr.match(/^integrationByParts\((.*),\s*(.*),\s*(\w+)\)$/s);
+  if (parts) {
+    const u = parts[1];
+    const dv = parts[2];
+    const variable = parts[3];
+    solvedMessage = explainIntegrationByParts(u, dv, variable);
+    awardProgress(50, 'Integration by parts applied!', 'calculus2');
+    resultEl.textContent = solvedMessage;
+    return;
+  }
+  resultEl.textContent = 'Use syntax: integrationByParts(u, dv, variable)';
+  setStatus('Syntax check', 'warning');
+  return;
+}
+
     if (expr.startsWith("volumeOfRevolution(")) {
       const parts = expr.match(/^volumeOfRevolution\((.*),\s*(\w+),\s*([-\d.]+),\s*([-\d.]+)\)$/s);
       if (parts) {
