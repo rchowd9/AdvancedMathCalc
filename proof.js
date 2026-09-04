@@ -865,3 +865,19 @@ function detectBaseCase(structure) {
   }
   return 'ε';
 }
+
+function extractSubstructures(structure) {
+  const matches = structure.match(/\(([^()]+)\)/g);
+  if (!matches) return [structure];
+  return matches.map(m => m.replace(/[()]/g, '').trim());
+}
+
+function evaluateStructuralClaim(claim, structure) {
+  try {
+    const replaced = claim.replace(/structure/g, `(${structure})`);
+    const simplified = mathInstance.simplify(replaced).toString();
+    return simplified !== 'false' && simplified !== '0';
+  } catch {
+    return false;
+  }
+}
