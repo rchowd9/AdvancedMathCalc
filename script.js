@@ -1029,6 +1029,18 @@ function explainStokesTheorem(F, surface) {
   ].join("\n");
 }
 
+function explainIntegrationByParts(u, dv, variable) {
+  const du = mathInstance.derivative(u, variable).toString();
+  const v = mathInstance.integrate(dv, variable).toString();
+  return [
+    "Integration by Parts:",
+    `u = ${u}, dv = ${dv}`,
+    `du = ${du}, v = ∫${dv} d${variable} = ${v}`,
+    "Formula: ∫ u dv = u·v - ∫ v du",
+    `Result: ${u} * ${v} - ∫(${v}) * (${du}) d${variable}`
+  ].join("\n");
+}
+
 function solveNonlinearSystem(equations, variables, initialGuess) {
   const maxIter = 20;
   const eps = 1e-6;
