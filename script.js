@@ -333,6 +333,22 @@ if (expr.startsWith("solveSystemNL(")) {
   return;
 }
 
+if (expr.startsWith("stokes(")) {
+  // Syntax: stokes(F(x,y,z), surface)
+  const parts = expr.match(/^stokes\((.*),\s*(.*)\)$/s);
+  if (parts) {
+    const F = parts[1];
+    const surface = parts[2];
+    solvedMessage = explainStokesTheorem(F, surface);
+    awardProgress(60, 'Stokes’ theorem applied!', 'calculus3');
+    resultEl.textContent = solvedMessage;
+    return;
+  }
+  resultEl.textContent = 'Use syntax: stokes(F(x,y,z), surface)';
+  setStatus('Syntax check', 'warning');
+  return;
+}
+
     if (expr.startsWith("volumeOfRevolution(")) {
       const parts = expr.match(/^volumeOfRevolution\((.*),\s*(\w+),\s*([-\d.]+),\s*([-\d.]+)\)$/s);
       if (parts) {
