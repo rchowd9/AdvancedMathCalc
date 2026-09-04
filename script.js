@@ -316,6 +316,23 @@ if (expr.startsWith("solveSystemNL(")) {
       }
     }
 
+    if (expr.startsWith("greens(")) {
+  // Syntax: greens(P(x,y), Q(x,y), region)
+  const parts = expr.match(/^greens\((.*),\s*(.*),\s*(.*)\)$/s);
+  if (parts) {
+    const P = parts[1];
+    const Q = parts[2];
+    const region = parts[3];
+    solvedMessage = explainGreensTheorem(P, Q, region);
+    awardProgress(55, 'Green’s theorem applied!', 'calculus3');
+    resultEl.textContent = solvedMessage;
+    return;
+  }
+  resultEl.textContent = 'Use syntax: greens(P(x,y), Q(x,y), region)';
+  setStatus('Syntax check', 'warning');
+  return;
+}
+
     if (expr.startsWith("volumeOfRevolution(")) {
       const parts = expr.match(/^volumeOfRevolution\((.*),\s*(\w+),\s*([-\d.]+),\s*([-\d.]+)\)$/s);
       if (parts) {
