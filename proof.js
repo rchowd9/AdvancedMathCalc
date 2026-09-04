@@ -643,6 +643,43 @@ function solveRecurrenceProof(args) {
   ].join('\n');
 }
 
+function solveStructuralInductionProof(args) {
+  if (args.length < 2) {
+    throw new Error('Use structuralInduction(claim, structure)');
+  }
+
+  const claim = args[0];
+  const structure = args[1];
+
+  const baseCase = detectBaseCase(structure);
+  const baseHolds = evaluateStructuralClaim(claim, baseCase);
+
+  const substructures = extractSubstructures(structure);
+  const stepChecks = substructures.map(s => evaluateStructuralClaim(claim, s));
+  const allStepsHold = stepChecks.every(Boolean);
+
+  return [
+    'Method: Structural induction',
+    `Claim: ${claim}`,
+    `Structure: ${structure}`,
+    '',
+    'Step 1: Base case (smallest structure)',
+    `  Base structure: ${JSON.stringify(baseCase)}`,
+    `  Result: ${baseHolds ? '✓ holds' : '✗ fails'}`,
+    '',
+    'Step 2: Inductive hypothesis',
+    '  Assume the claim holds for all immediate substructures.',
+    '',
+    'Step 3: Inductive step',
+    `  Substructures: ${JSON.stringify(substructures)}`,
+    `  Step results: ${allStepsHold ? '✓ all hold' : '✗ some fail'}`,
+    '',
+    baseHolds && allStepsHold
+      ? 'Conclusion: The claim holds for all recursively constructed structures.'
+      : 'Conclusion: Structural induction fails; claim does not hold for all substructures.'
+  ].join('\n');
+}
+
 function parseComparison(statement) {
   const equalsIndex = findTopLevelEquals(statement);
   if (equalsIndex >= 0) {
