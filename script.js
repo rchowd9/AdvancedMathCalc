@@ -1000,6 +1000,22 @@ function findRootsInInterval(fnStr, variable, lower, upper, samples = 200) {
   return roots;
 }
 
+function explainGreensTheorem(P, Q, region) {
+  return [
+    "Green’s Theorem:",
+    `Vector field F = <${P}, ${Q}>`,
+    `Region: ${region}`,
+    "Statement: ∬_R (∂Q/∂x - ∂P/∂y) dA = ∮_∂R (P dx + Q dy)",
+    "Step 1: Compute ∂Q/∂x and ∂P/∂y",
+    `∂Q/∂x = ${mathInstance.derivative(Q, 'x').toString()}`,
+    `∂P/∂y = ${mathInstance.derivative(P, 'y').toString()}`,
+    "Step 2: Form integrand (∂Q/∂x - ∂P/∂y)",
+    `= ${mathInstance.simplify(`(${mathInstance.derivative(Q,'x')}) - (${mathInstance.derivative(P,'y')})`).toString()}`,
+    "Step 3: Integrate over region R (symbolic region handling not implemented, conceptual only).",
+    "Conclusion: Green’s theorem relates the double integral of curl(F) over R to the line integral around ∂R."
+  ].join("\n");
+}
+
 function solveNonlinearSystem(equations, variables, initialGuess) {
   const maxIter = 20;
   const eps = 1e-6;
