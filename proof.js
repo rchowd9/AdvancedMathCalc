@@ -145,6 +145,8 @@ function solveInductionProof(argumentsList) {
   ].join('\n');
 }
 
+
+
 function solveContrapositiveProof(statement) {
   const arrowIndex = findTopLevelArrow(statement);
   if (arrowIndex < 0) {
@@ -581,7 +583,65 @@ function solveGeneralCombinatorialProof(identity) {
   ].join('\n');
 }
 
+function solveRecurrenceProof(args) {
+  if (args.length < 3) {
+    throw new Error('Use recurrence(T(n) = T(n-1) + ..., variable, baseValue)');
+  }
 
+  const recurrence = args[0];
+  const variable = args[1].trim();
+  const baseValue = Number(args[2]);
+
+  if (!/^\w+$/.test(variable)) {
+    throw new Error('Recurrence variable must be a simple name.');
+  }
+  if (!Number.isFinite(baseValue)) {
+    throw new Error('Base value must be numeric.');
+  }
+
+  const eqIndex = findTopLevelEquals(recurrence);
+  if (eqIndex < 0) {
+    throw new Error('Recurrence must contain an equality, e.g. T(n) = T(n-1) + 2');
+  }
+
+  const left = recurrence.slice(0, eqIndex).trim();
+  const right = recurrence.slice(eqIndex + 1).trim();
+
+  const baseScope = { [variable]: baseValue };
+  let baseLeft, baseRight;
+  try {
+    baseLeft = mathInstance.evaluate(left, baseScope);
+    baseRight = mathInstance.evaluate(right, baseScope);
+  } catch {
+    throw new Error('Could not evaluate base case.');
+  }
+  const baseHolds = Math.abs(baseLeft - baseRight) < 1e-9;
+
+  const stepValues = [baseValue + 1, baseValue + 2, baseValue + 3];
+  const stepChecks = stepValues.map(v => {
+    const scope = { [variable]: v };
+    try {
+      const lv = mathInstance.evaluate(left, scope);
+      const rv = mathInstance.evaluate(right, scope);
+      return Math.abs(lv - rv) < 1e-9;
+    } catch {
+      return false;
+    }
+  });
+
+  const allStepsHold = stepChecks.every(Boolean);
+
+  return [
+    'Method: Recurrence relation proof',
+    `Recurrence: ${left} = ${right}`,
+    `Variable: ${variable}`,
+    `Base case (${variable} = ${baseValue}): ${baseHolds ? '✓ holds' : '✗ fails'}`,
+    `Step checks (${stepValues.join(', ')}): ${allStepsHold ? '✓ all hold' : '✗ some fail'}`,
+    baseHolds && allStepsHold
+      ? 'Conclusion: Recurrence is consistent across tested values.'
+      : 'Conclusion: Recurrence fails at one or more tested values.'
+  ].join('\n');
+}
 
 function parseComparison(statement) {
   const equalsIndex = findTopLevelEquals(statement);
