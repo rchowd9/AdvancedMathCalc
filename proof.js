@@ -855,3 +855,13 @@ function findTopLevelEquals(statement) {
 
   return -1;
 }
+
+function detectBaseCase(structure) {
+  if (structure === '[]' || structure === '{}' || structure === 'ε') {
+    return structure;
+  }
+  if (/^\w+$/.test(structure)) {
+    return structure;
+  }
+  return 'ε';
+}
