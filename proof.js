@@ -13,7 +13,9 @@ window.PROOF_MODE_NAMES = new Set([
   'disprove',
   'proofbydivisibility', 'divisibility',
   'pigeonholeprinciple', 'pigeonhole',
-  'combinatorialproof', 'combinatorial'
+  'combinatorialproof', 'combinatorial',
+  'recurrence',
+  'structuralinduction'
 ]);
 
 function solveProof(input) {
