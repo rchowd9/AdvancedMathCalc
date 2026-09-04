@@ -1016,6 +1016,19 @@ function explainGreensTheorem(P, Q, region) {
   ].join("\n");
 }
 
+function explainStokesTheorem(F, surface) {
+  return [
+    "Stokes’ Theorem:",
+    `Vector field F = ${F}`,
+    `Surface: ${surface}`,
+    "Statement: ∬_S (curl F) · dS = ∮_∂S F · dr",
+    "Step 1: Compute curl(F) = ∇ × F",
+    "Step 2: Integrate curl(F) over surface S",
+    "Step 3: Relate to line integral of F around boundary ∂S",
+    "Conclusion: Stokes’ theorem generalizes Green’s theorem to 3D surfaces."
+  ].join("\n");
+}
+
 function solveNonlinearSystem(equations, variables, initialGuess) {
   const maxIter = 20;
   const eps = 1e-6;
