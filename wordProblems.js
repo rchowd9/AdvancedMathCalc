@@ -38,3 +38,30 @@ function solveWordProblem(input) {
     "Conclusion: Word problem solved using automatic classification + symbolic reasoning."
   ].join("\n");
 }
+
+function classifyWordProblem(text) {
+  const lower = text.toLowerCase();
+
+  if (lower.includes("rate") || lower.includes("speed") || lower.includes("distance") || lower.includes("time")) {
+    return "Rates / Motion";
+  }
+  if (lower.includes("percent") || lower.includes("interest") || lower.includes("tax") || lower.includes("discount")) {
+    return "Finance / Percentage";
+  }
+  if (lower.includes("area") || lower.includes("perimeter") || lower.includes("volume")) {
+    return "Geometry";
+  }
+  if (lower.includes("probability") || lower.includes("chance") || lower.includes("odds")) {
+    return "Probability";
+  }
+  if (lower.includes("mixture") || lower.includes("solution") || lower.includes("concentration")) {
+    return "Mixture Problems";
+  }
+  if (lower.includes("work") || lower.includes("together")) {
+    return "Work Problems";
+  }
+  if (lower.includes("age")) {
+    return "Age Problems";
+  }
+  return "General Algebra";
+}
