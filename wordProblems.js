@@ -72,3 +72,24 @@ function extractNumbersAndVariables(text) {
 
   return { numbers, variables };
 }
+
+function solveByCategory(category, data, text) {
+  switch (category) {
+    case "Rates / Motion":
+      return solveRatesProblem(data, text);
+    case "Finance / Percentage":
+      return solveFinanceProblem(data, text);
+    case "Geometry":
+      return solveGeometryProblem(data, text);
+    case "Probability":
+      return solveProbabilityProblem(data, text);
+    case "Mixture Problems":
+      return solveMixtureProblem(data, text);
+    case "Work Problems":
+      return solveWorkProblem(data, text);
+    case "Age Problems":
+      return solveAgeProblem(data, text);
+    default:
+      return solveGeneralAlgebraProblem(data, text);
+  }
+}
