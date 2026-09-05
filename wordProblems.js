@@ -65,3 +65,10 @@ function classifyWordProblem(text) {
   }
   return "General Algebra";
 }
+
+function extractNumbersAndVariables(text) {
+  const numbers = (text.match(/-?\d+(\.\d+)?/g) || []).map(Number);
+  const variables = (text.match(/[a-zA-Z]+/g) || []).filter(v => isNaN(v));
+
+  return { numbers, variables };
+}
