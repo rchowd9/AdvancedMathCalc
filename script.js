@@ -297,7 +297,12 @@ if (expr.startsWith("solveSystemNL(")) {
       }
     }
 
-
+    if (expr.startsWith("wordProblem(") || expr.startsWith("solveWordProblem(") || expr.startsWith("storyProblem(") || expr.startsWith("wp(")) {
+  solvedMessage = solveWordProblem(expr);
+  awardProgress(40, 'Word problem solved!', 'wordproblems');
+  resultEl.textContent = solvedMessage;
+  return;
+}
 
     if (expr.startsWith("tripleIntegral(")) {
       const parts = expr.match(/tripleIntegral\((.*),\s*x=(\d+)\.\.(\d+),\s*y=(\d+)\.\.(\d+),\s*z=(\d+)\.\.(\d+),\s*steps=(\d+)\)/);
