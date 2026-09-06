@@ -141,3 +141,11 @@ function splitTopLevel(statement) {
   parts.push(statement.slice(start).trim());
   return parts;
 }
+
+window.triangleCongruence = (...args) => solveGeometryProof(`triangleCongruence(${args.join(", ")})`);
+window.triangleSimilarity = (...args) => solveGeometryProof(`triangleSimilarity(${args.join(", ")})`);
+window.pythagoras = (...args) => solveGeometryProof(`pythagoras(${args.join(", ")})`);
+window.circleTheorem = (...args) => solveGeometryProof(`circleTheorem(${args.join(", ")})`);
+window.parallelLines = (...args) => solveGeometryProof(`parallelLines(${args.join(", ")})`);
+window.coordinateGeometry = (...args) => solveGeometryProof(`coordinateGeometry(${args.join(", ")})`);
+window.polygonAngles = (...args) => solveGeometryProof(`polygonAngles(${args.join(", ")})`);
