@@ -59,6 +59,7 @@ function solveTriangleCongruenceProof(args) {
 }
 
 function solveTriangleSimilarityProof(args) {
+  args = args.map(normalizeGeometrySymbols);
   return [
     "Method: Triangle Similarity",
     `Claim: ${args.join(", ")}`,
