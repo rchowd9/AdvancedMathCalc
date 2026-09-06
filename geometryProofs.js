@@ -42,6 +42,12 @@ function solveGeometryProof(input) {
   throw new Error("Unknown geometry proof method.");
 }
 
+function normalizeGeometrySymbols(arg) {
+  return arg
+    .replace(/∠/g, "angle")
+    .replace(/°/g, "deg");
+}
+
 function solveTriangleCongruenceProof(args) {
   return [
     "Method: Triangle Congruence",
