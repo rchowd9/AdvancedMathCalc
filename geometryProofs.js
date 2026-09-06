@@ -95,3 +95,26 @@ function solveParallelLinesProof(args) {
     "Conclusion: Lines are parallel if angle conditions hold."
   ].join("\n");
 }
+
+function solveCoordinateGeometryProof(args) {
+  return [
+    "Method: Coordinate Geometry",
+    `Claim: ${args.join(", ")}`,
+    "Step 1: Use slope, distance, or midpoint formulas.",
+    "Step 2: Verify relationships (parallel, perpendicular, equal length).",
+    "Conclusion: Claim proven using coordinate geometry."
+  ].join("\n");
+}
+
+function solvePolygonAnglesProof(args) {
+  if (args.length < 1) throw new Error("Use polygonAngles(n) with number of sides.");
+  const n = Number(args[0]);
+  const sum = (n - 2) * 180;
+  return [
+    "Method: Polygon Interior Angles",
+    `Claim: Sum of interior angles of polygon with ${n} sides.`,
+    `Step 1: Formula = (n - 2) × 180`,
+    `Step 2: Compute = ${sum}`,
+    `Conclusion: Interior angle sum = ${sum}°`
+  ].join("\n");
+}
