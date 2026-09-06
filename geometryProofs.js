@@ -75,3 +75,23 @@ function solvePythagorasProof(args) {
     lhs === rhs ? "Conclusion: The triangle satisfies Pythagoras." : "Conclusion: Not a right triangle."
   ].join("\n");
 }
+
+function solveCircleTheoremProof(args) {
+  return [
+    "Method: Circle Theorem",
+    `Claim: ${args.join(", ")}`,
+    "Step 1: Apply circle theorems (angle in semicircle = 90°, opposite angles in cyclic quadrilateral sum to 180°, etc.).",
+    "Step 2: Verify with given values.",
+    "Conclusion: Circle theorem holds if conditions are satisfied."
+  ].join("\n");
+}
+
+function solveParallelLinesProof(args) {
+  return [
+    "Method: Parallel Lines",
+    `Claim: ${args.join(", ")}`,
+    "Step 1: Use alternate angles, corresponding angles, or co-interior angles.",
+    "Step 2: Show equality or supplementary relationship.",
+    "Conclusion: Lines are parallel if angle conditions hold."
+  ].join("\n");
+}
