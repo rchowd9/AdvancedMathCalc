@@ -61,3 +61,17 @@ function solveTriangleSimilarityProof(args) {
     "Conclusion: Triangles are similar if criteria hold."
   ].join("\n");
 }
+
+function solvePythagorasProof(args) {
+  if (args.length < 3) throw new Error("Use pythagoras(a, b, c) with sides of a right triangle.");
+  const [a, b, c] = args.map(Number);
+  const lhs = a * a + b * b;
+  const rhs = c * c;
+  return [
+    "Method: Pythagoras Theorem",
+    `Claim: a² + b² = c²`,
+    `Step 1: Compute a² + b² = ${lhs}`,
+    `Step 2: Compute c² = ${rhs}`,
+    lhs === rhs ? "Conclusion: The triangle satisfies Pythagoras." : "Conclusion: Not a right triangle."
+  ].join("\n");
+}
