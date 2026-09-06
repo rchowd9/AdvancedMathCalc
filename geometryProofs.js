@@ -51,3 +51,13 @@ function solveTriangleCongruenceProof(args) {
     "Conclusion: Triangles are congruent if one of the criteria holds."
   ].join("\n");
 }
+
+function solveTriangleSimilarityProof(args) {
+  return [
+    "Method: Triangle Similarity",
+    `Claim: ${args.join(", ")}`,
+    "Step 1: Check similarity criteria (AA, SAS, SSS).",
+    "Step 2: Verify proportional sides or equal angles.",
+    "Conclusion: Triangles are similar if criteria hold."
+  ].join("\n");
+}
