@@ -73,6 +73,15 @@ evalBtn.addEventListener('click', () => {
       return;
     }
 
+    const geometryNameMatch = expr.match(/^([a-zA-Z]+)\(/);
+const geometryModeNames = window.GEOMETRY_PROOF_MODE_NAMES ?? new Set();
+if (geometryNameMatch && geometryModeNames.has(geometryNameMatch[1].toLowerCase())) {
+  solvedMessage = solveGeometryProof(expr);
+  awardProgress(45, 'Geometry proof complete!', 'geometry');
+  resultEl.textContent = solvedMessage;
+  return;
+}
+
     if (expr.startsWith("derivative(")) {
       const parts = expr.match(/derivative\((.*),\s*(\w+)\)/);
       if (parts) {
