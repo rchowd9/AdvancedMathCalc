@@ -118,3 +118,19 @@ function solvePolygonAnglesProof(args) {
     `Conclusion: Interior angle sum = ${sum}°`
   ].join("\n");
 }
+
+function splitTopLevel(statement) {
+  const parts = [];
+  let start = 0;
+  let depth = 0;
+  for (let index = 0; index < statement.length; index++) {
+    if ('(['.includes(statement[index])) depth += 1;
+    if ([')', ']'].includes(statement[index])) depth -= 1;
+    if (statement[index] === ',' && depth === 0) {
+      parts.push(statement.slice(start, index).trim());
+      start = index + 1;
+    }
+  }
+  parts.push(statement.slice(start).trim());
+  return parts;
+}
