@@ -41,3 +41,13 @@ function solveGeometryProof(input) {
 
   throw new Error("Unknown geometry proof method.");
 }
+
+function solveTriangleCongruenceProof(args) {
+  return [
+    "Method: Triangle Congruence",
+    `Claim: ${args.join(", ")}`,
+    "Step 1: Check congruence criteria (SSS, SAS, ASA, RHS).",
+    "Step 2: Verify sides/angles match.",
+    "Conclusion: Triangles are congruent if one of the criteria holds."
+  ].join("\n");
+}
