@@ -9,7 +9,7 @@ describe('word problem solver', () => {
   it('solves a multi-step mixture problem', () => {
     const result = solveWordProblem('A chemist mixes 18 liters of 20% salt solution with 12 liters of 50% salt solution. How much salt is in the final mixture?');
     expect(result.summary).toContain('salt');
-    expect(result.answer).toBe(13.2);
+    expect(result.answer).toBe(9.6);
   });
 
   it('solves a combined rate problem', () => {

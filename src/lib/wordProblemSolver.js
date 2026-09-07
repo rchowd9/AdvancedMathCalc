@@ -1,11 +1,11 @@
 export function classifyWordProblem(text) {
   const lower = text.toLowerCase();
 
-  if (/(speed|rate|distance|travel|train|car|boat|miles|km|hours?)/.test(lower)) return 'motion';
+  if (/(work|together|alone|job|machine|pipe|pump)/.test(lower)) return 'work';
+  if (/(speed|rate|distance|travel|train|car|boat|miles|km)/.test(lower)) return 'motion';
   if (/(percent|discount|tax|interest|profit|sale|commission|increase|decrease)/.test(lower)) return 'percent';
   if (/(area|perimeter|volume|rectangle|triangle|circle|cylinder|cone|radius|width|length|height)/.test(lower)) return 'geometry';
   if (/(mixture|solution|concentration|salt|acid|alcohol|water)/.test(lower)) return 'mixture';
-  if (/(work|together|alone|job|machine|pipe|pump|hours?)/.test(lower)) return 'work';
   if (/(age|older|younger|sum of ages|current age)/.test(lower)) return 'age';
   if (/(probability|chance|odds|random|at least|at most)/.test(lower)) return 'probability';
 
@@ -76,11 +76,11 @@ export function solveWordProblem(input) {
         return {
           category,
           answer: formatNumber(totalSalt),
-          summary: `The final mixture contains ${formatNumber(totalSalt)} units of solute and a concentration of ${formatNumber(finalConcentration)}%.`,
+          summary: `The final mixture contains ${formatNumber(totalSalt)} liters of salt, and the overall concentration is ${formatNumber(finalConcentration)}%.`,
           steps: [
-            'Compute the solute in each component',
-            'Add the solute amounts together',
-            'Divide by the total volume to get the final concentration'
+            'Compute the salt in each solution: amount × concentration',
+            'Add the salt amounts together',
+            'Use the total volume to find the final concentration'
           ]
         };
       }

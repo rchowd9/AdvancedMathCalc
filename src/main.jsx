@@ -7,6 +7,9 @@ const sampleProblems = [
   'A train travels 180 miles in 3 hours. What is its average speed?',
   'A chemist mixes 18 liters of 20% salt solution with 12 liters of 50% salt solution. How much salt is in the final mixture?',
   'Machine A can complete a job in 6 hours and machine B can complete the same job in 4 hours. How long will they take together?',
+  'A boat travels 36 miles downstream in 3 hours and 24 miles upstream in 4 hours. What is the speed of the current?',
+  'A student scored 84 on a test after improving by 12 points from last week. What was the old score?',
+  'The sum of two numbers is 48, and their difference is 8. What are the numbers?',
   'Two angles in a triangle measure 38° and 72°. What is the third angle?',
   'A store is offering 15% off a $240 jacket. What is the sale price?'
 ];
