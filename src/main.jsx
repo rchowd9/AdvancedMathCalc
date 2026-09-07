@@ -1,289 +1,274 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import './styles.css';
-import { solveWordProblem } from './lib/wordProblemSolver';
+import '../style.css';
 
-const sampleProblems = [
-  'A train travels 180 miles in 3 hours. What is its average speed?',
-  'A chemist mixes 18 liters of 20% salt solution with 12 liters of 50% salt solution. How much salt is in the final mixture?',
-  'Machine A can complete a job in 6 hours and machine B can complete the same job in 4 hours. How long will they take together?',
-  'A boat travels 36 miles downstream in 3 hours and 24 miles upstream in 4 hours. What is the speed of the current?',
-  'A student scored 84 on a test after improving by 12 points from last week. What was the old score?',
-  'The sum of two numbers is 48, and their difference is 8. What are the numbers?',
-  'Two angles in a triangle measure 38° and 72°. What is the third angle?',
-  'A store is offering 15% off a $240 jacket. What is the sale price?'
-];
+const loadLegacyScripts = () => {
+  if (window.__mathcalcLegacyLoaded) return;
+  window.__mathcalcLegacyLoaded = true;
 
-const challengeExamples = [
-  'derivative(sin(x), x)',
-  'integrate(x^2, x, 0, 1)',
-  'limit(sin(x)/x, x, 0)',
-  'det([[1,2],[3,4]])',
-  'taylor(sin(x), x, 0, 4)',
-  'stats([4, 8, 15, 16, 23, 42])',
-  'proof((x + 1)^2 = x^2 + 2*x + 1)',
-  'pigeonhole(100, 50)'
-];
-
-const proofExamples = [
-  'proof((x + 1)^2 = x^2 + 2*x + 1)',
-  'proofByInduction(2^n >= n + 1, n, 0)',
-  'contrapositive(n^2 % 2 = 0 => n % 2 = 0)',
-  'proofByContradiction(x + 1 = x)'
-];
-
-function formatMathResult(value) {
-  if (typeof value === 'number') return Number.isInteger(value) ? value.toString() : value.toFixed(4).replace(/0+$/, '').replace(/\.$/, '');
-  if (Array.isArray(value)) return value.map((item) => formatMathResult(item)).join(', ');
-  return String(value);
-}
+  const legacyScripts = ['/wordProblems.js', '/proof.js', '/geometryProofs.js', '/script.js'];
+  legacyScripts.forEach((src) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = false;
+    document.body.appendChild(script);
+  });
+};
 
 function App() {
-  const [activeTab, setActiveTab] = useState('calculator');
-  const [expression, setExpression] = useState('derivative(sin(x), x)');
-  const [calculatorResult, setCalculatorResult] = useState('Your calculator output will appear here.');
-  const [wordPrompt, setWordPrompt] = useState(sampleProblems[0]);
-  const [wordResult, setWordResult] = useState('');
-  const [plotExpr, setPlotExpr] = useState('sin(x)');
-  const [plotVariable, setPlotVariable] = useState('x');
-  const [plotMin, setPlotMin] = useState(-10);
-  const [plotMax, setPlotMax] = useState(10);
-  const plotRef = useRef(null);
-
-  const currentWordResult = useMemo(() => {
-    if (!wordResult) return 'Choose a word problem and solve it to see the breakdown here.';
-    return wordResult;
-  }, [wordResult]);
-
-  const solveExpression = () => {
-    const clean = expression.trim();
-    if (!clean) {
-      setCalculatorResult('Please enter an expression first.');
-      return;
-    }
-
-    try {
-      const mathApi = window.math || window.Math;
-      if (!mathApi || typeof mathApi.evaluate !== 'function') {
-        setCalculatorResult('Math.js is not loaded in this browser session.');
-        return;
-      }
-
-      const evaluated = mathApi.evaluate(clean);
-      setCalculatorResult(`Expression: ${clean}\nResult: ${formatMathResult(evaluated)}`);
-    } catch (error) {
-      setCalculatorResult(`Could not evaluate “${clean}”.\n${error.message}`);
-    }
-  };
-
-  const solveWord = () => {
-    const parsed = solveWordProblem(wordPrompt);
-    setWordResult(`${parsed.summary}\n\nCategory: ${parsed.category}\nAnswer: ${parsed.answer ?? 'Not enough information'}\nSteps:\n- ${parsed.steps.join('\n- ')}`);
-  };
-
-  const loadWordExample = (example) => {
-    setWordPrompt(example);
-    const parsed = solveWordProblem(example);
-    setWordResult(`${parsed.summary}\n\nCategory: ${parsed.category}\nAnswer: ${parsed.answer ?? 'Not enough information'}\nSteps:\n- ${parsed.steps.join('\n- ')}`);
-  };
-
   useEffect(() => {
-    if (!plotRef.current || activeTab !== 'graphs' || !window.Plotly) return;
-
-    const xValues = Array.from({ length: 400 }, (_, index) => {
-      const t = (index / 399) * (plotMax - plotMin) + plotMin;
-      return t;
-    });
-
-    const yValues = xValues.map((x) => {
-      try {
-        if (!window.math || typeof window.math.evaluate !== 'function') return 0;
-        return Number(window.math.evaluate(plotExpr, { [plotVariable]: x }));
-      } catch {
-        return 0;
-      }
-    });
-
-    const layout = {
-      paper_bgcolor: '#0b1220',
-      plot_bgcolor: '#0b1220',
-      font: { color: '#dfeeff' },
-      margin: { l: 40, r: 20, t: 20, b: 40 },
-      xaxis: { gridcolor: '#24314d', zerolinecolor: '#4b5f8e' },
-      yaxis: { gridcolor: '#24314d', zerolinecolor: '#4b5f8e' }
-    };
-
-    window.Plotly.newPlot(plotRef.current, [{ x: xValues, y: yValues, type: 'scatter', mode: 'lines', line: { color: '#60a5fa', width: 2 } }], layout, { responsive: true });
-
-    const handleResize = () => window.Plotly.Plots.resize(plotRef.current);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [activeTab, plotExpr, plotVariable, plotMin, plotMax]);
+    loadLegacyScripts();
+  }, []);
 
   return (
     <div className="app-shell">
       <header className="topbar">
-        <div>
-          <p className="eyebrow">Math Quest</p>
-          <h1>Brain Boost Lab</h1>
+        <div className="brand-block">
+          <div className="brand-mark">M</div>
+          <div>
+            <p className="eyebrow">Math Quest</p>
+            <h1>Brain Boost Lab</h1>
+          </div>
+        </div>
+
+        <div className="player-card">
+          <span className="level-badge" id="levelBadge">Lvl 1</span>
+          <div>
+            <strong>Player One</strong>
+            <small id="xpLabel">0 XP</small>
+          </div>
         </div>
       </header>
 
-      <nav className="tab-row" aria-label="Math tools navigation">
-        {[
-          ['calculator', 'Calculator'],
-          ['proofs', 'Proofs'],
-          ['graphs', 'Graphs'],
-          ['word', 'Word Problems']
-        ].map(([key, label]) => (
-          <button
-            key={key}
-            className={activeTab === key ? 'tab active' : 'tab'}
-            onClick={() => setActiveTab(key)}
-            type="button"
-          >
-            {label}
-          </button>
-        ))}
-      </nav>
+      <section className="hud" aria-label="Player status">
+        <div className="hud-item">
+          <span>XP</span>
+          <strong id="xpValue">0</strong>
+        </div>
+        <div className="hud-item">
+          <span>Streak</span>
+          <strong id="streakValue">1</strong>
+        </div>
+        <div className="hud-item">
+          <span>Level</span>
+          <strong id="levelValue">1</strong>
+        </div>
+        <div className="hud-item">
+          <span>Quests</span>
+          <strong id="missionProgress">0/3</strong>
+        </div>
+      </section>
 
-      {activeTab === 'calculator' && (
-        <main className="workspace">
-          <section className="panel">
-            <h2>Expression Arena</h2>
-            <textarea
-              value={expression}
-              onChange={(event) => setExpression(event.target.value)}
-              rows={5}
-              placeholder="Examples: derivative(sin(x), x); integrate(x^2, x, 0, 1); det([[1,2],[3,4]])"
-            />
+      <section className="quest-panel card">
+        <div className="card-header">
+          <div>
+            <p className="eyebrow">Daily mission</p>
+            <h2>Solve 3 challenges</h2>
+          </div>
+          <button id="randomChallengeBtn" className="secondary-btn" type="button">Random mission</button>
+        </div>
 
-            <div className="actions">
-              <button onClick={solveExpression}>Solve it!</button>
-              <button className="ghost" onClick={() => setExpression('')}>Reset</button>
+        <div className="challenge-list" aria-label="Quick math challenges">
+          <button className="challenge-chip" data-expression="derivative(sin(x), x)" type="button">Derivative drill</button>
+          <button className="challenge-chip" data-expression="integrate(x^2, x, 0, 1)" type="button">Integral launch</button>
+          <button className="challenge-chip" data-expression="limit(sin(x)/x, x, 0)" type="button">Limit test</button>
+          <button className="challenge-chip" data-expression="det([[1,2],[3,4]])" type="button">Matrix power</button>
+          <button className="challenge-chip" data-expression="taylor(sin(x), x, 0, 4)" type="button">Taylor series</button>
+          <button className="challenge-chip" data-expression="stats([4, 8, 15, 16, 23, 42])" type="button">Stats check</button>
+          <button className="challenge-chip" data-expression="combinations(6, 3)" type="button">Combinatorics</button>
+          <button className="challenge-chip" data-expression="volumeOfRevolution(x^2, x, 0, 2)" type="button">Solid of revolution</button>
+          <button className="challenge-chip" data-expression="proof((x + 1)^2 = x^2 + 2*x + 1)" type="button">Proof drill</button>
+          <button className="challenge-chip" data-expression="pigeonhole(100, 50)" type="button">Pigeonhole principle</button>
+          <button className="challenge-chip" data-expression="combinatorial(C(n,k)=C(n,n-k))" type="button">Combinatorial proof</button>
+        </div>
+      </section>
+
+      <main className="layout">
+        <section className="card calculator-panel">
+          <div className="card-header">
+            <div>
+              <p className="eyebrow">Expression arena</p>
+              <h2>Build your move</h2>
             </div>
+          </div>
 
-            <div className="examples">
-              {challengeExamples.map((example) => (
-                <button key={example} className="example-chip" onClick={() => setExpression(example)}>
-                  {example}
-                </button>
-              ))}
+          <label htmlFor="expr">Enter expression:</label>
+          <textarea id="expr" rows="3" placeholder="Examples: derivative(sin(x), x); taylor(sin(x), x, 0, 4); proof((x+1)^2=x^2+2*x+1); pigeonhole(100,50); combinatorial(C(n,k)=C(n,n-k))" />
+
+          <div className="action-row">
+            <button id="evalBtn" type="button">Solve it!</button>
+            <button id="clearBtn" className="ghost-btn" type="button">Reset</button>
+          </div>
+        </section>
+
+        <aside className="card achievements-panel">
+          <div className="card-header compact">
+            <div>
+              <p className="eyebrow">Rewards</p>
+              <h2>Badges</h2>
             </div>
-          </section>
+          </div>
 
-          <section className="panel result-panel">
-            <h2>Quest Log</h2>
-            <pre>{calculatorResult}</pre>
-          </section>
-        </main>
-      )}
+          <ul className="achievement-list" id="achievementList">
+            <li className="achievement locked">
+              <span className="badge-icon">🌟</span>
+              <div>
+                <strong>Starter</strong>
+                <small>First correct solve</small>
+              </div>
+            </li>
+            <li className="achievement locked">
+              <span className="badge-icon">📈</span>
+              <div>
+                <strong>Graph Explorer</strong>
+                <small>Plot your first function</small>
+              </div>
+            </li>
+            <li className="achievement locked">
+              <span className="badge-icon">🧠</span>
+              <div>
+                <strong>Derivative Pro</strong>
+                <small>Complete a derivative challenge</small>
+              </div>
+            </li>
+            <li className="achievement locked">
+              <span className="badge-icon">🏆</span>
+              <div>
+                <strong>Math Master</strong>
+                <small>Earn 250 XP</small>
+              </div>
+            </li>
+            <li className="achievement locked">
+              <span className="badge-icon">🎨</span>
+              <div>
+                <strong>Renaissance Solver</strong>
+                <small>Use 6 different math categories</small>
+              </div>
+            </li>
+          </ul>
+        </aside>
+      </main>
 
-      {activeTab === 'proofs' && (
-        <main className="workspace">
-          <section className="panel">
-            <h2>Proof Studio</h2>
-            <div className="examples proofs-list">
-              {proofExamples.map((example) => (
-                <button key={example} className="example-chip" onClick={() => setCalculatorResult(`Proof input: ${example}`)}>
-                  {example}
-                </button>
-              ))}
-            </div>
-            <p className="muted">
-              This app accepts the original proof patterns from the project, including direct proofs, induction, contradiction, and contrapositive checks.
-            </p>
-            <pre className="small-output">{calculatorResult}</pre>
-          </section>
+      <section className="card result-panel">
+        <div className="result-header">
+          <h2>Quest Log</h2>
+          <span id="statusBadge" className="status-badge ready">Ready</span>
+        </div>
+        <pre id="result">Your next big win is waiting...</pre>
+      </section>
 
-          <section className="panel result-panel">
-            <h2>Proof Guide</h2>
-            <ul className="info-list">
+      <section className="card graph-section">
+        <div className="graph-heading">
+          <div>
+            <p className="eyebrow">Graph mode</p>
+            <h2>Plot a function</h2>
+          </div>
+          <button id="plotBtn" type="button">Plot it!</button>
+        </div>
+
+        <div className="graph-controls">
+          <label>
+            Function
+            <input id="plotExpr" type="text" defaultValue="sin(x)" placeholder="e.g. x^2 - 4" />
+          </label>
+          <label>
+            Variable
+            <input id="plotVariable" type="text" defaultValue="x" maxLength="10" />
+          </label>
+          <label>
+            From
+            <input id="plotMin" type="number" defaultValue="-10" step="any" />
+          </label>
+          <label>
+            To
+            <input id="plotMax" type="number" defaultValue="10" step="any" />
+          </label>
+        </div>
+
+        <div id="plot" aria-label="Function graph" />
+        <p id="plotStatus" className="plot-status" role="status" />
+      </section>
+
+      <section className="section examples-panel">
+        <h2>Quick examples</h2>
+        <div className="examples-grid">
+          <div className="examples-group">
+            <h3>Calculus</h3>
+            <ul>
+              <li>derivative(sin(x), x)</li>
+              <li>partial(x^2*y + y^3, x)</li>
+              <li>gradient(x^2*y + y^3, [x, y])</li>
+              <li>integrate(x^2, x, 0, 1)</li>
+              <li>limit(sin(x)/x, x, 0)</li>
+              <li>taylor(sin(x), x, 0, 4)</li>
+            </ul>
+          </div>
+          <div className="examples-group">
+            <h3>Algebra &amp; Linear Algebra</h3>
+            <ul>
+              <li>simplify((x+1)^2 - (x^2+2x+1))</li>
+              <li>solveEquation(x^2 - 4 = 0, x)</li>
+              <li>det([[1,2],[3,4]])</li>
+              <li>inv([[1,2],[3,4]])</li>
+              <li>eigenvalues([[2,1],[1,2]])</li>
+            </ul>
+          </div>
+          <div className="examples-group">
+            <h3>Sequences &amp; Statistics</h3>
+            <ul>
+              <li>sum(i^2, i, 1, 10)</li>
+              <li>product(i, i, 1, 6)</li>
+              <li>stats([4, 8, 15, 16, 23, 42])</li>
+            </ul>
+          </div>
+          <div className="examples-group">
+            <h3>Combinatorics &amp; Number Theory</h3>
+            <ul>
+              <li>factorial(6)</li>
+              <li>permutations(6, 3)</li>
+              <li>combinations(6, 3)</li>
+              <li>primeFactors(360)</li>
+              <li>gcd(48, 18)</li>
+              <li>lcm(4, 6)</li>
+            </ul>
+          </div>
+          <div className="examples-group">
+            <h3>Vectors &amp; Units</h3>
+            <ul>
+              <li>dot([1,2,3], [4,5,6])</li>
+              <li>cross([1,0,0], [0,1,0])</li>
+              <li>magnitude([3,4])</li>
+              <li>convert(5 km, mi)</li>
+            </ul>
+          </div>
+          <div className="examples-group">
+            <h3>Volume, Surface Area &amp; Boundary</h3>
+            <ul>
+              <li>volumeOfRevolution(x^2, x, 0, 2)</li>
+              <li>surfaceOfRevolution(x^2, x, 0, 2)</li>
+              <li>arcLength(x^2, x, 0, 2)</li>
+            </ul>
+          </div>
+          <div className="examples-group">
+            <h3>Proofs</h3>
+            <ul>
               <li>proof((x + 1)^2 = x^2 + 2*x + 1)</li>
               <li>proofByInduction(2^n &gt;= n + 1, n, 0)</li>
               <li>contrapositive(n^2 % 2 = 0 =&gt; n % 2 = 0)</li>
               <li>proofByContradiction(x + 1 = x)</li>
+              <li>proveInequality(x^2 + 1 &gt;= 2*x)</li>
+              <li>proofByBiconditional(n % 2 = 0 &lt;=&gt; n^2 % 2 = 0)</li>
+              <li>proofByCases(n^2 % 2 = 0, n, [2,4,6,8], [1,3,5,7])</li>
+              <li>proofByExhaustion(n^2 &gt;= n, n, [0,1,2,3,4])</li>
+              <li>disprove(x^2 &gt;= x)</li>
+              <li>proofByDivisibility(n^3 - n, 6, n, 1)</li>
             </ul>
-          </section>
-        </main>
-      )}
-
-      {activeTab === 'graphs' && (
-        <main className="workspace">
-          <section className="panel">
-            <h2>Graph Mode</h2>
-            <div className="graph-controls">
-              <label>
-                Function
-                <input value={plotExpr} onChange={(event) => setPlotExpr(event.target.value)} />
-              </label>
-              <label>
-                Variable
-                <input value={plotVariable} onChange={(event) => setPlotVariable(event.target.value)} />
-              </label>
-              <label>
-                Min
-                <input type="number" value={plotMin} onChange={(event) => setPlotMin(Number(event.target.value))} />
-              </label>
-              <label>
-                Max
-                <input type="number" value={plotMax} onChange={(event) => setPlotMax(Number(event.target.value))} />
-              </label>
-            </div>
-            <div ref={plotRef} className="plot-area" />
-          </section>
-
-          <section className="panel result-panel">
-            <h2>Graph Notes</h2>
-            <p className="muted">The graph panel supports live function plotting using Plotly when the browser has the graph library loaded.</p>
-          </section>
-        </main>
-      )}
-
-      {activeTab === 'word' && (
-        <main className="workspace">
-          <section className="panel">
-            <h2>Advanced word problems</h2>
-            <textarea
-              value={wordPrompt}
-              onChange={(event) => setWordPrompt(event.target.value)}
-              rows={5}
-              placeholder="Type a real-world problem here..."
-            />
-
-            <div className="actions">
-              <button onClick={solveWord}>Solve problem</button>
-              <button className="ghost" onClick={() => setWordPrompt('')}>Clear</button>
-            </div>
-
-            <div className="examples">
-              {sampleProblems.map((problem) => (
-                <button key={problem} className="example-chip" onClick={() => loadWordExample(problem)}>
-                  {problem.slice(0, 48)}{problem.length > 48 ? '…' : ''}
-                </button>
-              ))}
-            </div>
-          </section>
-
-          <section className="panel result-panel">
-            <h2>Solution</h2>
-            <pre>{currentWordResult}</pre>
-          </section>
-        </main>
-      )}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
-
-const ensureRoot = () => {
-  if (!document.getElementById('root')) {
-    const root = document.createElement('div');
-    root.id = 'root';
-    document.body.appendChild(root);
-  }
-};
-
-ensureRoot();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
