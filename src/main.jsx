@@ -200,8 +200,8 @@ function App() {
             <h2>Proof Guide</h2>
             <ul className="info-list">
               <li>proof((x + 1)^2 = x^2 + 2*x + 1)</li>
-              <li>proofByInduction(2^n >= n + 1, n, 0)</li>
-              <li>contrapositive(n^2 % 2 = 0 => n % 2 = 0)</li>
+              <li>proofByInduction(2^n &gt;= n + 1, n, 0)</li>
+              <li>contrapositive(n^2 % 2 = 0 =&gt; n % 2 = 0)</li>
               <li>proofByContradiction(x + 1 = x)</li>
             </ul>
           </section>
