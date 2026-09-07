@@ -2,17 +2,32 @@ import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import '../style.css';
 
-const loadLegacyScripts = () => {
-  if (window.__mathcalcLegacyLoaded) return;
-  window.__mathcalcLegacyLoaded = true;
-
-  const legacyScripts = ['/wordProblems.js', '/proof.js', '/geometryProofs.js', '/script.js'];
-  legacyScripts.forEach((src) => {
+const loadScript = (src) => {
+  return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.src = src;
     script.async = false;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error(`Failed to load ${src}`));
     document.body.appendChild(script);
   });
+};
+
+const loadLegacyScripts = async () => {
+  if (window.__mathcalcLegacyLoaded) return;
+  window.__mathcalcLegacyLoaded = true;
+
+  try {
+    await loadScript('https://cdn.jsdelivr.net/npm/mathjs@11.11.0/lib/browser/math.js');
+    await loadScript('https://cdn.plot.ly/plotly-2.35.2.min.js');
+    const legacyScripts = ['/wordProblems.js', '/proof.js', '/geometryProofs.js', '/script.js'];
+    for (const src of legacyScripts) {
+      await loadScript(src);
+    }
+  } catch (error) {
+    window.__mathcalcLegacyLoaded = false;
+    console.error(error);
+  }
 };
 
 function App() {
