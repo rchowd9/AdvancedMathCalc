@@ -89,6 +89,16 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 - **Plotly.js** — interactive graph plotting
 - **HTML + CSS** — UI
 
+## SQL schema
+
+The optional SQLite schema in `schema.sql` provides tables for player progress, calculation history, and unlocked achievements. It can be applied with:
+
+```bash
+sqlite3 mathcalc.db < schema.sql
+```
+
+The current browser app still stores progress in local storage; the schema is ready for a server or desktop persistence layer.
+
 ## 🚀 Live Demo
 
 If deployed on GitHub Pages, add your link here:
