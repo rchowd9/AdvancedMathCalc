@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import * as math from 'mathjs';
+import { all, create } from 'mathjs';
 import Plotly from 'plotly.js-dist-min';
 import '../style.css';
 
-window.math = math;
+window.math = {
+  create: (config) => create(all, config),
+};
 window.Plotly = Plotly;
 
 const loadScript = (src) => {
