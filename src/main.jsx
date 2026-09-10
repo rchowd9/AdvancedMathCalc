@@ -25,9 +25,9 @@ const loadLegacyScripts = async () => {
   window.__mathcalcLegacyLoaded = true;
 
   try {
-    const legacyScripts = ['/wordProblems.js', '/proof.js', '/geometryProofs.js', '/script.js'];
+    const legacyScripts = ['wordProblems.js', 'proof.js', 'geometryProofs.js', 'script.js'];
     for (const src of legacyScripts) {
-      await loadScript(src);
+      await loadScript(`${import.meta.env.BASE_URL}${src}`);
     }
   } catch (error) {
     window.__mathcalcLegacyLoaded = false;
