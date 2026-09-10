@@ -1,6 +1,11 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
+import * as math from 'mathjs';
+import Plotly from 'plotly.js-dist-min';
 import '../style.css';
+
+window.math = math;
+window.Plotly = Plotly;
 
 const loadScript = (src) => {
   return new Promise((resolve, reject) => {
@@ -18,8 +23,6 @@ const loadLegacyScripts = async () => {
   window.__mathcalcLegacyLoaded = true;
 
   try {
-    await loadScript('https://cdn.jsdelivr.net/npm/mathjs@11.11.0/lib/browser/math.js');
-    await loadScript('https://cdn.plot.ly/plotly-2.35.2.min.js');
     const legacyScripts = ['/wordProblems.js', '/proof.js', '/geometryProofs.js', '/script.js'];
     for (const src of legacyScripts) {
       await loadScript(src);
