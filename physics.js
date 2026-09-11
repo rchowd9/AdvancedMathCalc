@@ -1,0 +1,21 @@
+window.PHYSICS_MODE_NAMES = new Set([
+  'kinematics',
+  'newton2',
+  'workenergy',
+  'momentum',
+  'coulomb',
+  'ohm',
+  'power',
+  'gravitation',
+  'projectile',
+  'electricfield',
+  'magneticforce',
+  'lorentzforce',
+  'capacitor',
+  'inductor',
+  'flux',
+  'faraday',
+  'continuousforce',
+  'continuousmass',
+  'continuouscharge'
+]);
