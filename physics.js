@@ -40,3 +40,12 @@ function solvePhysics(input) {
     case 'power': return solvePower(args);
     case 'gravitation': return solveGravitation(args);
     case 'projectile': return solveProjectile(args);
+
+    // Electromagnetism
+    case 'electricfield': return solveElectricField(args);
+    case 'magneticforce': return solveMagneticForce(args);
+    case 'lorentzforce': return solveLorentzForce(args);
+    case 'capacitor': return solveCapacitor(args);
+    case 'inductor': return solveInductor(args);
+    case 'flux': return solveFlux(args);
+    case 'faraday': return solveFaraday(args);
