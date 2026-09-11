@@ -149,3 +149,31 @@ function solveCoulomb(args) {
     "Conclusion: Electrostatic force computed."
   ].join("\n");
 }
+
+// 6. Ohm’s Law: ohm(V, R)
+function solveOhm(args) {
+  if (args.length < 2) throw new Error("Use ohm(V, R)");
+  const [V, R] = args.map(Number);
+  const I = V / R;
+
+  return [
+    "Ohm’s Law",
+    `V = ${V} V, R = ${R} Ω`,
+    `I = V / R = ${I} A`,
+    "Conclusion: Current computed."
+  ].join("\n");
+}
+
+// 7. Power: power(V, I)
+function solvePower(args) {
+  if (args.length < 2) throw new Error("Use power(V, I)");
+  const [V, I] = args.map(Number);
+  const P = V * I;
+
+  return [
+    "Electric Power",
+    `V = ${V} V, I = ${I} A`,
+    `P = V·I = ${P} W`,
+    "Conclusion: Power computed."
+  ].join("\n");
+}
