@@ -211,3 +211,131 @@ function solveProjectile(args) {
     "Conclusion: Projectile motion solved."
   ].join("\n");
 }
+
+// Electric field of a point charge: electricField(q, r)
+function solveElectricField(args) {
+  if (args.length < 2) throw new Error("Use electricField(q, r)");
+  const [q, r] = args.map(Number);
+  const k = 8.99e9;
+  const E = k * q / (r * r);
+
+  return [
+    "Electric Field of a Point Charge",
+    `q = ${q} C, r = ${r} m`,
+    `E = k·q / r² = ${E} N/C`,
+    "Conclusion: Electric field magnitude computed."
+  ].join("\n");
+}
+
+// Magnetic force on a moving charge: magneticForce(q, v, B, thetaDeg)
+function solveMagneticForce(args) {
+  if (args.length < 4) throw new Error("Use magneticForce(q, v, B, thetaDeg)");
+  const [q, v, B, thetaDeg] = args.map(Number);
+  const theta = thetaDeg * Math.PI / 180;
+  const F = q * v * B * Math.sin(theta);
+
+  return [
+    "Magnetic Force on a Moving Charge",
+    `q = ${q} C, v = ${v} m/s, B = ${B} T, θ = ${thetaDeg}°`,
+    `F = q·v·B·sin(θ) = ${F} N`,
+    "Conclusion: Magnetic force computed."
+  ].join("\n");
+}
+
+// Lorentz force: lorentzForce(q, Ex, Ey, Ez, vx, vy, vz, Bx, By, Bz)
+function solveLorentzForce(args) {
+  if (args.length < 10) throw new Error("Use lorentzForce(q, Ex, Ey, Ez, vx, vy, vz, Bx, By, Bz)");
+  const [q, Ex, Ey, Ez, vx, vy, vz, Bx, By, Bz] = args.map(Number);
+
+  const Fx = q * (Ex + vy * Bz - vz * By);
+  const Fy = q * (Ey + vz * Bx - vx * Bz);
+  const Fz = q * (Ez + vx * By - vy * Bx);
+
+  return [
+    "Lorentz Force",
+    `q = ${q} C`,
+    `E = <${Ex}, ${Ey}, ${Ez}> V/m`,
+    `v = <${vx}, ${vy}, ${vz}> m/s`,
+    `B = <${Bx}, ${By}, ${Bz}> T`,
+    `F = q(E + v × B) = <${Fx}, ${Fy}, ${Fz}> N`,
+    "Conclusion: Lorentz force vector computed."
+  ].join("\n");
+}
+
+// Capacitor: capacitor(C, V)
+function solveCapacitor(args) {
+  if (args.length < 2) throw new Error("Use capacitor(C, V)");
+  const [C, V] = args.map(Number);
+  const Q = C * V;
+  const U = 0.5 * C * V * V;
+
+  return [
+    "Capacitor",
+    `C = ${C} F, V = ${V} V`,
+    `Charge: Q = C·V = ${Q} C`,
+    `Energy: U = ½·C·V² = ${U} J`,
+    "Conclusion: Capacitor charge and energy computed."
+  ].join("\n");
+}
+
+// Inductor: inductor(L, I)
+function solveInductor(args) {
+  if (args.length < 2) throw new Error("Use inductor(L, I)");
+  const [L, I] = args.map(Number);
+  const U = 0.5 * L * I * I;
+
+  return [
+    "Inductor",
+    `L = ${L} H, I = ${I} A`,
+    `Energy: U = ½·L·I² = ${U} J`,
+    "Conclusion: Inductor energy computed."
+  ].join("\n");
+}
+
+// Magnetic flux: flux(B, A, thetaDeg)
+function solveFlux(args) {
+  if (args.length < 3) throw new Error("Use flux(B, A, thetaDeg)");
+  const [B, A, thetaDeg] = args.map(Number);
+  const theta = thetaDeg * Math.PI / 180;
+  const phi = B * A * Math.cos(theta);
+
+  return [
+    "Magnetic Flux",
+    `B = ${B} T, A = ${A} m², θ = ${thetaDeg}°`,
+    `Φ = B·A·cos(θ) = ${phi} Wb`,
+    "Conclusion: Magnetic flux computed."
+  ].join("\n");
+}
+
+// Faraday’s Law: faraday(dFlux, dt)
+function solveFaraday(args) {
+  if (args.length < 2) throw new Error("Use faraday(dFlux, dt)");
+  const [dFlux, dt] = args.map(Number);
+  const emf = -dFlux / dt;
+
+  return [
+    "Faraday’s Law of Induction",
+    `ΔΦ = ${dFlux} Wb, Δt = ${dt} s`,
+    `emf = -ΔΦ / Δt = ${emf} V`,
+    "Conclusion: Induced emf computed."
+  ].join("\n");
+}
+
+// ---------------- Calculus-based Physics ----------------
+
+// Continuous force: continuousForce(Fx(x), x, a, b)
+function solveContinuousForce(args) {
+  if (args.length < 4) throw new Error("Use continuousForce(Fx(x), x, a, b)");
+  const [FxStr, variable, aStr, bStr] = args;
+  const a = Number(aStr);
+  const b = Number(bStr);
+  const steps = 1000;
+  const W = numericIntegral(FxStr, variable, a, b, steps);
+
+  return [
+    "Work from Variable Force",
+    `F(x) = ${FxStr}, from x = ${a} to x = ${b}`,
+    `Work: W = ∫ F(x) dx ≈ ${W} J`,
+    "Conclusion: Work computed via numerical integration."
+  ].join("\n");
+}
