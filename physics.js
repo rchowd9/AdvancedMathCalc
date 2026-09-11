@@ -76,3 +76,19 @@ function splitPhysicsArgs(statement) {
   parts.push(statement.slice(start).trim());
   return parts;
 }
+
+// 1. Kinematics: kinematics(v0, a, t)
+function solveKinematics(args) {
+  if (args.length < 3) throw new Error("Use kinematics(v0, a, t)");
+  const [v0, a, t] = args.map(Number);
+  const v = v0 + a * t;
+  const d = v0 * t + 0.5 * a * t * t;
+
+  return [
+    "Kinematics (constant acceleration)",
+    `v0 = ${v0}, a = ${a}, t = ${t}`,
+    `Final velocity: v = v0 + a·t = ${v}`,
+    `Displacement: d = v0·t + ½·a·t² = ${d}`,
+    "Conclusion: Motion solved using basic kinematic equations."
+  ].join("\n");
+}
