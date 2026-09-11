@@ -49,3 +49,7 @@ function solvePhysics(input) {
     case 'inductor': return solveInductor(args);
     case 'flux': return solveFlux(args);
     case 'faraday': return solveFaraday(args);
+
+    case 'continuousforce': return solveContinuousForce(args);
+    case 'continuousmass': return solveContinuousMass(args);
+    case 'continuouscharge': return solveContinuousCharge(args);
