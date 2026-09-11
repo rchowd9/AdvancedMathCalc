@@ -339,3 +339,37 @@ function solveContinuousForce(args) {
     "Conclusion: Work computed via numerical integration."
   ].join("\n");
 }
+
+// Continuous mass: continuousMass(rho(x), x, a, b)
+function solveContinuousMass(args) {
+  if (args.length < 4) throw new Error("Use continuousMass(rho(x), x, a, b)");
+  const [rhoStr, variable, aStr, bStr] = args;
+  const a = Number(aStr);
+  const b = Number(bStr);
+  const steps = 1000;
+  const m = numericIntegral(rhoStr, variable, a, b, steps);
+
+  return [
+    "Continuous Mass Distribution",
+    `ρ(x) = ${rhoStr}, from x = ${a} to x = ${b}`,
+    `Mass: m = ∫ ρ(x) dx ≈ ${m} kg`,
+    "Conclusion: Mass of 1D rod computed via numerical integration."
+  ].join("\n");
+}
+
+// Continuous charge: continuousCharge(lambda(x), x, a, b)
+function solveContinuousCharge(args) {
+  if (args.length < 4) throw new Error("Use continuousCharge(lambda(x), x, a, b)");
+  const [lambdaStr, variable, aStr, bStr] = args;
+  const a = Number(aStr);
+  const b = Number(bStr);
+  const steps = 1000;
+  const Q = numericIntegral(lambdaStr, variable, a, b, steps);
+
+  return [
+    "Continuous Charge Distribution",
+    `λ(x) = ${lambdaStr}, from x = ${a} to x = ${b}`,
+    `Charge: Q = ∫ λ(x) dx ≈ ${Q} C`,
+    "Conclusion: Total charge of 1D line computed via numerical integration."
+  ].join("\n");
+}
