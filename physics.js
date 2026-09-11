@@ -92,3 +92,17 @@ function solveKinematics(args) {
     "Conclusion: Motion solved using basic kinematic equations."
   ].join("\n");
 }
+
+// 2. Newton’s Second Law: newton2(m, a)
+function solveNewton2(args) {
+  if (args.length < 2) throw new Error("Use newton2(m, a)");
+  const [m, a] = args.map(Number);
+  const F = m * a;
+
+  return [
+    "Newton’s Second Law",
+    `m = ${m}, a = ${a}`,
+    `Force: F = m·a = ${F} N`,
+    "Conclusion: Net force computed."
+  ].join("\n");
+}
