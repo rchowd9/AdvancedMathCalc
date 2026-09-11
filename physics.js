@@ -29,3 +29,14 @@ function solvePhysics(input) {
 
   const mode = match[1].toLowerCase();
   const args = splitPhysicsArgs(match[2]);
+
+  switch (mode) {
+    case 'kinematics': return solveKinematics(args);
+    case 'newton2': return solveNewton2(args);
+    case 'workenergy': return solveWorkEnergy(args);
+    case 'momentum': return solveMomentum(args);
+    case 'coulomb': return solveCoulomb(args);
+    case 'ohm': return solveOhm(args);
+    case 'power': return solvePower(args);
+    case 'gravitation': return solveGravitation(args);
+    case 'projectile': return solveProjectile(args);
