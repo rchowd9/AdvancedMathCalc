@@ -53,3 +53,8 @@ function solvePhysics(input) {
     case 'continuousforce': return solveContinuousForce(args);
     case 'continuousmass': return solveContinuousMass(args);
     case 'continuouscharge': return solveContinuousCharge(args);
+
+    default:
+      throw new Error("Unknown physics mode.");
+  }
+}
