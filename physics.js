@@ -120,3 +120,32 @@ function solveWorkEnergy(args) {
     "Conclusion: Work done computed."
   ].join("\n");
 }
+
+// 4. Momentum: momentum(m, v)
+function solveMomentum(args) {
+  if (args.length < 2) throw new Error("Use momentum(m, v)");
+  const [m, v] = args.map(Number);
+  const p = m * v;
+
+  return [
+    "Momentum",
+    `m = ${m}, v = ${v}`,
+    `p = m·v = ${p} kg·m/s`,
+    "Conclusion: Momentum computed."
+  ].join("\n");
+}
+
+// 5. Coulomb’s Law: coulomb(q1, q2, r)
+function solveCoulomb(args) {
+  if (args.length < 3) throw new Error("Use coulomb(q1, q2, r)");
+  const [q1, q2, r] = args.map(Number);
+  const k = 8.99e9;
+  const F = k * q1 * q2 / (r * r);
+
+  return [
+    "Coulomb’s Law",
+    `q1 = ${q1} C, q2 = ${q2} C, r = ${r} m`,
+    `F = k·q1·q2 / r² = ${F} N`,
+    "Conclusion: Electrostatic force computed."
+  ].join("\n");
+}
