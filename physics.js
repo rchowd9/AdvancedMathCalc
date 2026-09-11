@@ -177,3 +177,37 @@ function solvePower(args) {
     "Conclusion: Power computed."
   ].join("\n");
 }
+
+// 8. Gravitation: gravitation(m1, m2, r)
+function solveGravitation(args) {
+  if (args.length < 3) throw new Error("Use gravitation(m1, m2, r)");
+  const [m1, m2, r] = args.map(Number);
+  const G = 6.674e-11;
+  const F = G * m1 * m2 / (r * r);
+
+  return [
+    "Newton’s Law of Gravitation",
+    `m1 = ${m1} kg, m2 = ${m2} kg, r = ${r} m`,
+    `F = G·m1·m2 / r² = ${F} N`,
+    "Conclusion: Gravitational force computed."
+  ].join("\n");
+}
+
+// 9. Projectile Motion: projectile(v0, angle)
+function solveProjectile(args) {
+  if (args.length < 2) throw new Error("Use projectile(v0, angle)");
+  const [v0, angleDeg] = args.map(Number);
+  const angle = angleDeg * Math.PI / 180;
+  const g = 9.8;
+
+  const range = (v0 * v0 * Math.sin(2 * angle)) / g;
+  const height = (v0 * v0 * Math.sin(angle) * Math.sin(angle)) / (2 * g);
+
+  return [
+    "Projectile Motion",
+    `v0 = ${v0} m/s, angle = ${angleDeg}°`,
+    `Range = ${range} m`,
+    `Max height = ${height} m`,
+    "Conclusion: Projectile motion solved."
+  ].join("\n");
+}
