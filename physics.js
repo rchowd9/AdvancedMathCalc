@@ -106,3 +106,17 @@ function solveNewton2(args) {
     "Conclusion: Net force computed."
   ].join("\n");
 }
+
+// 3. Work-Energy: workEnergy(F, d)
+function solveWorkEnergy(args) {
+  if (args.length < 2) throw new Error("Use workEnergy(F, d)");
+  const [F, d] = args.map(Number);
+  const W = F * d;
+
+  return [
+    "Work-Energy",
+    `F = ${F}, d = ${d}`,
+    `Work: W = F·d = ${W} J`,
+    "Conclusion: Work done computed."
+  ].join("\n");
+}
