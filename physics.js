@@ -19,3 +19,9 @@ window.PHYSICS_MODE_NAMES = new Set([
   'continuousmass',
   'continuouscharge'
 ]);
+
+function solvePhysics(input) {
+  const match = input.match(/^([a-zA-Z]+)\(\s*([\s\S]*)\s*\)$/);
+  if (!match) {
+    throw new Error("Use physics modes like kinematics(...), newton2(...), workEnergy(...), electricField(...).");
+  }
