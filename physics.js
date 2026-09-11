@@ -58,3 +58,21 @@ function solvePhysics(input) {
       throw new Error("Unknown physics mode.");
   }
 }
+
+function splitPhysicsArgs(statement) {
+  const parts = [];
+  let start = 0;
+  let depth = 0;
+
+  for (let i = 0; i < statement.length; i++) {
+    const ch = statement[i];
+    if (ch === '(' || ch === '[') depth++;
+    if (ch === ')' || ch === ']') depth--;
+    if (ch === ',' && depth === 0) {
+      parts.push(statement.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+  parts.push(statement.slice(start).trim());
+  return parts;
+}
