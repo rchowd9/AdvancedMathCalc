@@ -115,6 +115,17 @@ function solveEntropy(args) {
   return `Entropy change: ΔS = q/T = ${q / T} J/K`;
 }
 
+function solveGibbs(args) {
+  const [H, T, S] = args.map(Number);
+  return `Gibbs free energy: ΔG = ΔH - TΔS = ${H - T * S} kJ`;
+}
+
+// Equilibrium constant: equilibrium(products, reactants)
+function solveEquilibrium(args) {
+  const [products, reactants] = args.map(Number);
+  return `Equilibrium constant: K = [products]/[reactants] = ${products / reactants}`;
+}
+
 
 // pH: ph(Hplus)
 function solvePH(args) {
