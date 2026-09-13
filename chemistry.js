@@ -67,3 +67,10 @@ function splitChemArgs(statement) {
   parts.push(statement.slice(start).trim());
   return parts;
 }
+
+function solveStoichiometry(args) {
+  if (args.length < 2) throw new Error("Use stoichiometry(moles, ratio)");
+  const [moles, ratio] = args.map(Number);
+  const result = moles * ratio;
+  return `Stoichiometry: ${moles} mol × ratio ${ratio} = ${result} mol products`;
+}
