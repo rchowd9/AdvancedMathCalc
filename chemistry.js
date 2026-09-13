@@ -16,3 +16,12 @@ window.CHEMISTRY_MODE_NAMES = new Set([
   'buffer',
   'quantumEnergy'
 ]);
+
+function solveChemistry(input) {
+  const match = input.match(/^([a-zA-Z]+)\(\s*([\s\S]*)\s*\)$/);
+  if (!match) {
+    throw new Error("Use chemistry modes like stoichiometry(...), molarity(...), idealGas(...).");
+  }
+
+  const mode = match[1].toLowerCase();
+  const args = splitChemArgs(match[2]);
