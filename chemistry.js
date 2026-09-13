@@ -86,3 +86,12 @@ function solveMolality(args) {
   const m = moles / mass;
   return `Molality: m = n / kg solvent = ${m} mol/kg`;
 }
+
+
+// pH: ph(Hplus)
+function solvePH(args) {
+  if (args.length < 1) throw new Error("Use ph([H+])");
+  const [H] = args.map(Number);
+  const pH = -Math.log10(H);
+  return `pH = -log10([H+]) = ${pH}`;
+}
