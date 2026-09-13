@@ -82,6 +82,24 @@ if (geometryNameMatch && geometryModeNames.has(geometryNameMatch[1].toLowerCase(
   return;
 }
 
+    const chemistryNameMatch = expr.match(/^([a-zA-Z]+)\(/);
+    const chemistryModeNames = window.CHEMISTRY_MODE_NAMES ?? new Set();
+    if (chemistryNameMatch && chemistryModeNames.has(chemistryNameMatch[1].toLowerCase())) {
+      solvedMessage = solveChemistry(expr);
+      awardProgress(45, 'Chemistry problem solved!', 'chemistry');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
+    const physicsNameMatch = expr.match(/^([a-zA-Z]+)\(/);
+    const physicsModeNames = window.PHYSICS_MODE_NAMES ?? new Set();
+    if (physicsNameMatch && physicsModeNames.has(physicsNameMatch[1].toLowerCase())) {
+      solvedMessage = solvePhysics(expr);
+      awardProgress(45, 'Physics problem solved!', 'physics');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
     if (expr.startsWith("derivative(")) {
       const parts = expr.match(/derivative\((.*),\s*(\w+)\)/);
       if (parts) {
