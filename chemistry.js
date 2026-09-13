@@ -163,3 +163,16 @@ function solvePH(args) {
   const pH = -Math.log10(H);
   return `pH = -log10([H+]) = ${pH}`;
 }
+
+// Buffer solution: buffer(pKa, [HA], [A-])
+function solveBuffer(args) {
+  const [pKa, HA, A] = args.map(Number);
+  return `Buffer pH = pKa + log([A-]/[HA]) = ${pKa + Math.log10(A / HA)}`;
+}
+
+// Quantum Energy: quantumEnergy(n, Z)
+function solveQuantumEnergy(args) {
+  const [n, Z] = args.map(Number);
+  const Rydberg = 2.18e-18;
+  return `Quantum energy level: E = -R·Z²/n² = ${-Rydberg * Z * Z / (n * n)} J`;
+}
