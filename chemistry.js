@@ -26,9 +26,7 @@ function solveChemistry(input) {
   const mode = match[1].toLowerCase();
   const args = splitChemArgs(match[2]);
 
-  const mode = match[1].toLowerCase();
-  const args = splitChemArgs(match[2]);
-
+  
   switch (mode) {
     case 'stoichiometry': return solveStoichiometry(args);
     case 'molarity': return solveMolarity(args);
