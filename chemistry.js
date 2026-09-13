@@ -127,6 +127,19 @@ function solveEquilibrium(args) {
 }
 
 
+// Rate Law: rateLaw(k, [A], order)
+function solveRateLaw(args) {
+  const [k, A, order] = args.map(Number);
+  return `Rate law: rate = k[A]^n = ${k * Math.pow(A, order)}`;
+}
+
+// Arrhenius Equation: arrhenius(A, Ea, T)
+function solveArrhenius(args) {
+  const [A, Ea, T] = args.map(Number);
+  const R = 8.314;
+  return `Arrhenius equation: k = Ae^(-Ea/RT) = ${A * Math.exp(-Ea / (R * T))}`;
+}
+
 // pH: ph(Hplus)
 function solvePH(args) {
   if (args.length < 1) throw new Error("Use ph([H+])");
