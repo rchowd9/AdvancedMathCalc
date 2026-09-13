@@ -87,6 +87,22 @@ function solveMolality(args) {
   return `Molality: m = n / kg solvent = ${m} mol/kg`;
 }
 
+// Ideal Gas Law: idealGas(P, V, n, T)
+function solveIdealGas(args) {
+  const [P, V, n, T] = args.map(Number);
+  const R = 0.0821;
+  return `Ideal Gas Law: PV = nRT → ${P * V} vs ${n * R * T}`;
+}
+
+// Van der Waals: vanDerWaals(P, V, n, T, a, b)
+function solveVanDerWaals(args) {
+  const [P, V, n, T, a, b] = args.map(Number);
+  const R = 0.0821;
+  const lhs = (P + (a * n * n) / (V * V)) * (V - n * b);
+  const rhs = n * R * T;
+  return `Van der Waals: [P + a(n/V)²][V - nb] = nRT → ${lhs} vs ${rhs}`;
+}
+
 
 // pH: ph(Hplus)
 function solvePH(args) {
