@@ -103,6 +103,18 @@ function solveVanDerWaals(args) {
   return `Van der Waals: [P + a(n/V)²][V - nb] = nRT → ${lhs} vs ${rhs}`;
 }
 
+// Enthalpy: enthalpy(q, n)
+function solveEnthalpy(args) {
+  const [q, n] = args.map(Number);
+  return `Enthalpy change per mole: ΔH = q/n = ${q / n} kJ/mol`;
+}
+
+// Entropy: entropy(q, T)
+function solveEntropy(args) {
+  const [q, T] = args.map(Number);
+  return `Entropy change: ΔS = q/T = ${q / T} J/K`;
+}
+
 
 // pH: ph(Hplus)
 function solvePH(args) {
