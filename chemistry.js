@@ -26,7 +26,7 @@ function solveChemistry(input) {
   const mode = match[1].toLowerCase();
   const args = splitChemArgs(match[2]);
 
-  
+
   switch (mode) {
     case 'stoichiometry': return solveStoichiometry(args);
     case 'molarity': return solveMolarity(args);
@@ -71,4 +71,11 @@ function solveStoichiometry(args) {
   const [moles, ratio] = args.map(Number);
   const result = moles * ratio;
   return `Stoichiometry: ${moles} mol × ratio ${ratio} = ${result} mol products`;
+}
+
+function solveMolarity(args) {
+  if (args.length < 2) throw new Error("Use molarity(moles, volumeL)");
+  const [moles, volume] = args.map(Number);
+  const M = moles / volume;
+  return `Molarity: M = n / V = ${M} mol/L`;
 }
