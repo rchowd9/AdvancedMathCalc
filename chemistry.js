@@ -79,3 +79,10 @@ function solveMolarity(args) {
   const M = moles / volume;
   return `Molarity: M = n / V = ${M} mol/L`;
 }
+
+function solveMolality(args) {
+  if (args.length < 2) throw new Error("Use molality(moles, massSolventKg)");
+  const [moles, mass] = args.map(Number);
+  const m = moles / mass;
+  return `Molality: m = n / kg solvent = ${m} mol/kg`;
+}
