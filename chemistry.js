@@ -140,6 +140,22 @@ function solveArrhenius(args) {
   return `Arrhenius equation: k = Ae^(-Ea/RT) = ${A * Math.exp(-Ea / (R * T))}`;
 }
 
+// Nernst Equation: nernst(E0, T, n, Q)
+function solveNernst(args) {
+  const [E0, T, n, Q] = args.map(Number);
+  const R = 8.314;
+  const F = 96485;
+  return `Nernst equation: E = E0 - (RT/nF)lnQ = ${E0 - (R * T) / (n * F) * Math.log(Q)} V`;
+}
+
+// Electrolysis: electrolysis(I, t, n)
+function solveElectrolysis(args) {
+  const [I, t, n] = args.map(Number);
+  const F = 96485;
+  const Q = I * t;
+  return `Electrolysis: Q = I·t = ${Q} C, moles = Q/(nF) = ${Q / (n * F)}`;
+}
+
 // pH: ph(Hplus)
 function solvePH(args) {
   if (args.length < 1) throw new Error("Use ph([H+])");
