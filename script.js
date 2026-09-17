@@ -100,6 +100,14 @@ if (geometryNameMatch && geometryModeNames.has(geometryNameMatch[1].toLowerCase(
       return;
     }
 
+    const engineeringModeNames = window.ENGINEERING_MODE_NAMES ?? new Set();
+    if (physicsNameMatch && engineeringModeNames.has(physicsNameMatch[1].toLowerCase())) {
+      solvedMessage = solveEngineering(expr);
+      awardProgress(50, 'Engineering check complete!', 'engineering');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
     if (expr.startsWith("derivative(")) {
       const parts = expr.match(/derivative\((.*),\s*(\w+)\)/);
       if (parts) {

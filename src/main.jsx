@@ -25,7 +25,7 @@ const loadLegacyScripts = async () => {
   window.__mathcalcLegacyLoaded = true;
 
   try {
-    const legacyScripts = ['wordProblems.js', 'proof.js', 'geometryProofs.js', 'chemistry.js', 'physics.js', 'script.js'];
+    const legacyScripts = ['wordProblems.js', 'proof.js', 'geometryProofs.js', 'chemistry.js', 'physics.js', 'engineering.js', 'script.js'];
     for (const src of legacyScripts) {
       await loadScript(`${import.meta.env.BASE_URL}${src}`);
     }
@@ -100,6 +100,24 @@ function App() {
           <button className="challenge-chip" data-expression="proof((x + 1)^2 = x^2 + 2*x + 1)" type="button">Proof drill</button>
           <button className="challenge-chip" data-expression="pigeonhole(100, 50)" type="button">Pigeonhole principle</button>
           <button className="challenge-chip" data-expression="combinatorial(C(n,k)=C(n,n-k))" type="button">Combinatorial proof</button>
+        </div>
+      </section>
+
+      <section className="card engineering-panel">
+        <div className="card-header">
+          <div>
+            <p className="eyebrow">Design desk</p>
+            <h2>Engineering Studio</h2>
+          </div>
+          <span className="status-badge ready">SI units</span>
+        </div>
+        <p className="panel-copy">Run quick design checks with transparent formulas and assumptions.</p>
+        <div className="challenge-list" aria-label="Engineering calculator presets">
+          <button className="challenge-chip" data-expression="stress(12000, 240)" type="button">Stress check</button>
+          <button className="challenge-chip" data-expression="beam(800, 3, 200000000000, 0.0000012)" type="button">Beam deflection</button>
+          <button className="challenge-chip" data-expression="reynolds(998, 2, 0.05, 0.001)" type="button">Flow regime</button>
+          <button className="challenge-chip" data-expression="heatTransfer(0.8, 12, 25, 0.15)" type="button">Heat transfer</button>
+          <button className="challenge-chip" data-expression="safetyFactor(250, 120)" type="button">Safety factor</button>
         </div>
       </section>
 
@@ -259,6 +277,16 @@ function App() {
               <li>cross([1,0,0], [0,1,0])</li>
               <li>magnitude([3,4])</li>
               <li>convert(5 km, mi)</li>
+            </ul>
+          </div>
+          <div className="examples-group">
+            <h3>Engineering Design</h3>
+            <ul>
+              <li>stress(12000, 240)</li>
+              <li>beam(800, 3, 200000000000, 0.0000012)</li>
+              <li>reynolds(998, 2, 0.05, 0.001)</li>
+              <li>heatTransfer(0.8, 12, 25, 0.15)</li>
+              <li>safetyFactor(250, 120)</li>
             </ul>
           </div>
           <div className="examples-group">

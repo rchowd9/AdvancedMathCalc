@@ -71,6 +71,13 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 - Adjustable domain
 - Smooth, interactive Plotly.js graphs
 
+### Engineering Studio
+- Normal stress — `stress(forceN, areaMm2)`
+- Simply supported beam checks — `beam(loadN, lengthM, youngsModulusPa, inertiaM4)`
+- Reynolds number and flow regime — `reynolds(densityKgM3, velocityMs, diameterM, viscosityPaS)`
+- Steady-state conduction — `heatTransfer(conductivityWmK, areaM2, deltaTK, thicknessM)`
+- Preliminary safety-factor screening — `safetyFactor(yieldStrengthMPa, workingStressMPa)`
+
 ### Gamification
 - XP, levels, and solve streaks
 - Daily mission tracker (solve 3 challenges)
