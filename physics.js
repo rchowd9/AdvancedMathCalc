@@ -17,7 +17,10 @@ window.PHYSICS_MODE_NAMES = new Set([
   'faraday',
   'continuousforce',
   'continuousmass',
-  'continuouscharge'
+  'continuouscharge',
+  'wave',
+  'circularmotion',
+  'resonance'
 ]);
 
 function solvePhysics(input) {
@@ -40,6 +43,9 @@ function solvePhysics(input) {
     case 'power': return solvePower(args);
     case 'gravitation': return solveGravitation(args);
     case 'projectile': return solveProjectile(args);
+    case 'wave': return solveWave(args);
+    case 'circularmotion': return solveCircularMotion(args);
+    case 'resonance': return solveResonance(args);
 
     // Electromagnetism
     case 'electricfield': return solveElectricField(args);
@@ -305,6 +311,48 @@ function solveFlux(args) {
     `Φ = B·A·cos(θ) = ${phi} Wb`,
     "Conclusion: Magnetic flux computed."
   ].join("\n");
+}
+
+// Wave motion: wave(f, lambda, [v])
+function solveWave(args) {
+  if (args.length < 2) throw new Error('Use wave(frequencyHz, wavelengthM, [speedMs])');
+  const [frequency, wavelength, speedValue] = args.map(Number);
+  const waveSpeed = (speedValue !== undefined && Number.isFinite(speedValue)) ? speedValue : frequency * wavelength;
+
+  return [
+    'Wave Motion',
+    `f = ${frequency} Hz, λ = ${wavelength} m`,
+    `v = f·λ = ${waveSpeed} m/s`,
+    'Conclusion: Wave speed computed from frequency and wavelength.'
+  ].join('\n');
+}
+
+// Uniform circular motion: circularMotion(m, v, r)
+function solveCircularMotion(args) {
+  if (args.length < 3) throw new Error('Use circularMotion(massKg, speedMs, radiusM)');
+  const [mass, speed, radius] = args.map(Number);
+  const centripetalForce = (mass * speed * speed) / radius;
+
+  return [
+    'Circular Motion',
+    `m = ${mass} kg, v = ${speed} m/s, r = ${radius} m`,
+    `F_c = m·v²/r = ${centripetalForce} N`,
+    'Conclusion: Centripetal force computed.'
+  ].join('\n');
+}
+
+// Resonance / simple harmonic oscillator: resonance(m, k)
+function solveResonance(args) {
+  if (args.length < 2) throw new Error('Use resonance(massKg, springConstantNpm)');
+  const [mass, springConstant] = args.map(Number);
+  const naturalFrequency = Math.sqrt(springConstant / mass) / (2 * Math.PI);
+
+  return [
+    'Simple Harmonic Motion / Resonance',
+    `m = ${mass} kg, k = ${springConstant} N/m`,
+    `f = (1/2π)·sqrt(k/m) = ${naturalFrequency} Hz`,
+    'Conclusion: Natural frequency of the oscillator determined.'
+  ].join('\n');
 }
 
 // Faraday’s Law: faraday(dFlux, dt)
