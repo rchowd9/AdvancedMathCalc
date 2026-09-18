@@ -3,7 +3,10 @@ window.ENGINEERING_MODE_NAMES = new Set([
   'beam',
   'reynolds',
   'heattransfer',
-  'safetyfactor'
+  'safetyfactor',
+  'powertransmission',
+  'shafttorque',
+  'pumphead'
 ]);
 
 function solveEngineering(input) {
@@ -21,6 +24,9 @@ function solveEngineering(input) {
     case 'reynolds': return solveReynolds(args);
     case 'heattransfer': return solveHeatTransfer(args);
     case 'safetyfactor': return solveSafetyFactor(args);
+    case 'powertransmission': return solvePowerTransmission(args);
+    case 'shafttorque': return solveShaftTorque(args);
+    case 'pumphead': return solvePumpHead(args);
     default: throw new Error('Unknown engineering mode.');
   }
 }
@@ -115,5 +121,49 @@ function solveSafetyFactor(args) {
     `Yield strength = ${yieldStrength} MPa, working stress = ${workingStress} MPa`,
     `N = yield strength / working stress = ${formatEngineeringNumber(safetyFactor)}`,
     `Screening result: ${status}`
+  ].join('\n');
+}
+
+function solvePowerTransmission(args) {
+  requirePositive(args, 3, 'powerTransmission(inputPowerW, speedRPM, efficiency)');
+  const [inputPower, speedRpm, efficiency] = args;
+  const mechanicalPower = inputPower * efficiency;
+  const shaftTorque = mechanicalPower / ((2 * Math.PI * speedRpm) / 60);
+
+  return [
+    'Power Transmission',
+    `P_in = ${inputPower} W, speed = ${speedRpm} rpm, η = ${efficiency}`,
+    `P_out = P_in × η = ${formatEngineeringNumber(mechanicalPower)} W`,
+    `T = P_out / ω = ${formatEngineeringNumber(shaftTorque)} N·m`,
+    'Conclusion: Output power and shaft torque estimated for a rotating machine.'
+  ].join('\n');
+}
+
+function solveShaftTorque(args) {
+  requirePositive(args, 2, 'shaftTorque(powerW, speedRPM)');
+  const [power, speedRpm] = args;
+  const angularVelocity = (2 * Math.PI * speedRpm) / 60;
+  const torque = power / angularVelocity;
+
+  return [
+    'Shaft Torque',
+    `P = ${power} W, speed = ${speedRpm} rpm`,
+    `T = P / ω = ${formatEngineeringNumber(torque)} N·m`,
+    'Conclusion: Shaft torque computed from power and rotational speed.'
+  ].join('\n');
+}
+
+function solvePumpHead(args) {
+  requirePositive(args, 3, 'pumpHead(flowM3s, densityKgM3, pressureRisePa)');
+  const [flowRate, density, pressureRise] = args;
+  const hydraulicHead = pressureRise / (density * 9.81);
+  const hydraulicPower = flowRate * pressureRise;
+
+  return [
+    'Pump Head',
+    `Q = ${flowRate} m^3/s, ρ = ${density} kg/m^3, ΔP = ${pressureRise} Pa`,
+    `H = ΔP / (ρg) = ${formatEngineeringNumber(hydraulicHead)} m`,
+    `P_hydraulic = QΔP = ${formatEngineeringNumber(hydraulicPower)} W`,
+    'Conclusion: Hydraulic head and power estimated for pump sizing.'
   ].join('\n');
 }

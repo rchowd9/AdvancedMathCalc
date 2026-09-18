@@ -14,7 +14,10 @@ window.CHEMISTRY_MODE_NAMES = new Set([
   'electrolysis',
   'ph',
   'buffer',
-  'quantumEnergy'
+  'quantumEnergy',
+  'dilution',
+  'titration',
+  'solubility'
 ]);
 
 function solveChemistry(input) {
@@ -44,6 +47,9 @@ function solveChemistry(input) {
     case 'ph': return solvePH(args);
     case 'buffer': return solveBuffer(args);
     case 'quantumenergy': return solveQuantumEnergy(args);
+    case 'dilution': return solveDilution(args);
+    case 'titration': return solveTitration(args);
+    case 'solubility': return solveSolubility(args);
     default:
       throw new Error("Unknown chemistry mode.");
   }
@@ -175,4 +181,29 @@ function solveQuantumEnergy(args) {
   const [n, Z] = args.map(Number);
   const Rydberg = 2.18e-18;
   return `Quantum energy level: E = -R·Z²/n² = ${-Rydberg * Z * Z / (n * n)} J`;
+}
+
+// Dilution: dilution(C1, V1, V2)
+function solveDilution(args) {
+  if (args.length < 3) throw new Error('Use dilution(C1, V1, V2)');
+  const [C1, V1, V2] = args.map(Number);
+  const C2 = (C1 * V1) / V2;
+  return `Dilution: C1V1 = C2V2 → C2 = C1·V1 / V2 = ${C2} M`;
+}
+
+// Acid-base titration: titration(Macid, Vacid, nH, Mbase, Vbase, nOH)
+function solveTitration(args) {
+  if (args.length < 6) throw new Error('Use titration(Macid, Vacid, nH, Mbase, Vbase, nOH)');
+  const [Macid, Vacid, nH, Mbase, Vbase, nOH] = args.map(Number);
+  const acidEq = Macid * Vacid * nH;
+  const baseEq = Mbase * Vbase * nOH;
+  return `Titration equivalence: acid equivalents = ${acidEq}, base equivalents = ${baseEq}. Balance check: ${acidEq} vs ${baseEq}`;
+}
+
+// Solubility product: solubility(Ksp, cationCoeff, anionCoeff)
+function solveSolubility(args) {
+  if (args.length < 3) throw new Error('Use solubility(Ksp, cationCoeff, anionCoeff)');
+  const [Ksp, cationCoeff, anionCoeff] = args.map(Number);
+  const molarSolubility = Math.pow(Ksp / (Math.pow(cationCoeff, cationCoeff) * Math.pow(anionCoeff, anionCoeff)), 1 / (cationCoeff + anionCoeff));
+  return `Solubility product: Ksp = [M]^a [X]^b = ${Ksp}; estimated molar solubility ≈ ${molarSolubility} M`;
 }
