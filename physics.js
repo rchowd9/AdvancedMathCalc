@@ -258,8 +258,8 @@ function solveMagneticForce(args) {
 
   return [
     "Magnetic Force on a Moving Charge",
-    `q = ${q} C, v = ${v} m/s, B = ${B} T, θ = ${thetaDeg}°`,
-    `F = q·v·B·sin(θ) = ${F} N`,
+    `q = ${q} C, v = ${v} m/s, B = ${B} T, ${formatGreekSymbol('theta')} = ${thetaDeg}°`,
+    `F = q·v·B·sin(${formatGreekSymbol('theta')}) = ${F} N`,
     "Conclusion: Magnetic force computed."
   ].join("\n");
 }

@@ -177,9 +177,9 @@ function solvePumpHead(args) {
 
   return [
     'Pump Head',
-    `Q = ${flowRate} m^3/s, ρ = ${density} kg/m^3, ΔP = ${pressureRise} Pa`,
-    `H = ΔP / (ρg) = ${formatEngineeringNumber(hydraulicHead)} m`,
-    `P_hydraulic = QΔP = ${formatEngineeringNumber(hydraulicPower)} W`,
+    `Q = ${flowRate} m^3/s, ${formatGreekSymbol('rho')} = ${density} kg/m^3, ${formatGreekSymbol('delta')}P = ${pressureRise} Pa`,
+    `H = ${formatGreekSymbol('delta')}P / (${formatGreekSymbol('rho')}g) = ${formatEngineeringNumber(hydraulicHead)} m`,
+    `P_hydraulic = Q${formatGreekSymbol('delta')}P = ${formatEngineeringNumber(hydraulicPower)} W`,
     'Conclusion: Hydraulic head and power estimated for pump sizing.'
   ].join('\n');
 }
