@@ -141,6 +141,22 @@ function solveMomentum(args) {
   ].join("\n");
 }
 
+function formatGreekSymbol(name) {
+  const greekMap = {
+    rho: 'ρ',
+    mu: 'μ',
+    sigma: 'σ',
+    theta: 'θ',
+    lambda: 'λ',
+    eta: 'η',
+    phi: 'Φ',
+    delta: 'Δ',
+    omega: 'ω',
+    pi: 'π'
+  };
+  return greekMap[name.toLowerCase()] ?? name;
+}
+
 // 5. Coulomb’s Law: coulomb(q1, q2, r)
 function solveCoulomb(args) {
   if (args.length < 3) throw new Error("Use coulomb(q1, q2, r)");
@@ -242,8 +258,8 @@ function solveMagneticForce(args) {
 
   return [
     "Magnetic Force on a Moving Charge",
-    `q = ${q} C, v = ${v} m/s, B = ${B} T, θ = ${thetaDeg}°`,
-    `F = q·v·B·sin(θ) = ${F} N`,
+    `q = ${q} C, v = ${v} m/s, B = ${B} T, ${formatGreekSymbol('theta')} = ${thetaDeg}°`,
+    `F = q·v·B·sin(${formatGreekSymbol('theta')}) = ${F} N`,
     "Conclusion: Magnetic force computed."
   ].join("\n");
 }
@@ -307,8 +323,8 @@ function solveFlux(args) {
 
   return [
     "Magnetic Flux",
-    `B = ${B} T, A = ${A} m², θ = ${thetaDeg}°`,
-    `Φ = B·A·cos(θ) = ${phi} Wb`,
+    `B = ${B} T, A = ${A} m², ${formatGreekSymbol('theta')} = ${thetaDeg}°`,
+    `${formatGreekSymbol('phi')} = B·A·cos(${formatGreekSymbol('theta')}) = ${phi} Wb`,
     "Conclusion: Magnetic flux computed."
   ].join("\n");
 }
@@ -321,8 +337,8 @@ function solveWave(args) {
 
   return [
     'Wave Motion',
-    `f = ${frequency} Hz, λ = ${wavelength} m`,
-    `v = f·λ = ${waveSpeed} m/s`,
+    `f = ${frequency} Hz, ${formatGreekSymbol('lambda')} = ${wavelength} m`,
+    `v = f·${formatGreekSymbol('lambda')} = ${waveSpeed} m/s`,
     'Conclusion: Wave speed computed from frequency and wavelength.'
   ].join('\n');
 }
@@ -363,8 +379,8 @@ function solveFaraday(args) {
 
   return [
     "Faraday’s Law of Induction",
-    `ΔΦ = ${dFlux} Wb, Δt = ${dt} s`,
-    `emf = -ΔΦ / Δt = ${emf} V`,
+    `${formatGreekSymbol('delta')}${formatGreekSymbol('phi')} = ${dFlux} Wb, ${formatGreekSymbol('delta')}t = ${dt} s`,
+    `emf = -${formatGreekSymbol('delta')}${formatGreekSymbol('phi')} / ${formatGreekSymbol('delta')}t = ${emf} V`,
     "Conclusion: Induced emf computed."
   ].join("\n");
 }

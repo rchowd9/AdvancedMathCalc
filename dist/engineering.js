@@ -60,6 +60,22 @@ function formatEngineeringNumber(value) {
   return Number(value.toPrecision(6));
 }
 
+function formatGreekSymbol(name) {
+  const greekMap = {
+    rho: 'ρ',
+    mu: 'μ',
+    sigma: 'σ',
+    theta: 'θ',
+    lambda: 'λ',
+    eta: 'η',
+    phi: 'Φ',
+    delta: 'Δ',
+    omega: 'ω',
+    pi: 'π'
+  };
+  return greekMap[name.toLowerCase()] ?? name;
+}
+
 function solveStress(args) {
   requirePositive(args, 2, 'stress(forceN, areaMm2)');
   const [force, area] = args;
@@ -67,7 +83,7 @@ function solveStress(args) {
   return [
     'Normal Stress',
     `Force = ${force} N, area = ${area} mm^2`,
-    `sigma = F / A = ${formatEngineeringNumber(stress)} MPa`,
+    `${formatGreekSymbol('sigma')} = F / A = ${formatEngineeringNumber(stress)} MPa`,
     'Conclusion: Axial stress calculated from load and cross-sectional area.'
   ].join('\n');
 }
@@ -93,8 +109,8 @@ function solveReynolds(args) {
   const regime = reynoldsNumber < 2300 ? 'laminar' : reynoldsNumber <= 4000 ? 'transitional' : 'turbulent';
   return [
     'Reynolds Number',
-    `rho = ${density} kg/m^3, v = ${velocity} m/s, D = ${diameter} m`,
-    `Re = rho*v*D/mu = ${formatEngineeringNumber(reynoldsNumber)}`,
+    `${formatGreekSymbol('rho')} = ${density} kg/m^3, v = ${velocity} m/s, D = ${diameter} m`,
+    `Re = ${formatGreekSymbol('rho')}·v·D/${formatGreekSymbol('mu')} = ${formatEngineeringNumber(reynoldsNumber)}`,
     `Flow regime: ${regime}`
   ].join('\n');
 }
@@ -105,8 +121,8 @@ function solveHeatTransfer(args) {
   const heatRate = (conductivity * area * deltaTemperature) / thickness;
   return [
     'Steady-State Conduction',
-    `k = ${conductivity} W/(m*K), A = ${area} m^2, deltaT = ${deltaTemperature} K`,
-    `Heat rate = k*A*deltaT/L = ${formatEngineeringNumber(heatRate)} W`,
+    `k = ${conductivity} W/(m*K), A = ${area} m^2, ${formatGreekSymbol('delta')}T = ${deltaTemperature} K`,
+    `Heat rate = k·A·${formatGreekSymbol('delta')}T/L = ${formatEngineeringNumber(heatRate)} W`,
     'Assumption: One-dimensional conduction through a uniform slab.'
   ].join('\n');
 }
@@ -132,9 +148,9 @@ function solvePowerTransmission(args) {
 
   return [
     'Power Transmission',
-    `P_in = ${inputPower} W, speed = ${speedRpm} rpm, η = ${efficiency}`,
-    `P_out = P_in × η = ${formatEngineeringNumber(mechanicalPower)} W`,
-    `T = P_out / ω = ${formatEngineeringNumber(shaftTorque)} N·m`,
+    `P_in = ${inputPower} W, speed = ${speedRpm} rpm, ${formatGreekSymbol('eta')} = ${efficiency}`,
+    `P_out = P_in × ${formatGreekSymbol('eta')} = ${formatEngineeringNumber(mechanicalPower)} W`,
+    `T = P_out / ${formatGreekSymbol('omega')} = ${formatEngineeringNumber(shaftTorque)} N·m`,
     'Conclusion: Output power and shaft torque estimated for a rotating machine.'
   ].join('\n');
 }
@@ -161,9 +177,9 @@ function solvePumpHead(args) {
 
   return [
     'Pump Head',
-    `Q = ${flowRate} m^3/s, ρ = ${density} kg/m^3, ΔP = ${pressureRise} Pa`,
-    `H = ΔP / (ρg) = ${formatEngineeringNumber(hydraulicHead)} m`,
-    `P_hydraulic = QΔP = ${formatEngineeringNumber(hydraulicPower)} W`,
+    `Q = ${flowRate} m^3/s, ${formatGreekSymbol('rho')} = ${density} kg/m^3, ${formatGreekSymbol('delta')}P = ${pressureRise} Pa`,
+    `H = ${formatGreekSymbol('delta')}P / (${formatGreekSymbol('rho')}g) = ${formatEngineeringNumber(hydraulicHead)} m`,
+    `P_hydraulic = Q${formatGreekSymbol('delta')}P = ${formatEngineeringNumber(hydraulicPower)} W`,
     'Conclusion: Hydraulic head and power estimated for pump sizing.'
   ].join('\n');
 }
