@@ -74,7 +74,7 @@ function solveOrganic(args) {
   const normalized = formula.replace(/\s+/g, '');
   const described = describeOrganicCompound(normalized);
   const formatted = formatChemicalFormula(normalized);
-  return `Organic chemistry: ${formatted} → ${described}. Common functional pattern: ${normalized.includes('OH') ? 'alcohol/phenol' : normalized.includes('COOH') ? 'carboxylic acid' : normalized.includes('C=') ? 'unsaturated hydrocarbon' : 'organic structure'}.`;
+  return `Organic chemistry: ${normalized} (${formatted}) → ${described}. Common functional pattern: ${normalized.includes('OH') ? 'alcohol/phenol' : normalized.includes('COOH') ? 'carboxylic acid' : normalized.includes('C=') ? 'unsaturated hydrocarbon' : 'organic structure'}.`;
 }
 
 function solveChemistry(input) {
@@ -246,8 +246,7 @@ function solveDilution(args) {
   if (args.length < 3) throw new Error('Use dilution(C1, V1, V2)');
   const [C1, V1, V2] = args.map(Number);
   const C2 = (C1 * V1) / V2;
-  const equation = formatChemEquation('C1V1 = C2V2 → C2 = C1·V1 / V2');
-  return `Dilution: ${equation} = ${C2} M`;
+  return `Dilution: C1V1 = C2V2 → C2 = C1·V1 / V2 = ${C2} M`;
 }
 
 // Acid-base titration: titration(Macid, Vacid, nH, Mbase, Vbase, nOH)
