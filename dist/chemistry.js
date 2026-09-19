@@ -17,8 +17,65 @@ window.CHEMISTRY_MODE_NAMES = new Set([
   'quantumEnergy',
   'dilution',
   'titration',
-  'solubility'
+  'solubility',
+  'organic'
 ]);
+
+const CHEM_SUBSCRIPT = { '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄', '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉' };
+const CHEM_SUPERSCRIPT = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '+': '⁺', '-': '⁻' };
+
+function formatChemicalFormula(value) {
+  return String(value)
+    .replace(/\+/g, '⁺')
+    .replace(/-/g, '⁻')
+    .replace(/([A-Za-z]+)(\d+)/g, (_, letters, digits) => {
+      const subscript = [...digits].map((char) => CHEM_SUBSCRIPT[char] ?? char).join('');
+      return `${letters}${subscript}`;
+    })
+    .replace(/\[([A-Za-z]+)\+\]/g, (_, letters) => `[${letters}⁺]`)
+    .replace(/\[([A-Za-z]+)\-\]/g, (_, letters) => `[${letters}⁻]`);
+}
+
+function formatChemEquation(value) {
+  return formatChemicalFormula(value).replace(/\*/g, '·').replace(/\//g, '÷');
+}
+
+function describeOrganicCompound(formula) {
+  const normalized = formula.replace(/\s+/g, '').toUpperCase();
+  const known = {
+    C6H6: 'benzene (aromatic hydrocarbon)',
+    C2H5OH: 'ethanol (alcohol)',
+    CH3COOH: 'acetic acid (carboxylic acid)',
+    C6H12O6: 'glucose (carbohydrate)',
+    C2H4: 'ethene (alkene)',
+    C2H6: 'ethane (alkane)',
+    CH4: 'methane (alkane)',
+    C3H8: 'propane (alkane)',
+    C2H2: 'ethyne (alkyne)',
+    CH3OH: 'methanol (alcohol)',
+    C6H5OH: 'phenol (aromatic alcohol)',
+    CH3COCH3: 'acetone (ketone)',
+    NH3: 'ammonia (base)',
+    H2O: 'water',
+    CO2: 'carbon dioxide'
+  };
+
+  if (known[normalized]) return known[normalized];
+
+  if (/^C[0-9]*H[0-9]*$/.test(normalized)) return 'hydrocarbon family compound';
+  if (/^C[0-9]*H[0-9]*O[0-9]*$/.test(normalized)) return 'oxygen-containing organic compound';
+  if (/^C[0-9]*H[0-9]*N[0-9]*$/.test(normalized)) return 'nitrogen-containing organic compound';
+  return 'organic compound';
+}
+
+function solveOrganic(args) {
+  if (args.length < 1) throw new Error('Use organic(formula)');
+  const formula = args[0].trim();
+  const normalized = formula.replace(/\s+/g, '');
+  const described = describeOrganicCompound(normalized);
+  const formatted = formatChemicalFormula(normalized);
+  return `Organic chemistry: ${formatted} → ${described}. Common functional pattern: ${normalized.includes('OH') ? 'alcohol/phenol' : normalized.includes('COOH') ? 'carboxylic acid' : normalized.includes('C=') ? 'unsaturated hydrocarbon' : 'organic structure'}.`;
+}
 
 function solveChemistry(input) {
   const match = input.match(/^([a-zA-Z]+)\(\s*([\s\S]*)\s*\)$/);
@@ -50,6 +107,7 @@ function solveChemistry(input) {
     case 'dilution': return solveDilution(args);
     case 'titration': return solveTitration(args);
     case 'solubility': return solveSolubility(args);
+    case 'organic': return solveOrganic(args);
     default:
       throw new Error("Unknown chemistry mode.");
   }
@@ -167,13 +225,13 @@ function solvePH(args) {
   if (args.length < 1) throw new Error("Use ph([H+])");
   const [H] = args.map(Number);
   const pH = -Math.log10(H);
-  return `pH = -log10([H+]) = ${pH}`;
+  return `pH = -log10(${formatChemicalFormula('[H+]')}) = ${pH}`;
 }
 
 // Buffer solution: buffer(pKa, [HA], [A-])
 function solveBuffer(args) {
   const [pKa, HA, A] = args.map(Number);
-  return `Buffer pH = pKa + log([A-]/[HA]) = ${pKa + Math.log10(A / HA)}`;
+  return `Buffer pH = pKa + log(${formatChemicalFormula('[A-]/[HA]')}) = ${pKa + Math.log10(A / HA)}`;
 }
 
 // Quantum Energy: quantumEnergy(n, Z)
@@ -188,7 +246,8 @@ function solveDilution(args) {
   if (args.length < 3) throw new Error('Use dilution(C1, V1, V2)');
   const [C1, V1, V2] = args.map(Number);
   const C2 = (C1 * V1) / V2;
-  return `Dilution: C1V1 = C2V2 → C2 = C1·V1 / V2 = ${C2} M`;
+  const equation = formatChemEquation('C1V1 = C2V2 → C2 = C1·V1 / V2');
+  return `Dilution: ${equation} = ${C2} M`;
 }
 
 // Acid-base titration: titration(Macid, Vacid, nH, Mbase, Vbase, nOH)
