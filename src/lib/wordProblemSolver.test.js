@@ -50,6 +50,8 @@ describe('word problem solver', () => {
 
     expect(chemistry.window.CHEMISTRY_MODE_NAMES.has('dilution')).toBe(true);
     expect(chemistry.solveChemistry('dilution(1.0, 0.5, 2.0)')).toContain('C1V1 = C2V2');
+    expect(chemistry.window.CHEMISTRY_MODE_NAMES.has('organic')).toBe(true);
+    expect(chemistry.solveChemistry('organic(C6H6)')).toContain('C6H6');
 
     expect(physics.window.PHYSICS_MODE_NAMES.has('wave')).toBe(true);
     expect(physics.solvePhysics('wave(2, 5, 0.5)')).toContain('v = f·λ');
