@@ -32,8 +32,18 @@ body {
 
 button,
 input,
-textarea {
+textarea,
+pre {
   font: inherit;
+}
+
+body,
+input,
+textarea,
+pre,
+code,
+button {
+  font-family: "JetBrains Mono", "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", "Segoe UI Symbol", "Noto Sans Symbols 2", "Apple Symbols", "Symbola", monospace;
 }
 
 .app-shell {
