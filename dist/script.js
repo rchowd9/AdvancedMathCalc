@@ -18,11 +18,13 @@ const levelBadgeEl = document.getElementById('levelBadge');
 const levelValueEl = document.getElementById('levelValue');
 const missionProgressEl = document.getElementById('missionProgress');
 const plotBtn = document.getElementById('plotBtn');
+const plotClearBtn = document.getElementById('plotClearBtn');
 const randomChallengeBtn = document.getElementById('randomChallengeBtn');
 const plotExprInput = document.getElementById('plotExpr');
 const plotVariableInput = document.getElementById('plotVariable');
 const plotMinInput = document.getElementById('plotMin');
 const plotMaxInput = document.getElementById('plotMax');
+const plotModeInput = document.getElementById('plotMode');
 const plotEl = document.getElementById('plot');
 const plotStatusEl = document.getElementById('plotStatus');
 const achievementItems = [...document.querySelectorAll('.achievement')];
@@ -31,6 +33,13 @@ const challengeButtons = [...document.querySelectorAll('.challenge-chip')];
 updateGameHud();
 
 plotBtn.addEventListener('click', plotFunction);
+plotClearBtn.addEventListener('click', () => {
+  clearPlot();
+  setPlotStatus('Graph cleared.');
+});
+plotExprInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') plotFunction();
+});
 randomChallengeBtn.addEventListener('click', loadRandomChallenge);
 clearBtn.addEventListener('click', () => {
   exprInput.value = '';
@@ -586,6 +595,37 @@ if (expr.startsWith("integrationByParts(")) {
       }
     }
 
+    if (expr.startsWith("distributionStats(")) {
+      const parts = expr.match(/^distributionStats\((.*),\s*(\w+),\s*(-?[\d.]+),\s*(-?[\d.]+)\)$/s);
+      if (parts) {
+        const lower = Number(parts[3]);
+        const upper = Number(parts[4]);
+        solvedMessage = explainDistributionStats(parts[1], parts[2], lower, upper);
+        awardProgress(45, 'Distribution analyzed!', 'statistics');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+      resultEl.textContent = 'Use syntax: distributionStats(density, variable, lower, upper)';
+      setStatus('Syntax check', 'warning');
+      return;
+    }
+
+    if (expr.startsWith("normalPdf(") || expr.startsWith("normalCdf(")) {
+      const parts = expr.match(/^(normalPdf|normalCdf)\(([-\d.]+),\s*([-\d.]+),\s*([\d.]+)\)$/);
+      if (parts) {
+        const value = Number(parts[2]);
+        const mean = Number(parts[3]);
+        const standardDeviation = Number(parts[4]);
+        solvedMessage = explainNormalDistribution(parts[1], value, mean, standardDeviation);
+        awardProgress(35, 'Distribution formula solved!', 'statistics');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+      resultEl.textContent = 'Use normalPdf(x, mean, stdDev) or normalCdf(x, mean, stdDev)';
+      setStatus('Syntax check', 'warning');
+      return;
+    }
+
     if (expr.startsWith("factorial(")) {
       const parts = expr.match(/^factorial\((\d+)\)$/);
       if (parts) {
@@ -833,6 +873,7 @@ function plotFunction() {
   const variable = plotVariableInput.value.trim();
   const lower = Number(plotMinInput.value);
   const upper = Number(plotMaxInput.value);
+  const mode = plotModeInput.value;
 
   if (!expression || !/^\w+$/.test(variable)) {
     clearPlot();
@@ -847,8 +888,10 @@ function plotFunction() {
   }
 
   try {
-    const compiled = mathInstance.compile(expression);
-    const pointCount = 500;
+    const compiled = mode === 'derivative'
+      ? mathInstance.derivative(expression, variable).compile()
+      : mathInstance.compile(expression);
+    const pointCount = 800;
     const step = (upper - lower) / (pointCount - 1);
     const xValues = [];
     const yValues = [];
@@ -869,22 +912,28 @@ function plotFunction() {
       throw new Error('No real values were found in this range.');
     }
 
-    Plotly.react(plotEl, [{
+    const trace = {
       x: xValues,
       y: yValues,
       type: 'scatter',
       mode: 'lines',
-      line: { color: '#38bdf8', width: 2 }
-    }], {
+      name: mode === 'derivative' ? `d/d${variable} (${expression})` : expression,
+      line: { color: mode === 'area' ? '#fbbf24' : '#38bdf8', width: 2 },
+      ...(mode === 'area' ? { fill: 'tozeroy', fillcolor: 'rgba(251, 191, 36, 0.18)' } : {})
+    };
+    Plotly.react(plotEl, [trace], {
       margin: { top: 24, right: 24, bottom: 48, left: 56 },
       paper_bgcolor: 'transparent',
       plot_bgcolor: '#020617',
       font: { color: '#cbd5e1' },
-      xaxis: { title: variable, gridcolor: '#334155', zerolinecolor: '#64748b' },
-      yaxis: { title: expression, gridcolor: '#334155', zerolinecolor: '#64748b' },
-      responsive: true
-    }, { responsive: true, displaylogo: false });
-    setPlotStatus(`Plotted ${expression} over [${lower}, ${upper}].`);
+      hovermode: 'x unified',
+      showlegend: true,
+      legend: { orientation: 'h', y: 1.12, x: 0 },
+      xaxis: { title: variable, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
+      yaxis: { title: mode === 'derivative' ? `d/d${variable} (${expression})` : expression, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
+      uirevision: `${expression}:${variable}:${lower}:${upper}:${mode}`
+    }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
+    setPlotStatus(`${mode === 'derivative' ? 'Derivative' : mode === 'area' ? 'Area' : 'Function'} plotted over [${lower}, ${upper}]. Scroll to zoom.`);
     state.xp += 15;
     saveGameState();
     updateGameHud();
@@ -1710,4 +1759,54 @@ function explainConversion(sourceExpression, targetUnit) {
     `Step 2: Apply the conversion factor to ${targetUnit}`,
     `Result: ${formatResult(converted)}`
   ].join('\n');
+}
+
+function explainDistributionStats(density, variable, lower, upper) {
+  if (!Number.isFinite(lower) || !Number.isFinite(upper) || lower >= upper) {
+    throw new Error('The distribution bounds must be finite and lower < upper.');
+  }
+  const area = numericIntegral(density, variable, lower, upper, 1200);
+  if (!Number.isFinite(area) || area <= 0) throw new Error('The density must integrate to a positive finite area.');
+  const firstMoment = numericIntegral(`(${variable}) * (${density})`, variable, lower, upper, 1200);
+  const secondMoment = numericIntegral(`(${variable})^2 * (${density})`, variable, lower, upper, 1200);
+  const mean = firstMoment / area;
+  const variance = Math.max(0, secondMoment / area - mean ** 2);
+  return [
+    `Density: f(${variable}) = ${density}`,
+    `Interval: ${lower} ≤ ${variable} ≤ ${upper}`,
+    `Normalization Z = ∫ f(${variable}) d${variable} ≈ ${formatResult(area)}`,
+    `Expected value E[X] = ∫ x f(x) dx / Z ≈ ${formatResult(mean)}`,
+    `Second moment E[X²] ≈ ${formatResult(secondMoment / area)}`,
+    `Variance = E[X²] - E[X]² ≈ ${formatResult(variance)}`,
+    `Standard deviation = √variance ≈ ${formatResult(Math.sqrt(variance))}`
+  ].join('\n');
+}
+
+function explainNormalDistribution(mode, value, mean, standardDeviation) {
+  if (!Number.isFinite(value) || !Number.isFinite(mean) || !Number.isFinite(standardDeviation) || standardDeviation <= 0) {
+    throw new Error('The normal distribution needs finite x and mean values plus a positive standard deviation.');
+  }
+  const z = (value - mean) / standardDeviation;
+  const density = Math.exp(-0.5 * z ** 2) / (standardDeviation * Math.sqrt(2 * Math.PI));
+  if (mode === 'normalPdf') {
+    return [
+      'Normal Probability Density',
+      `z = (x - μ) / σ = ${formatResult(z)}`,
+      `f(x) = exp(-z²/2) / (σ√(2π)) = ${formatResult(density)}`
+    ].join('\n');
+  }
+  const cdf = 0.5 * (1 + erf(z / Math.sqrt(2)));
+  return [
+    'Normal Cumulative Distribution',
+    `z = (x - μ) / σ = ${formatResult(z)}`,
+    `F(x) = P(X ≤ x) = ${formatResult(cdf)}`
+  ].join('\n');
+}
+
+function erf(value) {
+  const sign = value < 0 ? -1 : 1;
+  const absolute = Math.abs(value);
+  const t = 1 / (1 + 0.3275911 * absolute);
+  const polynomial = (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t;
+  return sign * (1 - polynomial * Math.exp(-(absolute ** 2)));
 }
