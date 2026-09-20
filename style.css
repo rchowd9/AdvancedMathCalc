@@ -377,9 +377,14 @@ pre {
   margin-bottom: 18px;
 }
 
+.graph-actions {
+  display: flex;
+  gap: 10px;
+}
+
 .graph-controls {
   display: grid;
-  grid-template-columns: minmax(180px, 2fr) repeat(3, minmax(80px, 1fr));
+  grid-template-columns: minmax(180px, 2fr) repeat(4, minmax(80px, 1fr));
   gap: 12px;
   margin-bottom: 16px;
 }
@@ -389,7 +394,8 @@ pre {
   font-size: 0.9rem;
 }
 
-.graph-controls input {
+.graph-controls input,
+.graph-controls select {
   box-sizing: border-box;
   width: 100%;
   margin-top: 6px;
@@ -487,6 +493,14 @@ li {
   .graph-heading button,
   .graph-heading h2 {
     margin-top: 8px;
+  }
+
+  .graph-actions {
+    margin-top: 8px;
+  }
+
+  .graph-actions button {
+    width: auto;
   }
 
   .graph-controls {
