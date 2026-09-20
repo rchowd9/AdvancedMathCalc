@@ -218,7 +218,7 @@ function solveRigidBodyDynamics(args) {
     'Rigid-Body Dynamics',
     `ΣF = ${netForce} N, m = ${mass} kg, Στ = ${netTorque} N·m, I = ${inertia} kg·m^2`,
     `Translational equation: ΣF = m·a → a = ${formatEngineeringNumber(linearAcceleration)} m/s^2`,
-    `Rotational equation: Στ = I·α → α = ${formatEngineeringNumber(angularAcceleration)} rad/s^2`,
+    `Angular acceleration: Στ = I·α → α = ${formatEngineeringNumber(angularAcceleration)} rad/s^2`,
     'Conclusion: Coupled translational and rotational accelerations computed for a rigid body.'
   ].join('\n');
 }
