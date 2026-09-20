@@ -118,6 +118,9 @@ function App() {
           <button className="challenge-chip" data-expression="reynolds(998, 2, 0.05, 0.001)" type="button">Flow regime</button>
           <button className="challenge-chip" data-expression="heatTransfer(0.8, 12, 25, 0.15)" type="button">Heat transfer</button>
           <button className="challenge-chip" data-expression="safetyFactor(250, 120)" type="button">Safety factor</button>
+          <button className="challenge-chip" data-expression="pipeFlow(998, 2, 0.05, 0.001, 0.00005)" type="button">Pipe flow</button>
+          <button className="challenge-chip" data-expression="rigidBodyDynamics(12, 48, 0.8, 16)" type="button">Rigid-body dynamics</button>
+          <button className="challenge-chip" data-expression="electromagneticInduction(200, 0.03, 4, 12)" type="button">Induction coil</button>
         </div>
       </section>
 
