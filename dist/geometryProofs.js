@@ -5,7 +5,8 @@ window.GEOMETRY_PROOF_MODE_NAMES = new Set([
   'circletheorem',
   'parallellines',
   'coordinategeometry',
-  'polygonangles'
+  'polygonangles',
+  'lawofcosines'
 ]);
 
 function solveGeometryProof(input) {
@@ -37,6 +38,9 @@ function solveGeometryProof(input) {
   }
   if (mode === 'polygonangles') {
     return solvePolygonAnglesProof(args);
+  }
+  if (mode === 'lawofcosines') {
+    return solveLawOfCosinesProof(args);
   }
 
   throw new Error("Unknown geometry proof method.");
@@ -126,6 +130,31 @@ function solvePolygonAnglesProof(args) {
   ].join("\n");
 }
 
+function solveLawOfCosinesProof(args) {
+  if (args.length < 4) throw new Error('Use lawOfCosines(a, b, angleDeg, c) to verify a triangle side.');
+  const [a, b, angleDeg, c] = args.map(Number);
+  if ([a, b, c].some((value) => !Number.isFinite(value) || value <= 0) || !Number.isFinite(angleDeg) || angleDeg <= 0 || angleDeg >= 180) {
+    throw new Error('Triangle sides must be positive and the included angle must be between 0 and 180 degrees.');
+  }
+  const angle = angleDeg * Math.PI / 180;
+  const expectedSquared = a ** 2 + b ** 2 - 2 * a * b * Math.cos(angle);
+  const suppliedSquared = c ** 2;
+  const tolerance = 1e-9 * Math.max(1, expectedSquared);
+  const agrees = Math.abs(expectedSquared - suppliedSquared) <= tolerance;
+  return [
+    'Law of Cosines Proof',
+    `Claim: c^2 = a^2 + b^2 - 2ab cos(C), with a = ${a}, b = ${b}, C = ${angleDeg}°, c = ${c}`,
+    'Step 1: Resolve the included angle into the dot-product term -2ab cos(C).',
+    `Step 2: a^2 + b^2 - 2ab cos(C) = ${formatProofNumber(expectedSquared)}`,
+    `Step 3: Compare with c^2 = ${formatProofNumber(suppliedSquared)}.`,
+    agrees ? 'Conclusion: The supplied side satisfies the Law of Cosines.' : 'Conclusion: The supplied side does not satisfy the Law of Cosines.'
+  ].join('\n');
+}
+
+function formatProofNumber(value) {
+  return Number(value.toPrecision(8));
+}
+
 function splitTopLevel(statement) {
   const parts = [];
   let start = 0;
@@ -149,3 +178,4 @@ window.circleTheorem = (...args) => solveGeometryProof(`circleTheorem(${args.joi
 window.parallelLines = (...args) => solveGeometryProof(`parallelLines(${args.join(", ")})`);
 window.coordinateGeometry = (...args) => solveGeometryProof(`coordinateGeometry(${args.join(", ")})`);
 window.polygonAngles = (...args) => solveGeometryProof(`polygonAngles(${args.join(", ")})`);
+window.lawOfCosines = (...args) => solveGeometryProof(`lawOfCosines(${args.join(", ")})`);

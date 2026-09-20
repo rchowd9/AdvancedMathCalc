@@ -47,6 +47,7 @@ describe('word problem solver', () => {
     const chemistry = loadCalculatorScript('chemistry.js');
     const physics = loadCalculatorScript('physics.js');
     const engineering = loadCalculatorScript('engineering.js');
+    const geometry = loadCalculatorScript('geometryProofs.js');
 
     expect(chemistry.window.CHEMISTRY_MODE_NAMES.has('dilution')).toBe(true);
     expect(chemistry.solveChemistry('dilution(1.0, 0.5, 2.0)')).toContain('C1V1 = C2V2');
@@ -58,5 +59,12 @@ describe('word problem solver', () => {
 
     expect(engineering.window.ENGINEERING_MODE_NAMES.has('powertransmission')).toBe(true);
     expect(engineering.solveEngineering('powertransmission(1500, 1800, 0.85)')).toContain('P_out');
+    expect(engineering.window.ENGINEERING_MODE_NAMES.has('pipeflow')).toBe(true);
+    expect(engineering.solveEngineering('pipeFlow(998, 2, 0.05, 0.001, 0.00005)')).toContain('Pressure gradient');
+    expect(engineering.solveEngineering('rigidBodyDynamics(12, 48, 0.8, 16)')).toContain('angular acceleration');
+    expect(engineering.solveEngineering('electromagneticInduction(200, 0.03, 4, 12)')).toContain('Induced current');
+
+    expect(geometry.window.GEOMETRY_PROOF_MODE_NAMES.has('lawofcosines')).toBe(true);
+    expect(geometry.solveGeometryProof('lawOfCosines(3, 4, 90, 5)')).toContain('supplied side satisfies');
   });
 });

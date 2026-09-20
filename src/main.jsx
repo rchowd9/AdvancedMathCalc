@@ -100,6 +100,7 @@ function App() {
           <button className="challenge-chip" data-expression="proof((x + 1)^2 = x^2 + 2*x + 1)" type="button">Proof drill</button>
           <button className="challenge-chip" data-expression="pigeonhole(100, 50)" type="button">Pigeonhole principle</button>
           <button className="challenge-chip" data-expression="combinatorial(C(n,k)=C(n,n-k))" type="button">Combinatorial proof</button>
+          <button className="challenge-chip" data-expression="lawOfCosines(3, 4, 90, 5)" type="button">Cosine proof</button>
         </div>
       </section>
 

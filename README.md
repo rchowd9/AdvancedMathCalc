@@ -59,6 +59,7 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 - Disproof by counterexample — `disprove(statement)`
 - Pigeonhole principle — `pigeonholeprinciple(numItems, numContainers)`
 - Combinatorial proofs — `combinatorialproof(identity)` with support for Pascal's identity, binomial sum, symmetry proofs, and hockey-stick identity
+- Law of cosines verification proof — `lawOfCosines(a, b, includedAngleDeg, c)`
 
 ### Vectors & Units
 - Dot product — `dot(v1, v2)`
@@ -77,6 +78,9 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 - Reynolds number and flow regime — `reynolds(densityKgM3, velocityMs, diameterM, viscosityPaS)`
 - Steady-state conduction — `heatTransfer(conductivityWmK, areaM2, deltaTK, thicknessM)`
 - Preliminary safety-factor screening — `safetyFactor(yieldStrengthMPa, workingStressMPa)`
+- Darcy-Weisbach pipe-flow estimate — `pipeFlow(densityKgM3, velocityMs, diameterM, viscosityPaS, roughnessM)`
+- Coupled rigid-body dynamics — `rigidBodyDynamics(massKg, netForceN, inertiaKgM2, netTorqueNm)`
+- Electromagnetic induction and coil power — `electromagneticInduction(turns, areaM2, dBdtTPerS, resistanceOhm)`
 
 ### Gamification
 - XP, levels, and solve streaks
