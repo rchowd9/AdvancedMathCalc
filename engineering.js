@@ -6,7 +6,10 @@ window.ENGINEERING_MODE_NAMES = new Set([
   'safetyfactor',
   'powertransmission',
   'shafttorque',
-  'pumphead'
+  'pumphead',
+  'pipeflow',
+  'rigidbodydynamics',
+  'electromagneticinduction'
 ]);
 
 function solveEngineering(input) {
@@ -27,6 +30,9 @@ function solveEngineering(input) {
     case 'powertransmission': return solvePowerTransmission(args);
     case 'shafttorque': return solveShaftTorque(args);
     case 'pumphead': return solvePumpHead(args);
+    case 'pipeflow': return solvePipeFlow(args);
+    case 'rigidbodydynamics': return solveRigidBodyDynamics(args);
+    case 'electromagneticinduction': return solveElectromagneticInduction(args);
     default: throw new Error('Unknown engineering mode.');
   }
 }
@@ -181,5 +187,54 @@ function solvePumpHead(args) {
     `H = ${formatGreekSymbol('delta')}P / (${formatGreekSymbol('rho')}g) = ${formatEngineeringNumber(hydraulicHead)} m`,
     `P_hydraulic = Q${formatGreekSymbol('delta')}P = ${formatEngineeringNumber(hydraulicPower)} W`,
     'Conclusion: Hydraulic head and power estimated for pump sizing.'
+  ].join('\n');
+}
+
+function solvePipeFlow(args) {
+  requirePositive(args, 5, 'pipeFlow(densityKgM3, velocityMs, diameterM, viscosityPaS, roughnessM)');
+  const [density, velocity, diameter, viscosity, roughness] = args;
+  const reynoldsNumber = (density * velocity * diameter) / viscosity;
+  const relativeRoughness = roughness / diameter;
+  const frictionFactor = reynoldsNumber < 2300
+    ? 64 / reynoldsNumber
+    : 0.25 / Math.log10((roughness / (3.7 * diameter)) + (5.74 / reynoldsNumber ** 0.9)) ** 2;
+  const pressureDrop = frictionFactor * (1 / diameter) * (density * velocity ** 2 / 2);
+  return [
+    'Internal Pipe Flow',
+    `Re = ${formatEngineeringNumber(reynoldsNumber)}, relative roughness = ${formatEngineeringNumber(relativeRoughness)}`,
+    `Darcy friction factor f = ${formatEngineeringNumber(frictionFactor)}`,
+    `Pressure gradient = f·(1/D)·ρv²/2 = ${formatEngineeringNumber(pressureDrop)} Pa/m`,
+    `Flow regime: ${reynoldsNumber < 2300 ? 'laminar' : 'turbulent'}`,
+    'Assumption: Fully developed steady flow in a circular pipe; turbulent flow uses an explicit Colebrook approximation.'
+  ].join('\n');
+}
+
+function solveRigidBodyDynamics(args) {
+  requirePositive(args, 4, 'rigidBodyDynamics(massKg, netForceN, inertiaKgM2, netTorqueNm)');
+  const [mass, netForce, inertia, netTorque] = args;
+  const linearAcceleration = netForce / mass;
+  const angularAcceleration = netTorque / inertia;
+  return [
+    'Rigid-Body Dynamics',
+    `ΣF = ${netForce} N, m = ${mass} kg, Στ = ${netTorque} N·m, I = ${inertia} kg·m^2`,
+    `Translational equation: ΣF = m·a → a = ${formatEngineeringNumber(linearAcceleration)} m/s^2`,
+    `Rotational equation: Στ = I·α → α = ${formatEngineeringNumber(angularAcceleration)} rad/s^2`,
+    'Conclusion: Coupled translational and rotational accelerations computed for a rigid body.'
+  ].join('\n');
+}
+
+function solveElectromagneticInduction(args) {
+  requirePositive(args, 4, 'electromagneticInduction(turns, areaM2, dBdtTPerS, resistanceOhm)');
+  const [turns, area, magneticFieldRate, resistance] = args;
+  const inducedEmf = turns * area * magneticFieldRate;
+  const current = inducedEmf / resistance;
+  const power = inducedEmf * current;
+  return [
+    'Electromagnetic Induction',
+    `N = ${turns}, A = ${area} m^2, dB/dt = ${magneticFieldRate} T/s, R = ${resistance} Ω`,
+    `Faraday's law: |ε| = N·A·|dB/dt| = ${formatEngineeringNumber(inducedEmf)} V`,
+    `Induced current: I = |ε|/R = ${formatEngineeringNumber(current)} A`,
+    `Resistive power: P = ε·I = ${formatEngineeringNumber(power)} W`,
+    'Assumption: Uniform magnetic field normal to the coil; self-inductance is neglected.'
   ].join('\n');
 }
