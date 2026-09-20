@@ -1808,5 +1808,5 @@ function erf(value) {
   const absolute = Math.abs(value);
   const t = 1 / (1 + 0.3275911 * absolute);
   const polynomial = (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t;
-  return sign * (1 - polynomial * Math.exp(-absolute ** 2));
+  return sign * (1 - polynomial * Math.exp(-(absolute ** 2)));
 }

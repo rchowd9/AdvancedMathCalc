@@ -95,6 +95,8 @@ function App() {
           <button className="challenge-chip" data-expression="det([[1,2],[3,4]])" type="button">Matrix power</button>
           <button className="challenge-chip" data-expression="taylor(sin(x), x, 0, 4)" type="button">Taylor series</button>
           <button className="challenge-chip" data-expression="stats([4, 8, 15, 16, 23, 42])" type="button">Stats check</button>
+          <button className="challenge-chip" data-expression="distributionStats(exp(-x^2 / 2), x, -5, 5)" type="button">Distribution moments</button>
+          <button className="challenge-chip" data-expression="normalCdf(1.96, 0, 1)" type="button">Normal CDF</button>
           <button className="challenge-chip" data-expression="combinations(6, 3)" type="button">Combinatorics</button>
           <button className="challenge-chip" data-expression="volumeOfRevolution(x^2, x, 0, 2)" type="button">Solid of revolution</button>
           <button className="challenge-chip" data-expression="proof((x + 1)^2 = x^2 + 2*x + 1)" type="button">Proof drill</button>
@@ -205,7 +207,10 @@ function App() {
             <p className="eyebrow">Graph mode</p>
             <h2>Plot a function</h2>
           </div>
-          <button id="plotBtn" type="button">Plot it!</button>
+          <div className="graph-actions">
+            <button id="plotBtn" type="button">Plot it!</button>
+            <button id="plotClearBtn" className="ghost-btn" type="button">Clear</button>
+          </div>
         </div>
 
         <div className="graph-controls">
@@ -224,6 +229,14 @@ function App() {
           <label>
             To
             <input id="plotMax" type="number" defaultValue="10" step="any" />
+          </label>
+          <label>
+            Mode
+            <select id="plotMode" defaultValue="function">
+              <option value="function">Function</option>
+              <option value="derivative">Derivative</option>
+              <option value="area">Area to zero</option>
+            </select>
           </label>
         </div>
 
@@ -261,6 +274,9 @@ function App() {
               <li>sum(i^2, i, 1, 10)</li>
               <li>product(i, i, 1, 6)</li>
               <li>stats([4, 8, 15, 16, 23, 42])</li>
+              <li>distributionStats(exp(-x^2 / 2), x, -5, 5)</li>
+              <li>normalPdf(1.96, 0, 1)</li>
+              <li>normalCdf(1.96, 0, 1)</li>
             </ul>
           </div>
           <div className="examples-group">
@@ -291,6 +307,7 @@ function App() {
               <li>reynolds(998, 2, 0.05, 0.001)</li>
               <li>heatTransfer(0.8, 12, 25, 0.15)</li>
               <li>safetyFactor(250, 120)</li>
+              <li>pipeFlow(998, 2, 0.05, 0.001, 0.00005)</li>
             </ul>
           </div>
           <div className="examples-group">
