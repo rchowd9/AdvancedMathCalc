@@ -205,3 +205,41 @@ return [
 function solvePotentialEnergy([m, g, h]) {
 return `Potential Energy = ${m * g * h} J`;
 }
+
+/ ======================
+// 11. ANGULAR MOMENTUM
+// ======================
+ 
+function solveAngularMomentum([I, omega]) {
+return `Angular Momentum = ${I * omega}`;
+}
+ 
+// ======================
+// 12. FLYWHEEL ENERGY
+// ======================
+ 
+function solveFlywheelEnergy([I, omega]) {
+const energy = 0.5 * I * omega * omega;
+ 
+return [
+"Flywheel Energy",
+`E = ½Iω²`,
+`E = ${energy}`
+].join("\n");
+}
+ 
+// ======================
+// 13. GEAR RATIO
+// ======================
+ 
+function solveGearRatio([driven, driver]) {
+return `Gear Ratio = ${driven / driver}`;
+}
+ 
+// ======================
+// 14. SHAFT TORQUE
+// ======================
+ 
+function solveShaftTorque([power, omega]) {
+return `Torque = ${power / omega} N·m`;
+}
