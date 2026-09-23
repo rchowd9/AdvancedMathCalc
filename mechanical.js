@@ -60,3 +60,39 @@ default:
 throw new Error("Unknown Mechanical Engineering formula.");
 }
 }
+
+function splitMechanicalArgs(statement) {
+return statement.split(',').map(x => x.trim());
+}
+ 
+// ======================
+// 1. STRESS
+// stress(force, area)
+// ======================
+ 
+function solveStress([force, area]) {
+const stress = force / area;
+ 
+return [
+"Mechanical Stress",
+`σ = F / A`,
+`σ = ${force} / ${area}`,
+`Stress = ${stress}`
+].join("\n");
+}
+ 
+// ======================
+// 2. STRAIN
+// strain(deltaL, L)
+// ======================
+ 
+function solveStrain([deltaL, length]) {
+const strain = deltaL / length;
+ 
+return [
+"Mechanical Strain",
+`ε = ΔL / L`,
+`ε = ${deltaL}/${length}`,
+`Strain = ${strain}`
+].join("\n");
+}
