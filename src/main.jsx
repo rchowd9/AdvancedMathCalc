@@ -3,11 +3,47 @@ import ReactDOM from 'react-dom/client';
 import { all, create } from 'mathjs';
 import Plotly from 'plotly.js-dist-min';
 import '../style.css';
+import * as aerospaceEngineering from '../engineering/aerospace.js';
+import * as biomedicalEngineering from '../engineering/biomedical.js';
+import * as chemicalEngineering from '../engineering/chemical.js';
+import * as civilEngineering from '../engineering/civil.js';
+import * as computerEngineering from '../engineering/computer.js';
+import * as electricalEngineering from '../engineering/electrical.js';
+import * as environmentalEngineering from '../engineering/environmental.js';
+import * as industrialEngineering from '../engineering/industrial.js';
+import * as materialsEngineering from '../engineering/materials.js';
+import * as mechanicalEngineering from '../engineering/mechanical.js';
 
 window.math = {
   create: (config) => create(all, config),
 };
 window.Plotly = Plotly;
+
+const engineeringDisciplineModules = {
+  aerospace: aerospaceEngineering,
+  biomedical: biomedicalEngineering,
+  chemical: chemicalEngineering,
+  civil: civilEngineering,
+  computer: computerEngineering,
+  electrical: electricalEngineering,
+  environmental: environmentalEngineering,
+  industrial: industrialEngineering,
+  materials: materialsEngineering,
+  mechanical: mechanicalEngineering,
+};
+
+const engineeringDisciplineFunctions = {};
+for (const [discipline, module] of Object.entries(engineeringDisciplineModules)) {
+  for (const [name, formula] of Object.entries(module)) {
+    if (typeof formula !== 'function') continue;
+    const normalizedName = name.toLowerCase();
+    if (!engineeringDisciplineFunctions[normalizedName]) {
+      engineeringDisciplineFunctions[normalizedName] = formula;
+    }
+    engineeringDisciplineFunctions[`${discipline}${name[0].toUpperCase()}${name.slice(1)}`.toLowerCase()] = formula;
+  }
+}
+window.ENGINEERING_DISCIPLINE_FUNCTIONS = engineeringDisciplineFunctions;
 
 const loadScript = (src) => {
   return new Promise((resolve, reject) => {
