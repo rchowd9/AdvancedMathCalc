@@ -170,7 +170,7 @@ return [
 ].join("\n");
 }
 
-/ ======================
+// ======================
 // 8. EULER BUCKLING
 // ======================
  
@@ -206,7 +206,7 @@ function solvePotentialEnergy([m, g, h]) {
 return `Potential Energy = ${m * g * h} J`;
 }
 
-/ ======================
+// ======================
 // 11. ANGULAR MOMENTUM
 // ======================
  
