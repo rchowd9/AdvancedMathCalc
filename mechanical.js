@@ -111,3 +111,33 @@ return [
 `E = ${E}`
 ].join("\n");
 }
+
+// ======================
+// 4. SHEAR STRESS
+// ======================
+ 
+function solveShearStress([force, area]) {
+const tau = force / area;
+ 
+return [
+"Shear Stress",
+`τ = F/A`,
+`τ = ${tau}`
+].join("\n");
+}
+ 
+// ======================
+// 5. TORSION
+// τ = Tr/J
+// ======================
+ 
+function solveTorsion([torque, radius, polarMoment]) {
+const tau = torque * radius / polarMoment;
+ 
+return [
+"Torsion Formula",
+`τ = Tr/J`,
+`τ = (${torque} × ${radius})/${polarMoment}`,
+`τ = ${tau}`
+].join("\n");
+}
