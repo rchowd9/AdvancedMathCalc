@@ -117,6 +117,20 @@ if (geometryNameMatch && geometryModeNames.has(geometryNameMatch[1].toLowerCase(
       return;
     }
 
+    const disciplineFunctionName = physicsNameMatch?.[1]?.toLowerCase();
+    const disciplineFunction = window.ENGINEERING_DISCIPLINE_FUNCTIONS?.[disciplineFunctionName];
+    if (disciplineFunction) {
+      const functionArgs = splitFormulaArguments(physicsNameMatch.input.slice(physicsNameMatch[0].length, -1));
+      if (functionArgs.some((value) => !Number.isFinite(value))) {
+        throw new Error('Engineering discipline formulas require numeric arguments.');
+      }
+      const result = disciplineFunction(...functionArgs);
+      solvedMessage = `${physicsNameMatch[1]}(${functionArgs.join(', ')})\nResult = ${result}`;
+      awardProgress(50, 'Engineering discipline formula solved!', 'engineering');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
     if (expr.startsWith("derivative(")) {
       const parts = expr.match(/derivative\((.*),\s*(\w+)\)/);
       if (parts) {
@@ -742,6 +756,11 @@ if (expr.startsWith("integrationByParts(")) {
     setStatus('Oops', 'warning');
   }
 });
+
+function splitFormulaArguments(statement) {
+  if (!statement.trim()) return [];
+  return statement.split(',').map((value) => Number(value.trim()));
+}
 
 function awardProgress(points, statusMessage, category = 'general') {
   state.xp += points;
