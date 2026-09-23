@@ -23,3 +23,13 @@ window.MECHANICAL_FORMULAS = new Set([
 'fluidpower',
 'bearinglife'
 ]);
+
+function solveMechanical(input) {
+const match = input.match(/^([a-zA-Z]+)\(([\s\S]*)\)$/);
+ 
+if (!match) {
+throw new Error("Invalid mechanical formula syntax.");
+}
+ 
+const mode = match[1].toLowerCase();
+const args = splitMechanicalArgs(match[2]).map(Number);
