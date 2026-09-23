@@ -67,4 +67,14 @@ describe('word problem solver', () => {
     expect(geometry.window.GEOMETRY_PROOF_MODE_NAMES.has('lawofcosines')).toBe(true);
     expect(geometry.solveGeometryProof('lawOfCosines(3, 4, 90, 5)')).toContain('supplied side satisfies');
   });
+
+  it('adds engineering explanations with symbols and units', () => {
+    const engineering = loadCalculatorScript('engineering.js');
+    const result = engineering.solveEngineering('stress(12000, 240)');
+
+    expect(result).toContain('σ');
+    expect(result).toContain('MPa');
+    expect(result).toContain('Step 1');
+    expect(result).toContain('Step 2');
+  });
 });
