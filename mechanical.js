@@ -243,3 +243,64 @@ return `Gear Ratio = ${driven / driver}`;
 function solveShaftTorque([power, omega]) {
 return `Torque = ${power / omega} N·m`;
 }
+
+// ======================
+// 15. BRAKE POWER
+// ======================
+ 
+function solveBrakePower([torque, rpm]) {
+const power = 2 * Math.PI * rpm * torque / 60;
+return `Brake Power = ${power} W`;
+}
+ 
+// ======================
+// 16. THERMAL EXPANSION
+// ======================
+ 
+function solveThermalExpansion([alpha, length, deltaT]) {
+return `ΔL = ${alpha * length * deltaT}`;
+}
+ 
+// ======================
+// 17. THERMAL STRESS
+// ======================
+ 
+function solveThermalStress([E, alpha, deltaT]) {
+return `σ = ${E * alpha * deltaT}`;
+}
+ 
+// ======================
+// 18. NATURAL FREQUENCY
+// ======================
+ 
+function solveVibrationFrequency([k, m]) {
+const freq = (1 / (2 * Math.PI)) * Math.sqrt(k / m);
+ 
+return [
+"Natural Frequency",
+`f = (1/2π)√(k/m)`,
+`f = ${freq} Hz`
+].join("\n");
+}
+ 
+// ======================
+// 19. FLUID POWER
+// ======================
+ 
+function solveFluidPower([pressure, flowRate]) {
+return `Fluid Power = ${pressure * flowRate} W`;
+}
+ 
+// ======================
+// 20. BEARING LIFE
+// ======================
+ 
+function solveBearingLife([C, P]) {
+const life = Math.pow(C / P, 3);
+ 
+return [
+"Bearing Life",
+`L10 = (C/P)^3`,
+`Life = ${life}`
+].join("\n");
+}
