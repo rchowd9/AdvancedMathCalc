@@ -141,3 +141,31 @@ return [
 `τ = ${tau}`
 ].join("\n");
 }
+
+// ======================
+// 6. BEAM DEFLECTION
+// ======================
+ 
+function solveBeamDeflection([P, L, E, I]) {
+const delta = (P * Math.pow(L, 3)) / (48 * E * I);
+ 
+return [
+"Beam Deflection",
+`δ = PL³/(48EI)`,
+`δ = ${delta}`
+].join("\n");
+}
+ 
+// ======================
+// 7. SPRING FORCE
+// ======================
+ 
+function solveSpringForce([k, x]) {
+const force = k * x;
+ 
+return [
+"Hooke's Law",
+`F = kx`,
+`F = ${force}`
+].join("\n");
+}
