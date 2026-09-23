@@ -96,3 +96,18 @@ return [
 `Strain = ${strain}`
 ].join("\n");
 }
+
+// ======================
+// 3. YOUNG'S MODULUS
+// ======================
+ 
+function solveYoungsModulus([stress, strain]) {
+const E = stress / strain;
+ 
+return [
+"Young's Modulus",
+`E = σ / ε`,
+`E = ${stress}/${strain}`,
+`E = ${E}`
+].join("\n");
+}
