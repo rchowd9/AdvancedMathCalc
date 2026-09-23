@@ -125,7 +125,7 @@ if (geometryNameMatch && geometryModeNames.has(geometryNameMatch[1].toLowerCase(
         throw new Error('Engineering discipline formulas require numeric arguments.');
       }
       const result = disciplineFunction(...functionArgs);
-      solvedMessage = `${physicsNameMatch[1]}(${functionArgs.join(', ')})\nResult = ${result}`;
+      solvedMessage = buildDisciplineStepExplanation(physicsNameMatch[1], functionArgs, result);
       awardProgress(50, 'Engineering discipline formula solved!', 'engineering');
       resultEl.textContent = solvedMessage;
       return;
@@ -760,6 +760,39 @@ if (expr.startsWith("integrationByParts(")) {
 function splitFormulaArguments(statement) {
   if (!statement.trim()) return [];
   return statement.split(',').map((value) => Number(value.trim()));
+}
+
+function buildDisciplineStepExplanation(functionName, values, result) {
+  const normalized = functionName.toLowerCase();
+  const library = {
+    stress: { symbol: 'σ', formula: 'σ = F / A', unit: 'Pa', overview: 'Normal stress' },
+    beamdeflection: { symbol: 'δ', formula: 'δ = P·L^3 / (48·E·I)', unit: 'm', overview: 'Beam deflection' },
+    reynolds: { symbol: 'Re', formula: 'Re = ρ·v·D / μ', unit: 'dimensionless', overview: 'Reynolds number' },
+    heattransfer: { symbol: 'q', formula: 'q = k·A·ΔT / L', unit: 'W', overview: 'Heat transfer rate' },
+    safetyfactor: { symbol: 'N', formula: 'N = σ_y / σ_w', unit: 'dimensionless', overview: 'Safety factor' },
+    powertransmission: { symbol: 'P_out', formula: 'P_out = η·P_in', unit: 'W', overview: 'Power transmission' },
+    shafttorque: { symbol: 'T', formula: 'T = P / ω', unit: 'N·m', overview: 'Shaft torque' },
+    pumphead: { symbol: 'H', formula: 'H = ΔP / (ρg)', unit: 'm', overview: 'Pump head' },
+    pipeflow: { symbol: 'ΔP', formula: 'ΔP = f·(L/D)·ρ·v²/2', unit: 'Pa', overview: 'Pipe pressure drop' },
+    rigidbodydynamics: { symbol: 'a', formula: 'ΣF = m·a', unit: 'm/s²', overview: 'Rigid-body acceleration' },
+    electromagneticinduction: { symbol: 'ε', formula: 'ε = N·A·dB/dt', unit: 'V', overview: 'Induced EMF' },
+    lift: { symbol: 'L', formula: 'L = 0.5·ρ·v²·A·C_L', unit: 'N', overview: 'Lift force' },
+    bmi: { symbol: 'BMI', formula: 'BMI = mass / height²', unit: 'kg/m²', overview: 'Body mass index' },
+    taktTime: { symbol: 'T', formula: 'T = available time / demand', unit: 'hours', overview: 'Takt time' },
+    molarity: { symbol: 'M', formula: 'M = moles / volume', unit: 'mol/L', overview: 'Molarity' },
+    density: { symbol: 'ρ', formula: 'ρ = m / V', unit: 'kg/m³', overview: 'Density' }
+  };
+
+  const detail = library[normalized] || { symbol: 'Result', formula: 'Use the governing equation', unit: '', overview: functionName };
+  const unitsText = detail.unit ? ` ${detail.unit}` : '';
+  return [
+    detail.overview,
+    'Step 1: Write the governing equation.',
+    `Formula: ${detail.formula}`,
+    `Step 2: Substitute the values: ${values.join(', ')}`,
+    `Step 3: Calculate the final expression: ${detail.symbol} = ${result}${unitsText}`,
+    `Final answer: ${detail.symbol} = ${result}${unitsText}`
+  ].join('\n');
 }
 
 function awardProgress(points, statusMessage, category = 'general') {

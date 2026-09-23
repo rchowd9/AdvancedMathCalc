@@ -82,16 +82,30 @@ function formatGreekSymbol(name) {
   return greekMap[name.toLowerCase()] ?? name;
 }
 
+function formatEngineeringSolution({ title, formula, symbol, values, result, unit, note }) {
+  return [
+    title,
+    'Step 1: Use the governing equation.',
+    `Formula: ${formula}`,
+    `Step 2: Substitute the values: ${values}`,
+    `Step 3: Calculate the result: ${symbol} = ${result} ${unit}`,
+    note || `Final answer: ${symbol} = ${result} ${unit}`
+  ].join('\n');
+}
+
 function solveStress(args) {
   requirePositive(args, 2, 'stress(forceN, areaMm2)');
   const [force, area] = args;
   const stress = force / area;
-  return [
-    'Normal Stress',
-    `Force = ${force} N, area = ${area} mm^2`,
-    `${formatGreekSymbol('sigma')} = F / A = ${formatEngineeringNumber(stress)} MPa`,
-    'Conclusion: Axial stress calculated from load and cross-sectional area.'
-  ].join('\n');
+  return formatEngineeringSolution({
+    title: 'Normal Stress',
+    formula: 'σ = F / A',
+    symbol: 'σ',
+    values: `F = ${force} N, A = ${area} mm²`,
+    result: formatEngineeringNumber(stress),
+    unit: 'MPa',
+    note: `Conclusion: Axial stress = ${formatEngineeringNumber(stress)} MPa, with force and area in consistent units.`
+  });
 }
 
 function solveBeam(args) {
@@ -99,13 +113,15 @@ function solveBeam(args) {
   const [load, length, youngsModulus, inertia] = args;
   const deflection = (load * length ** 3) / (48 * youngsModulus * inertia);
   const moment = (load * length) / 4;
-  return [
-    'Simply Supported Beam',
-    `Point load = ${load} N, span = ${length} m`,
-    `Maximum moment = P*L/4 = ${formatEngineeringNumber(moment)} N*m`,
-    `Center deflection = P*L^3/(48*E*I) = ${formatEngineeringNumber(deflection)} m`,
-    'Assumption: A centered point load and linear elastic behavior.'
-  ].join('\n');
+  return formatEngineeringSolution({
+    title: 'Simply Supported Beam',
+    formula: 'δ = P·L^3 / (48·E·I)',
+    symbol: 'δ',
+    values: `P = ${load} N, L = ${length} m, E = ${youngsModulus} Pa, I = ${inertia} m^4`,
+    result: formatEngineeringNumber(deflection),
+    unit: 'm',
+    note: `Maximum moment = ${formatEngineeringNumber(moment)} N·m. Assumption: centered point load and linear elastic behavior.`
+  });
 }
 
 function solveReynolds(args) {
@@ -113,24 +129,30 @@ function solveReynolds(args) {
   const [density, velocity, diameter, viscosity] = args;
   const reynoldsNumber = (density * velocity * diameter) / viscosity;
   const regime = reynoldsNumber < 2300 ? 'laminar' : reynoldsNumber <= 4000 ? 'transitional' : 'turbulent';
-  return [
-    'Reynolds Number',
-    `${formatGreekSymbol('rho')} = ${density} kg/m^3, v = ${velocity} m/s, D = ${diameter} m`,
-    `Re = ${formatGreekSymbol('rho')}·v·D/${formatGreekSymbol('mu')} = ${formatEngineeringNumber(reynoldsNumber)}`,
-    `Flow regime: ${regime}`
-  ].join('\n');
+  return formatEngineeringSolution({
+    title: 'Reynolds Number',
+    formula: 'Re = ρ·v·D / μ',
+    symbol: 'Re',
+    values: `${formatGreekSymbol('rho')} = ${density} kg/m³, v = ${velocity} m/s, D = ${diameter} m, ${formatGreekSymbol('mu')} = ${viscosity} Pa·s`,
+    result: formatEngineeringNumber(reynoldsNumber),
+    unit: 'dimensionless',
+    note: `Flow regime: ${regime}.`
+  });
 }
 
 function solveHeatTransfer(args) {
   requirePositive(args, 4, 'heatTransfer(conductivityWmK, areaM2, deltaTK, thicknessM)');
   const [conductivity, area, deltaTemperature, thickness] = args;
   const heatRate = (conductivity * area * deltaTemperature) / thickness;
-  return [
-    'Steady-State Conduction',
-    `k = ${conductivity} W/(m*K), A = ${area} m^2, ${formatGreekSymbol('delta')}T = ${deltaTemperature} K`,
-    `Heat rate = k·A·${formatGreekSymbol('delta')}T/L = ${formatEngineeringNumber(heatRate)} W`,
-    'Assumption: One-dimensional conduction through a uniform slab.'
-  ].join('\n');
+  return formatEngineeringSolution({
+    title: 'Steady-State Conduction',
+    formula: 'q = k·A·ΔT / L',
+    symbol: 'q',
+    values: `k = ${conductivity} W/(m·K), A = ${area} m², ΔT = ${deltaTemperature} K, L = ${thickness} m`,
+    result: formatEngineeringNumber(heatRate),
+    unit: 'W',
+    note: 'Assumption: one-dimensional conduction through a uniform slab.'
+  });
 }
 
 function solveSafetyFactor(args) {
