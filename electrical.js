@@ -377,3 +377,51 @@ return [
 // REACTIVE POWER
 // reactivePower(V,I,thetaDeg)
 // ----------------------------------
+
+function solveReactivePower([V,I,theta]) {
+ 
+const Q =
+V*I*Math.sin(theta*Math.PI/180);
+ 
+return [
+"Reactive Power",
+"Q=VIsinθ",
+`Q = ${Q} VAR`
+].join("\n");
+}
+ 
+// ----------------------------------
+// ELECTRIC FIELD
+// electricField(q,r)
+// ----------------------------------
+ 
+function solveElectricField([q,r]) {
+ 
+const k=8.99e9;
+ 
+const E =
+k*q/(r*r);
+ 
+return [
+"Electric Field",
+"E=kq/r²",
+`E = ${E} N/C`
+].join("\n");
+}
+ 
+// ----------------------------------
+// MAGNETIC FLUX
+// magneticFlux(B,A,thetaDeg)
+// ----------------------------------
+ 
+function solveMagneticFlux([B,A,theta]) {
+ 
+const flux =
+B*A*Math.cos(theta*Math.PI/180);
+ 
+return [
+"Magnetic Flux",
+"Φ=BAcosθ",
+`Flux = ${flux} Wb`
+].join("\n");
+}
