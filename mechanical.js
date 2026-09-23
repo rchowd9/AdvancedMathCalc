@@ -169,3 +169,39 @@ return [
 `F = ${force}`
 ].join("\n");
 }
+
+/ ======================
+// 8. EULER BUCKLING
+// ======================
+ 
+function solveBuckling([E, I, L]) {
+const P = Math.PI ** 2 * E * I / (L * L);
+ 
+return [
+"Euler Buckling",
+`Pcr = π²EI/L²`,
+`Critical Load = ${P}`
+].join("\n");
+}
+ 
+// ======================
+// 9. KINETIC ENERGY
+// ======================
+ 
+function solveKineticEnergy([m, v]) {
+const ke = 0.5 * m * v * v;
+ 
+return [
+"Kinetic Energy",
+`KE = ½mv²`,
+`KE = ${ke} J`
+].join("\n");
+}
+ 
+// ======================
+// 10. POTENTIAL ENERGY
+// ======================
+ 
+function solvePotentialEnergy([m, g, h]) {
+return `Potential Energy = ${m * g * h} J`;
+}
