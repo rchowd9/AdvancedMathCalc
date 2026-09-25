@@ -96,4 +96,15 @@ describe('word problem solver', () => {
     expect(calculus.solveCalculus('divergence([x^2, y^2, z^2], [x, y, z], [1, 2, 3])')).toContain('= 12');
     expect(calculus.solveCalculus('curl([-y, x, 0], [x, y, z], [1, 2, 3])')).toContain('∇ × F = [0, 0, 2]');
   });
+
+  it('computes additional number theory and combinatorics formulas', () => {
+    const discreteMath = loadCalculatorScript('discreteMath.js');
+
+    expect(discreteMath.solveDiscreteFormula('isprime', [97])).toContain('97 is prime');
+    expect(discreteMath.solveDiscreteFormula('modularpower', [7, 128, 13])).toContain('= 3');
+    expect(discreteMath.solveDiscreteFormula('eulerphi', [36])).toContain('φ(36) = 12');
+    expect(discreteMath.solveDiscreteFormula('divisorcount', [360])).toContain('τ(360) = 24');
+    expect(discreteMath.solveDiscreteFormula('starsandbars', [10, 4])).toContain('C(13, 3) = 286');
+    expect(discreteMath.solveDiscreteFormula('derangements', [6])).toContain('!6 = 265');
+  });
 });

@@ -11,6 +11,7 @@ const legacyAssets = [
   'physics.js',
   'engineering.js',
   'calculus.js',
+  'discreteMath.js',
   'script.js'
 ];
 

@@ -61,7 +61,7 @@ const loadLegacyScripts = async () => {
   window.__mathcalcLegacyLoaded = true;
 
   try {
-    const legacyScripts = ['wordProblems.js', 'proof.js', 'geometryProofs.js', 'chemistry.js', 'physics.js', 'engineering.js', 'calculus.js', 'script.js'];
+    const legacyScripts = ['wordProblems.js', 'proof.js', 'geometryProofs.js', 'chemistry.js', 'physics.js', 'engineering.js', 'calculus.js', 'discreteMath.js', 'script.js'];
     for (const src of legacyScripts) {
       await loadScript(`${import.meta.env.BASE_URL}${src}`);
     }
