@@ -34,6 +34,117 @@ updateGameHud();
 
 plotBtn.addEventListener('click', plotFunction);
 plotClearBtn.addEventListener('click', () => {
+  clearPlot();
+  setPlotStatus('Graph cleared.');
+});
+plotExprInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') plotFunction();
+});
+randomChallengeBtn.addEventListener('click', loadRandomChallenge);
+clearBtn.addEventListener('click', () => {
+  exprInput.value = '';
+  resultEl.textContent = 'Fresh board. Pick a challenge and go!';
+  setStatus('Ready', 'ready');
+});
+
+challengeButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    exprInput.value = button.dataset.expression;
+    exprInput.focus();
+    setStatus('Challenge loaded', 'ready');
+  });
+});
+
+evalBtn.addEventListener('click', () => {
+  const expr = exprInput.value.trim();
+  if (!expr) {
+    resultEl.textContent = 'Please enter an expression.';
+    setStatus('Need input', 'warning');
+    return;
+  }
+
+  try {
+    let solvedMessage = '';
+
+    if (expr.startsWith("proof(") || expr.startsWith("prove(")) {
+      solvedMessage = solveProof(expr);
+      awardProgress(45, 'Proof complete!', 'proofs');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
+    const proofNameMatch = expr.match(/^([a-zA-Z]+)\(/);
+    const proofModeNames = window.PROOF_MODE_NAMES ?? new Set();
+    if (proofNameMatch && proofModeNames.has(proofNameMatch[1].toLowerCase())) {
+      solvedMessage = solveProofMode(expr);
+      awardProgress(45, 'Proof complete!', 'proofs');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
+    const geometryNameMatch = expr.match(/^([a-zA-Z]+)\(/);
+    const geometryModeNames = window.GEOMETRY_PROOF_MODE_NAMES ?? new Set();
+    if (geometryNameMatch && geometryModeNames.has(geometryNameMatch[1].toLowerCase())) {
+      solvedMessage = solveGeometryProof(expr);
+      awardProgress(45, 'Geometry proof complete!', 'geometry');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
+    const chemistryNameMatch = expr.match(/^([a-zA-Z]+)\(/);
+    const chemistryModeNames = window.CHEMISTRY_MODE_NAMES ?? new Set();
+    if (chemistryNameMatch && chemistryModeNames.has(chemistryNameMatch[1].toLowerCase())) {
+      solvedMessage = solveChemistry(expr);
+      awardProgress(45, 'Chemistry problem solved!', 'chemistry');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
+    const physicsNameMatch = expr.match(/^([a-zA-Z]+)\(/);
+    const physicsModeNames = window.PHYSICS_MODE_NAMES ?? new Set();
+    if (physicsNameMatch && physicsModeNames.has(physicsNameMatch[1].toLowerCase())) {
+      solvedMessage = solvePhysics(expr);
+      awardProgress(45, 'Physics problem solved!', 'physics');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
+    const engineeringModeNames = window.ENGINEERING_MODE_NAMES ?? new Set();
+    if (physicsNameMatch && engineeringModeNames.has(physicsNameMatch[1].toLowerCase())) {
+      solvedMessage = solveEngineering(expr);
+      awardProgress(50, 'Engineering check complete!', 'engineering');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
+    const calculusModeNames = window.CALCULUS_MODE_NAMES ?? new Set();
+    if (physicsNameMatch && calculusModeNames.has(physicsNameMatch[1].toLowerCase())) {
+      solvedMessage = solveCalculus(expr);
+      awardProgress(45, 'Calculus III formula solved!', 'calculus3');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
+    const disciplineFunctionName = physicsNameMatch?.[1]?.toLowerCase();
+    const disciplineFunction = window.ENGINEERING_DISCIPLINE_FUNCTIONS?.[disciplineFunctionName];
+    if (disciplineFunction) {
+      const functionArgs = splitFormulaArguments(physicsNameMatch.input.slice(physicsNameMatch[0].length, -1));
+      if (functionArgs.some((value) => !Number.isFinite(value))) {
+        throw new Error('Engineering discipline formulas require numeric arguments.');
+      }
+      const result = disciplineFunction(...functionArgs);
+      solvedMessage = buildDisciplineStepExplanation(physicsNameMatch[1], functionArgs, result);
+      awardProgress(50, 'Engineering discipline formula solved!', 'engineering');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
+    if (expr.startsWith("derivative(")) {
+      const parts = expr.match(/derivative\((.*),\s*(\w+)\)/);
+      if (parts) {
+        solvedMessage = explainDerivative(parts[1], parts[2]);
+        const reward = 35;
+        awardProgress(reward, 'Derivative win!');
         resultEl.textContent = solvedMessage;
         return;
       }
