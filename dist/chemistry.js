@@ -87,7 +87,8 @@ function solveChemistry(input) {
   const args = splitChemArgs(match[2]);
 
 
-  switch (mode) {
+  const result = (() => {
+    switch (mode) {
     case 'stoichiometry': return solveStoichiometry(args);
     case 'molarity': return solveMolarity(args);
     case 'molality': return solveMolality(args);
@@ -110,6 +111,21 @@ function solveChemistry(input) {
     case 'organic': return solveOrganic(args);
     default:
       throw new Error("Unknown chemistry mode.");
+    }
+  })();
+  const outputUnits = {
+    stoichiometry: 'product amount mol', molarity: 'mol/L', molality: 'mol/kg',
+    idealgas: 'PV and nRT L·atm (R = 0.0821 L·atm/(mol·K))',
+    vanderwaals: 'both sides L·atm (R = 0.0821 L·atm/(mol·K))', enthalpy: 'kJ/mol',
+    entropy: 'J/K', gibbs: 'same energy units as ΔH', equilibrium: 'dimensionless',
+    ratelaw: 'same units as k·[A]^order; depends on rate-law inputs',
+    arrhenius: 'same units as pre-exponential factor A', nernst: 'V',
+    electrolysis: 'charge C; amount mol', ph: 'dimensionless', buffer: 'dimensionless pH',
+    quantumenergy: 'J', dilution: 'mol/L',
+    titration: 'mol equivalents when concentration is mol/L and volume is L',
+    solubility: 'mol/L', organic: 'chemical formula; no physical unit'
+  };
+  return `${result}\nOutput units: ${outputUnits[mode]}.`;
   }
 }
 

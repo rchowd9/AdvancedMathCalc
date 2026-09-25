@@ -69,7 +69,7 @@ function solveDirectionalDerivative(args, math) {
   const gradient = variables.map((variable) => derivativeAt(args[0], variable, variables, point, math));
   const unitDirection = direction.map((component) => component / norm);
   const result = gradient.reduce((sum, component, index) => sum + component * unitDirection[index], 0);
-  return [`Directional derivative of f = ${args[0]}`, `Gradient at the point: ∇f = [${gradient.join(', ')}]`, `Unit direction: u = [${unitDirection.join(', ')}]`, `Dᵤf = ∇f · u = ${result}`].join('\n');
+  return [`Directional derivative of f = ${args[0]}`, `Gradient at the point: ∇f = [${gradient.join(', ')}]`, `Unit direction: u = [${unitDirection.join(', ')}]`, `Dᵤf = ∇f · u = ${result}`, 'Output units: function-output units per coordinate unit (depends on input variables).'].join('\n');
 }
 
 function solveTangentPlane(args, math) {
@@ -80,7 +80,7 @@ function solveTangentPlane(args, math) {
   const z0 = evaluateCalculusExpression(args[0], ['x', 'y'], point, math);
   const fx = derivativeAt(args[0], 'x', ['x', 'y'], point, math);
   const fy = derivativeAt(args[0], 'y', ['x', 'y'], point, math);
-  return [`Surface: z = ${args[0]}`, `Point: (${x0}, ${y0}, ${z0})`, `Partial derivatives: fₓ = ${fx}, fᵧ = ${fy}`, `Tangent plane: z = ${z0} + ${fx}(x - ${x0}) + ${fy}(y - ${y0})`].join('\n');
+  return [`Surface: z = ${args[0]}`, `Point: (${x0}, ${y0}, ${z0})`, `Partial derivatives: fₓ = ${fx}, fᵧ = ${fy}`, `Tangent plane: z = ${z0} + ${fx}(x - ${x0}) + ${fy}(y - ${y0})`, 'Output units: z uses function-output units; partial derivatives use function-output units per coordinate unit.'].join('\n');
 }
 
 function solveMultipleIntegral(args, math, dimensions) {
@@ -113,7 +113,7 @@ function solveMultipleIntegral(args, math, dimensions) {
   };
   visit(0, []);
   const result = sum * widths.reduce((product, width) => product * width, 1);
-  return [`${dimensions === 2 ? 'Double' : 'Triple'} integral of ${args[0]}`, `Midpoint rule with ${steps} subdivisions per variable`, `Approximate value: ${result}`].join('\n');
+  return [`${dimensions === 2 ? 'Double' : 'Triple'} integral of ${args[0]}`, `Midpoint rule with ${steps} subdivisions per variable`, `Approximate value: ${result}`, 'Output units: integrand units multiplied by each integration-variable unit.'].join('\n');
 }
 
 function solveVectorFieldDerivative(args, math, mode) {
@@ -125,7 +125,7 @@ function solveVectorFieldDerivative(args, math, mode) {
   if (fields.length !== dimension || variables.length !== dimension || point.length !== dimension) throw new Error(`${mode} requires ${dimension} field components, variables, and point coordinates.`);
   if (mode === 'divergence') {
     const terms = fields.map((field, index) => derivativeAt(field, variables[index], variables, point, math));
-    return [`Vector field: F = [${fields.join(', ')}]`, `Divergence: ∇ · F = ${terms.join(' + ')} = ${terms.reduce((sum, value) => sum + value, 0)}`].join('\n');
+    return [`Vector field: F = [${fields.join(', ')}]`, `Divergence: ∇ · F = ${terms.join(' + ')} = ${terms.reduce((sum, value) => sum + value, 0)}`, 'Output units: field-component units per coordinate unit.'].join('\n');
   }
   const [p, q, r] = fields;
   const [x, y, z] = variables;
@@ -134,5 +134,5 @@ function solveVectorFieldDerivative(args, math, mode) {
     derivativeAt(p, z, variables, point, math) - derivativeAt(r, x, variables, point, math),
     derivativeAt(q, x, variables, point, math) - derivativeAt(p, y, variables, point, math)
   ];
-  return [`Vector field: F = [${fields.join(', ')}]`, `Curl: ∇ × F = [${components.join(', ')}]`].join('\n');
+  return [`Vector field: F = [${fields.join(', ')}]`, `Curl: ∇ × F = [${components.join(', ')}]`, 'Output units: field-component units per coordinate unit.'].join('\n');
 }

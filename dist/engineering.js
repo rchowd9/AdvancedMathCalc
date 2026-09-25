@@ -21,7 +21,8 @@ function solveEngineering(input) {
   const mode = match[1].toLowerCase();
   const args = splitEngineeringArgs(match[2]).map(Number);
 
-  switch (mode) {
+  const result = (() => {
+    switch (mode) {
     case 'stress': return solveStress(args);
     case 'beam': return solveBeam(args);
     case 'reynolds': return solveReynolds(args);
@@ -34,6 +35,16 @@ function solveEngineering(input) {
     case 'rigidbodydynamics': return solveRigidBodyDynamics(args);
     case 'electromagneticinduction': return solveElectromagneticInduction(args);
     default: throw new Error('Unknown engineering mode.');
+    }
+  })();
+  const outputUnits = {
+    stress: 'MPa', beam: 'deflection m; moment N·m', reynolds: 'dimensionless',
+    heattransfer: 'W', safetyfactor: 'dimensionless', powertransmission: 'output power W; torque N·m',
+    shafttorque: 'N·m', pumphead: 'head m; hydraulic power W', pipeflow: 'pressure gradient Pa/m',
+    rigidbodydynamics: 'linear acceleration m/s²; angular acceleration rad/s²',
+    electromagneticinduction: 'emf V; current A; power W'
+  };
+  return `${result}\nOutput units: ${outputUnits[mode]}.`;
   }
 }
 

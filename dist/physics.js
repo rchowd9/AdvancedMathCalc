@@ -44,7 +44,8 @@ function solvePhysics(input) {
   const mode = match[1].toLowerCase();
   const args = splitPhysicsArgs(match[2]);
 
-  switch (mode) {
+  const result = (() => {
+    switch (mode) {
     case 'kinematics': return solveKinematics(args);
     case 'newton2': return solveNewton2(args);
     case 'workenergy': return solveWorkEnergy(args);
@@ -84,7 +85,22 @@ function solvePhysics(input) {
 
     default:
       throw new Error("Unknown physics mode.");
-  }
+    }
+  })();
+  const outputUnits = {
+    kinematics: 'final velocity m/s; displacement m', newton2: 'force N', workenergy: 'work J',
+    momentum: 'momentum kg·m/s', coulomb: 'force N', ohm: 'current A', power: 'power W',
+    gravitation: 'force N', projectile: 'range and height m', electricfield: 'field N/C',
+    magneticforce: 'force N', lorentzforce: 'force vector N', capacitor: 'charge C; energy J',
+    inductor: 'energy J', flux: 'magnetic flux Wb', faraday: 'induced emf V',
+    continuousforce: 'work J', continuousmass: 'mass kg', continuouscharge: 'charge C',
+    wave: 'speed m/s', circularmotion: 'force N', resonance: 'frequency Hz', weight: 'force N',
+    friction: 'force N', torque: 'torque N·m', rotationalke: 'energy J', thermalenergy: 'heat J',
+    idealgas: 'PV and nRT J', snelllaw: 'angle degrees; refractive index dimensionless',
+    bernoulli: 'pressure Pa', radioactivedecay: 'same quantity units as N₀', photonenergy: 'energy J',
+    lens: 'focal length m'
+  };
+  return `${result}\nOutput units: ${outputUnits[mode]}.`;
 }
 
 function splitPhysicsArgs(statement) {

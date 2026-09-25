@@ -21,9 +21,9 @@ function solveDiscreteFormula(mode, values) {
   if (mode === 'isprime') {
     requireArgs(1, 'isPrime(n)');
     const [n] = values;
-    if (n < 2) return `${n} is not prime.`;
-    for (let divisor = 2; divisor * divisor <= n; divisor += 1) if (n % divisor === 0) return `${n} is composite; ${divisor} is a divisor.`;
-    return `${n} is prime.`;
+    if (n < 2) return `${n} is not prime. Units: integer classification (dimensionless).`;
+    for (let divisor = 2; divisor * divisor <= n; divisor += 1) if (n % divisor === 0) return `${n} is composite; ${divisor} is a divisor. Units: integer classification (dimensionless).`;
+    return `${n} is prime. Units: integer classification (dimensionless).`;
   }
   if (mode === 'modularpower') {
     requireArgs(3, 'modularPower(base, exponent, modulus)');
@@ -39,7 +39,7 @@ function solveDiscreteFormula(mode, values) {
       factor = (factor * factor) % mod;
       power /= 2n;
     }
-    return `Repeated squaring gives ${base}^${exponent} mod ${modulus} = ${result}.`;
+    return `Repeated squaring gives ${base}^${exponent} mod ${modulus} = ${result}. Units: dimensionless residue.`;
   }
   if (mode === 'eulerphi') {
     requireArgs(1, 'eulerPhi(n)');
@@ -53,7 +53,7 @@ function solveDiscreteFormula(mode, values) {
       result -= result / prime;
     }
     if (remaining > 1) result -= result / remaining;
-    return `Euler's totient: φ(${n}) = ${result}, using φ(n) = n ∏(1 - 1/p) over prime divisors p of n.`;
+    return `Euler's totient: φ(${n}) = ${result}, using φ(n) = n ∏(1 - 1/p) over prime divisors p of n. Units: coprime-integer count.`;
   }
   if (mode === 'divisorcount') {
     requireArgs(1, 'divisorCount(n)');
@@ -70,7 +70,7 @@ function solveDiscreteFormula(mode, values) {
       count *= exponent + 1;
     }
     if (remaining > 1) count *= 2;
-    return `If n = ∏pᵢ^aᵢ, then τ(n) = ∏(aᵢ + 1). Therefore τ(${n}) = ${count}.`;
+    return `If n = ∏pᵢ^aᵢ, then τ(n) = ∏(aᵢ + 1). Therefore τ(${n}) = ${count}. Units: divisor count.`;
   }
   if (mode === 'multisetcombinations') {
     requireArgs(2, 'multisetCombinations(n, r)');
@@ -78,7 +78,7 @@ function solveDiscreteFormula(mode, values) {
     requireNonnegative(n, 'n');
     requireNonnegative(r, 'r');
     const result = chooseBigInt(n + r - 1, r);
-    return `Combinations with repetition: C(n + r - 1, r) = C(${n + r - 1}, ${r}) = ${result}.`;
+    return `Combinations with repetition: C(n + r - 1, r) = C(${n + r - 1}, ${r}) = ${result}. Units: number of combinations.`;
   }
   if (mode === 'starsandbars') {
     requireArgs(2, 'starsAndBars(total, parts)');
@@ -86,25 +86,25 @@ function solveDiscreteFormula(mode, values) {
     requireNonnegative(total, 'Total');
     if (parts < 1) throw new Error('Parts must be a positive integer.');
     const result = chooseBigInt(total + parts - 1, parts - 1);
-    return `Non-negative integer solutions: C(total + parts - 1, parts - 1) = C(${total + parts - 1}, ${parts - 1}) = ${result}.`;
+    return `Non-negative integer solutions: C(total + parts - 1, parts - 1) = C(${total + parts - 1}, ${parts - 1}) = ${result}. Units: number of solutions.`;
   }
   if (mode === 'circularpermutations') {
     requireArgs(1, 'circularPermutations(n)');
     const [n] = values;
     if (n < 1) throw new Error('n must be a positive integer.');
-    return `Distinct circular arrangements: (n - 1)! = ${n - 1}! = ${factorialBigInt(n - 1)}.`;
+    return `Distinct circular arrangements: (n - 1)! = ${n - 1}! = ${factorialBigInt(n - 1)}. Units: number of arrangements.`;
   }
   if (mode === 'derangements') {
     requireArgs(1, 'derangements(n)');
     const [n] = values;
     requireNonnegative(n, 'n');
     let previous = 1n;
-    if (n === 0) return 'Derangements: !0 = 1.';
+    if (n === 0) return 'Derangements: !0 = 1. Units: number of arrangements.';
     let current = 0n;
     for (let index = 2; index <= n; index += 1) {
       [previous, current] = [current, BigInt(index - 1) * (current + previous)];
     }
-    return `Derangements satisfy !n = (n - 1)(!(n - 1) + !(n - 2)); !${n} = ${current}.`;
+    return `Derangements satisfy !n = (n - 1)(!(n - 1) + !(n - 2)); !${n} = ${current}. Units: number of arrangements.`;
   }
   throw new Error('Unknown number theory or combinatorics formula.');
 }
