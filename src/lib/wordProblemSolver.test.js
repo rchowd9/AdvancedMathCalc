@@ -89,7 +89,7 @@ describe('word problem solver', () => {
   it('solves representative Calculus III formulas', () => {
     const calculus = loadCalculatorScript('calculus.js');
 
-    expect(calculus.solveCalculus('directionalDerivative(x^2*y + y^2, [x, y], [1, 2], [3, 4])')).toContain('Dᵤf = ∇f · u = 8');
+    expect(calculus.solveCalculus('directionalDerivative(x^2*y + y^2, [x, y], [1, 2], [3, 4])')).toContain('Dᵤf = ∇f · u = 6.4');
     expect(calculus.solveCalculus('tangentPlane(x^2 + y^2, 1, 2)')).toContain('Tangent plane: z = 5 + 2(x - 1) + 4(y - 2)');
     expect(calculus.solveCalculus('doubleIntegral(x + y, x, 0, 1, y, 0, 2)')).toContain('Approximate value: 3');
     expect(calculus.solveCalculus('divergence([x^2, y^2, z^2], [x, y, z], [1, 2, 3])')).toContain('= 12');

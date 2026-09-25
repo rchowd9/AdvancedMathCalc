@@ -43,12 +43,10 @@ function splitCalculusArgs(statement) {
   return parts;
 }
 
-function parseCalculusArray(value, math) {
-  const parsed = math.evaluate(value);
-  if (!Array.isArray(parsed) || parsed.some((entry) => !Number.isFinite(Number(entry)))) {
-    throw new Error('Expected an array of finite numbers or expressions.');
-  }
-  return parsed;
+function parseCalculusArray(value, math, evaluateEntries = true) {
+  if (!value.startsWith('[') || !value.endsWith(']')) throw new Error('Expected an array of finite numbers or expressions.');
+  const entries = splitCalculusArgs(value.slice(1, -1));
+  return entries.map((entry) => evaluateEntries ? math.evaluate(entry) : entry);
 }
 
 function evaluateCalculusExpression(expression, variables, values, math) {
@@ -62,7 +60,7 @@ function derivativeAt(expression, variable, variables, values, math) {
 
 function solveDirectionalDerivative(args, math) {
   if (args.length !== 4) throw new Error('Use directionalDerivative(expression, [x, y], [x0, y0], [a, b]).');
-  const variables = parseCalculusArray(args[1], math).map(String);
+  const variables = parseCalculusArray(args[1], math, false);
   const point = parseCalculusArray(args[2], math).map(Number);
   const direction = parseCalculusArray(args[3], math).map(Number);
   if (variables.length !== point.length || point.length !== direction.length || !variables.length) throw new Error('Variables, point, and direction must have the same non-zero length.');
@@ -120,8 +118,8 @@ function solveMultipleIntegral(args, math, dimensions) {
 
 function solveVectorFieldDerivative(args, math, mode) {
   if (args.length !== 3) throw new Error(`Use ${mode}([P, Q${mode === 'curl' ? ', R' : ''}], [variables], [point]).`);
-  const fields = parseCalculusArray(args[0], math).map(String);
-  const variables = parseCalculusArray(args[1], math).map(String);
+  const fields = parseCalculusArray(args[0], math, false);
+  const variables = parseCalculusArray(args[1], math, false);
   const point = parseCalculusArray(args[2], math).map(Number);
   const dimension = mode === 'curl' ? 3 : fields.length;
   if (fields.length !== dimension || variables.length !== dimension || point.length !== dimension) throw new Error(`${mode} requires ${dimension} field components, variables, and point coordinates.`);
