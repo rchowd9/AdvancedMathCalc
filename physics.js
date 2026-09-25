@@ -20,7 +20,18 @@ window.PHYSICS_MODE_NAMES = new Set([
   'continuouscharge',
   'wave',
   'circularmotion',
-  'resonance'
+  'resonance',
+  'weight',
+  'friction',
+  'torque',
+  'rotationalke',
+  'thermalenergy',
+  'idealgas',
+  'snelllaw',
+  'bernoulli',
+  'radioactivedecay',
+  'photonenergy',
+  'lens'
 ]);
 
 function solvePhysics(input) {
@@ -46,6 +57,17 @@ function solvePhysics(input) {
     case 'wave': return solveWave(args);
     case 'circularmotion': return solveCircularMotion(args);
     case 'resonance': return solveResonance(args);
+    case 'weight': return solveWeight(args);
+    case 'friction': return solveFriction(args);
+    case 'torque': return solveTorque(args);
+    case 'rotationalke': return solveRotationalKE(args);
+    case 'thermalenergy': return solveThermalEnergy(args);
+    case 'idealgas': return solveIdealGas(args);
+    case 'snelllaw': return solveSnellLaw(args);
+    case 'bernoulli': return solveBernoulli(args);
+    case 'radioactivedecay': return solveRadioactiveDecay(args);
+    case 'photonenergy': return solvePhotonEnergy(args);
+    case 'lens': return solveLens(args);
 
     // Electromagnetism
     case 'electricfield': return solveElectricField(args);
@@ -382,6 +404,171 @@ function solveFaraday(args) {
     `${formatGreekSymbol('delta')}${formatGreekSymbol('phi')} = ${dFlux} Wb, ${formatGreekSymbol('delta')}t = ${dt} s`,
     `emf = -${formatGreekSymbol('delta')}${formatGreekSymbol('phi')} / ${formatGreekSymbol('delta')}t = ${emf} V`,
     "Conclusion: Induced emf computed."
+  ].join("\n");
+}
+
+// Weight: weight(m, g)
+function solveWeight(args) {
+  if (args.length < 2) throw new Error("Use weight(massKg, gravityMs2)");
+  const [m, g] = args.map(Number);
+  const W = m * g;
+
+  return [
+    "Weight",
+    `m = ${m} kg, g = ${g} m/s²`,
+    `W = m·g = ${W} N`,
+    "Conclusion: Weight force computed."
+  ].join("\n");
+}
+
+// Friction: friction(mu, N)
+function solveFriction(args) {
+  if (args.length < 2) throw new Error("Use friction(mu, normalForceN)");
+  const [mu, N] = args.map(Number);
+  const f = mu * N;
+
+  return [
+    "Friction Force",
+    `μ = ${mu}, N = ${N} N`,
+    `f = μ·N = ${f} N`,
+    "Conclusion: Friction force computed."
+  ].join("\n");
+}
+
+// Torque: torque(r, F, thetaDeg)
+function solveTorque(args) {
+  if (args.length < 3) throw new Error("Use torque(r, F, thetaDeg)");
+  const [r, F, thetaDeg] = args.map(Number);
+  const theta = thetaDeg * Math.PI / 180;
+  const tau = r * F * Math.sin(theta);
+
+  return [
+    "Torque",
+    `r = ${r} m, F = ${F} N, θ = ${thetaDeg}°`,
+    `τ = r·F·sin(θ) = ${tau} N·m`,
+    "Conclusion: Torque computed."
+  ].join("\n");
+}
+
+// Rotational kinetic energy: rotationalKE(I, omega)
+function solveRotationalKE(args) {
+  if (args.length < 2) throw new Error("Use rotationalKE(I, omega)");
+  const [I, omega] = args.map(Number);
+  const KE = 0.5 * I * omega * omega;
+
+  return [
+    "Rotational Kinetic Energy",
+    `I = ${I} kg·m², ω = ${omega} rad/s`,
+    `KE = ½·I·ω² = ${KE} J`,
+    "Conclusion: Rotational kinetic energy computed."
+  ].join("\n");
+}
+
+// Thermal energy: thermalEnergy(m, c, deltaT)
+function solveThermalEnergy(args) {
+  if (args.length < 3) throw new Error("Use thermalEnergy(massKg, specificHeat, deltaT)");
+  const [m, c, deltaT] = args.map(Number);
+  const Q = m * c * deltaT;
+
+  return [
+    "Heat Energy",
+    `m = ${m} kg, c = ${c} J/(kg·K), ΔT = ${deltaT} K`,
+    `Q = m·c·ΔT = ${Q} J`,
+    "Conclusion: Heat transferred computed."
+  ].join("\n");
+}
+
+// Ideal gas law: idealGas(P, V, n, T)
+function solveIdealGas(args) {
+  if (args.length < 4) throw new Error("Use idealGas(P, V, n, T)");
+  const [P, V, n, T] = args.map(Number);
+  const R = 8.314;
+  const leftSide = P * V;
+  const rightSide = n * R * T;
+
+  return [
+    "Ideal Gas Law",
+    `P = ${P} Pa, V = ${V} m³, n = ${n} mol, T = ${T} K`,
+    `P·V = ${leftSide} J`,
+    `n·R·T = ${rightSide} J`,
+    "Conclusion: Ideal gas relation checked."
+  ].join("\n");
+}
+
+// Snell's law: snellLaw(n1, theta1Deg, n2)
+function solveSnellLaw(args) {
+  if (args.length < 3) throw new Error("Use snellLaw(n1, theta1Deg, n2)");
+  const [n1, theta1Deg, n2] = args.map(Number);
+  const theta1 = theta1Deg * Math.PI / 180;
+  const sinTheta2 = (n1 * Math.sin(theta1)) / n2;
+  const theta2Deg = Math.asin(Math.max(-1, Math.min(1, sinTheta2))) * 180 / Math.PI;
+
+  return [
+    "Snell’s Law",
+    `n₁ = ${n1}, θ₁ = ${theta1Deg}°, n₂ = ${n2}`,
+    `n₁·sin(θ₁) = n₂·sin(θ₂)`,
+    `θ₂ = arcsin((n₁·sin θ₁)/n₂) = ${theta2Deg}°`,
+    "Conclusion: Refracted angle computed."
+  ].join("\n");
+}
+
+// Bernoulli equation: bernoulli(P1, rho, v1, z1, v2, z2)
+function solveBernoulli(args) {
+  if (args.length < 6) throw new Error("Use bernoulli(P1, rho, v1, z1, v2, z2)");
+  const [P1, rho, v1, z1, v2, z2] = args.map(Number);
+  const g = 9.8;
+  const P2 = P1 + 0.5 * rho * (v1 * v1 - v2 * v2) + rho * g * (z1 - z2);
+
+  return [
+    "Bernoulli’s Equation",
+    `P₁ = ${P1} Pa, ρ = ${rho} kg/m³, v₁ = ${v1} m/s, z₁ = ${z1} m`,
+    `v₂ = ${v2} m/s, z₂ = ${z2} m`,
+    `P₂ = P₁ + ½·ρ·(v₁² − v₂²) + ρ·g·(z₁ − z₂) = ${P2} Pa`,
+    "Conclusion: Pressure at the second point computed."
+  ].join("\n");
+}
+
+// Radioactive decay: radioactiveDecay(N0, lambda, t)
+function solveRadioactiveDecay(args) {
+  if (args.length < 3) throw new Error("Use radioactiveDecay(N0, lambda, t)");
+  const [N0, lambda, t] = args.map(Number);
+  const N = N0 * Math.exp(-lambda * t);
+
+  return [
+    "Radioactive Decay",
+    `N₀ = ${N0}, λ = ${lambda} s⁻¹, t = ${t} s`,
+    `N = N₀·e^(-λ·t) = ${N}`,
+    "Conclusion: Remaining quantity after time t computed."
+  ].join("\n");
+}
+
+// Photon energy: photonEnergy(f)
+function solvePhotonEnergy(args) {
+  if (args.length < 1) throw new Error("Use photonEnergy(frequencyHz)");
+  const [f] = args.map(Number);
+  const h = 6.62607015e-34;
+  const E = h * f;
+
+  return [
+    "Photon Energy",
+    `f = ${f} Hz`,
+    `E = h·f = ${E} J`,
+    "Conclusion: Energy of a photon computed."
+  ].join("\n");
+}
+
+// Thin lens equation: lens(do, di)
+function solveLens(args) {
+  if (args.length < 2) throw new Error("Use lens(objectDistance, imageDistance)");
+  const [do, di] = args.map(Number);
+  const f = 1 / ((1 / do) + (1 / di));
+
+  return [
+    "Thin Lens Equation",
+    `dₒ = ${do} m, dᵢ = ${di} m`,
+    `1/f = 1/dₒ + 1/dᵢ`,
+    `f = 1 / (1/dₒ + 1/dᵢ) = ${f} m`,
+    "Conclusion: Focal length computed."
   ].join("\n");
 }
 
