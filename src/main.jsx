@@ -61,7 +61,7 @@ const loadLegacyScripts = async () => {
   window.__mathcalcLegacyLoaded = true;
 
   try {
-    const legacyScripts = ['wordProblems.js', 'proof.js', 'geometryProofs.js', 'chemistry.js', 'physics.js', 'engineering.js', 'script.js'];
+    const legacyScripts = ['wordProblems.js', 'proof.js', 'geometryProofs.js', 'chemistry.js', 'physics.js', 'engineering.js', 'calculus.js', 'script.js'];
     for (const src of legacyScripts) {
       await loadScript(`${import.meta.env.BASE_URL}${src}`);
     }
@@ -292,6 +292,24 @@ function App() {
               <li>integrate(x^2, x, 0, 1)</li>
               <li>limit(sin(x)/x, x, 0)</li>
               <li>taylor(sin(x), x, 0, 4)</li>
+              <li>directionalDerivative(x^2*y + y^2, [x, y], [1, 2], [3, 4])</li>
+              <li>tangentPlane(x^2 + y^2, 1, 2)</li>
+              <li>doubleIntegral(x + y, x, 0, 1, y, 0, 2)</li>
+              <li>tripleIntegral(x + y + z, x, 0, 1, y, 0, 1, z, 0, 1)</li>
+              <li>divergence([x^2, y^2, z^2], [x, y, z], [1, 2, 3])</li>
+              <li>curl([-y, x, 0], [x, y, z], [1, 2, 3])</li>
+            </ul>
+          </div>
+          <div className="examples-group">
+            <h3>Physics</h3>
+            <ul>
+              <li>kinematics(0, 9.8, 3)</li>
+              <li>newton2(12, 4)</li>
+              <li>projectile(20, 45)</li>
+              <li>coulomb(0.000001, 0.000002, 0.5)</li>
+              <li>ohm(12, 4)</li>
+              <li>gravitation(5.97e24, 7.35e22, 384400000)</li>
+              <li>bernoulli(100000, 2, 1000, 0.5, 0, 1000, 1)</li>
             </ul>
           </div>
           <div className="examples-group">
@@ -324,6 +342,14 @@ function App() {
               <li>primeFactors(360)</li>
               <li>gcd(48, 18)</li>
               <li>lcm(4, 6)</li>
+              <li>isPrime(97)</li>
+              <li>modularPower(7, 128, 13)</li>
+              <li>eulerPhi(36)</li>
+              <li>divisorCount(360)</li>
+              <li>multisetCombinations(5, 3)</li>
+              <li>starsAndBars(10, 4)</li>
+              <li>circularPermutations(6)</li>
+              <li>derangements(6)</li>
             </ul>
           </div>
           <div className="examples-group">
@@ -344,6 +370,16 @@ function App() {
               <li>heatTransfer(0.8, 12, 25, 0.15)</li>
               <li>safetyFactor(250, 120)</li>
               <li>pipeFlow(998, 2, 0.05, 0.001, 0.00005)</li>
+              <li>civilBendingStress(12000, 0.05, 0.0002)</li>
+              <li>mechanicalBucklingLoad(200000000000, 0.0000012, 3)</li>
+              <li>electricalThreePhasePower(400, 12, 0.9)</li>
+              <li>aerospaceLift(1.225, 70, 16, 0.8)</li>
+              <li>biomedicalBMI(70, 1.75)</li>
+              <li>chemicalMolarity(0.5, 2)</li>
+              <li>computerAmdahlSpeedup(0.9, 8)</li>
+              <li>environmentalDetentionTime(500, 25)</li>
+              <li>industrialEconomicOrderQuantity(12000, 50, 2)</li>
+              <li>materialsThermalExpansion(0.000012, 2, 50)</li>
             </ul>
           </div>
           <div className="examples-group">
