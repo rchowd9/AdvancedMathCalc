@@ -91,7 +91,8 @@ describe('word problem solver', () => {
 
     expect(calculus.solveCalculus('directionalDerivative(x^2*y + y^2, [x, y], [1, 2], [3, 4])')).toContain('Dᵤf = ∇f · u = 6.4');
     expect(calculus.solveCalculus('tangentPlane(x^2 + y^2, 1, 2)')).toContain('Tangent plane: z = 5 + 2(x - 1) + 4(y - 2)');
-    expect(calculus.solveCalculus('doubleIntegral(x + y, x, 0, 1, y, 0, 2)')).toContain('Approximate value: 3');
+    const doubleIntegral = calculus.solveCalculus('doubleIntegral(x + y, x, 0, 1, y, 0, 2)');
+    expect(Number(doubleIntegral.match(/Approximate value: (.+)/)[1])).toBeCloseTo(3, 10);
     expect(calculus.solveCalculus('divergence([x^2, y^2, z^2], [x, y, z], [1, 2, 3])')).toContain('= 12');
     expect(calculus.solveCalculus('curl([-y, x, 0], [x, y, z], [1, 2, 3])')).toContain('∇ × F = [0, 0, 2]');
   });
