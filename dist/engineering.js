@@ -45,7 +45,6 @@ function solveEngineering(input) {
     electromagneticinduction: 'emf V; current A; power W'
   };
   return `${result}\nOutput units: ${outputUnits[mode]}.`;
-  }
 }
 
 function splitEngineeringArgs(statement) {

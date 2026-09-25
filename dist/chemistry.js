@@ -126,7 +126,6 @@ function solveChemistry(input) {
     solubility: 'mol/L', organic: 'chemical formula; no physical unit'
   };
   return `${result}\nOutput units: ${outputUnits[mode]}.`;
-  }
 }
 
 function splitChemArgs(statement) {
