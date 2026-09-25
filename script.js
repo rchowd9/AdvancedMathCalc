@@ -766,7 +766,7 @@ if (expr.startsWith("integrationByParts(")) {
 
     const res = mathInstance.evaluate(expr);
     const explanation = buildExpressionExplanation(expr, res);
-    solvedMessage = `Result: ${formatResult(res)}\n\nStep-by-step explanation:\n${explanation}`;
+    solvedMessage = `Result: ${formatResult(res)}\nUnits: inferred from the expression; dimensionless when no units are supplied.\n\nStep-by-step explanation:\n${explanation}`;
     awardProgress(25, 'Nice work!', 'arithmetic');
     resultEl.textContent = solvedMessage;
 
@@ -858,7 +858,7 @@ function buildDisciplineStepExplanation(functionName, values, result) {
     diffusionlength: { symbol: 'L', formula: 'L = √(D·t)', unit: 'm', overview: 'Diffusion length' }
   };
 
-  const detail = library[normalized] || { symbol: 'Result', formula: 'Use the governing equation', unit: '', overview: functionName };
+  const detail = library[normalized] || { symbol: 'Result', formula: 'Use the governing equation', unit: 'units depend on inputs', overview: functionName };
   const unitsText = detail.unit ? ` ${detail.unit}` : '';
   return [
     detail.overview,
@@ -1084,7 +1084,7 @@ function setPlotStatus(message) {
 
 function explainDerivative(expression, variable) {
   const derivative = mathInstance.derivative(expression, variable).toString();
-  return `Function: f(${variable}) = ${expression}\nDerivative: f'(${variable}) = ${derivative}`;
+  return `Function: f(${variable}) = ${expression}\nDerivative: f'(${variable}) = ${derivative}\nUnits: function-output units per ${variable}-unit.`;
 }
 
 function explainDeterminant(matrix) {
@@ -1405,7 +1405,8 @@ function explainPartialDerivative(expression, variable) {
     `Function: f(...) = ${expression}`,
     `Step 1: Treat every variable except "${variable}" as a constant`,
     `Step 2: Differentiate with respect to ${variable}`,
-    `Result: ∂f/∂${variable} = ${derivative}`
+    `Result: ∂f/∂${variable} = ${derivative}`,
+    `Units: function-output units per ${variable}-unit.`
   ].join('\n');
 }
 
@@ -1417,6 +1418,7 @@ function explainGradient(expression, variables) {
     return derivative;
   });
   steps.push(`Result: ∇f = [ ${components.join(', ')} ]`);
+  steps.push('Units: each component uses function-output units per corresponding variable unit.');
   return steps.join('\n');
 }
 
@@ -1664,7 +1666,8 @@ function explainFactorial(n) {
   return [
     `Compute: ${n}!`,
     `Step 1: ${n}! = ${chain}`,
-    `Result: ${n}! = ${formatResult(result)}`
+    `Result: ${n}! = ${formatResult(result)}`,
+    'Units: count (dimensionless).'
   ].join('\n');
 }
 
@@ -1674,7 +1677,8 @@ function explainPermutations(n, r) {
     `Compute: P(${n}, ${r}) — number of ordered arrangements of ${r} items from ${n}`,
     `Formula: P(n, r) = n! / (n - r)!`,
     `Step 1: ${n}! / ${n - r}!`,
-    `Result: P(${n}, ${r}) = ${formatResult(result)}`
+    `Result: P(${n}, ${r}) = ${formatResult(result)}`,
+    'Units: number of ordered arrangements.'
   ].join('\n');
 }
 
@@ -1684,7 +1688,8 @@ function explainCombinations(n, r) {
     `Compute: C(${n}, ${r}) — number of unordered groups of ${r} items from ${n}`,
     `Formula: C(n, r) = n! / (r! × (n - r)!)`,
     `Step 1: ${n}! / (${r}! × ${n - r}!)`,
-    `Result: C(${n}, ${r}) = ${formatResult(result)}`
+    `Result: C(${n}, ${r}) = ${formatResult(result)}`,
+    'Units: number of unordered groups.'
   ].join('\n');
 }
 
@@ -1698,7 +1703,8 @@ function explainPrimeFactors(n) {
     'Step 1: Divide repeatedly by the smallest possible prime',
     `Step 2: Continue until the remaining factor is 1`,
     `Prime factors: ${factors.join(' × ')}`,
-    `Result: ${n} = ${grouped}`
+    `Result: ${n} = ${grouped}`,
+    'Units: prime factors are dimensionless integers.'
   ].join('\n');
 }
 
@@ -1740,7 +1746,8 @@ function explainGcdLcm(a, b, mode) {
     `Step 1: Prime factorize ${a} → ${factorsA.join(' × ')}`,
     `Step 2: Prime factorize ${b} → ${factorsB.join(' × ')}`,
     `Step 3: ${isGcd ? 'Take the shared prime factors at their lowest powers' : 'Take all prime factors at their highest powers'}`,
-    `Result: ${isGcd ? 'GCD' : 'LCM'}(${a}, ${b}) = ${formatResult(result)}`
+    `Result: ${isGcd ? 'GCD' : 'LCM'}(${a}, ${b}) = ${formatResult(result)}`,
+    'Units: same units as the inputs; dimensionless for plain integers.'
   ].join('\n');
 }
 
@@ -1753,7 +1760,8 @@ function explainVectorOp(v1, v2, mode) {
       `Vectors: a = [${v1.join(', ')}], b = [${v2.join(', ')}]`,
       'Formula: a · b = Σ (aᵢ × bᵢ)',
       `Step 1: ${v1.map((val, i) => `(${val} × ${v2[i]})`).join(' + ')}`,
-      `Result: a · b = ${formatResult(result)}`
+      `Result: a · b = ${formatResult(result)}`,
+      'Units: product of the input vector component units.'
     ].join('\n');
   }
 
@@ -1762,7 +1770,8 @@ function explainVectorOp(v1, v2, mode) {
     `Vectors: a = [${v1.join(', ')}], b = [${v2.join(', ')}]`,
     'Formula: a × b uses the 3×3 determinant expansion of the standard basis vectors',
     'Step 1: Expand along the top row of the basis/vector matrix',
-    `Result: a × b = ${formatResult(result)}`
+    `Result: a × b = ${formatResult(result)}`,
+    'Units: product of the input vector component units.'
   ].join('\n');
 }
 
@@ -1773,7 +1782,8 @@ function explainMagnitude(v) {
     `Vector: v = [${v.join(', ')}]`,
     'Formula: |v| = √(v₁² + v₂² + ... + vₙ²)',
     `Step 1: √(${squares})`,
-    `Result: |v| = ${formatResult(result)}`
+    `Result: |v| = ${formatResult(result)}`,
+    'Units: same as the vector components.'
   ].join('\n');
 }
 
