@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import vm from 'node:vm';
 import { describe, it, expect } from 'vitest';
+import { all, create } from 'mathjs';
 import { solveWordProblem, classifyWordProblem } from './wordProblemSolver';
 
 function loadCalculatorScript(fileName) {
@@ -10,6 +11,7 @@ function loadCalculatorScript(fileName) {
     console,
     Math,
     Number,
+    math: { create: (config) => create(all, config) },
     Array,
     Object,
     String,
@@ -82,5 +84,15 @@ describe('word problem solver', () => {
     expect(result).toContain('MPa');
     expect(result).toContain('Step 1');
     expect(result).toContain('Step 2');
+  });
+
+  it('solves representative Calculus III formulas', () => {
+    const calculus = loadCalculatorScript('calculus.js');
+
+    expect(calculus.solveCalculus('directionalDerivative(x^2*y + y^2, [x, y], [1, 2], [3, 4])')).toContain('Dᵤf = ∇f · u = 8');
+    expect(calculus.solveCalculus('tangentPlane(x^2 + y^2, 1, 2)')).toContain('Tangent plane: z = 5 + 2(x - 1) + 4(y - 2)');
+    expect(calculus.solveCalculus('doubleIntegral(x + y, x, 0, 1, y, 0, 2)')).toContain('Approximate value: 3');
+    expect(calculus.solveCalculus('divergence([x^2, y^2, z^2], [x, y, z], [1, 2, 3])')).toContain('= 12');
+    expect(calculus.solveCalculus('curl([-y, x, 0], [x, y, z], [1, 2, 3])')).toContain('∇ × F = [0, 0, 2]');
   });
 });
