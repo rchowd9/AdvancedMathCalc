@@ -56,6 +56,12 @@ describe('word problem solver', () => {
 
     expect(physics.window.PHYSICS_MODE_NAMES.has('wave')).toBe(true);
     expect(physics.solvePhysics('wave(2, 5, 0.5)')).toContain('v = f·λ');
+    expect(physics.window.PHYSICS_MODE_NAMES.has('weight')).toBe(true);
+    expect(physics.solvePhysics('weight(5, 9.8)')).toContain('W = m·g');
+    expect(physics.window.PHYSICS_MODE_NAMES.has('torque')).toBe(true);
+    expect(physics.solvePhysics('torque(0.5, 20, 90)')).toContain('τ = r·F·sin');
+    expect(physics.window.PHYSICS_MODE_NAMES.has('snellLaw')).toBe(true);
+    expect(physics.solvePhysics('snellLaw(1.0, 30, 1.5)')).toContain('θ₂');
 
     expect(engineering.window.ENGINEERING_MODE_NAMES.has('powertransmission')).toBe(true);
     expect(engineering.solveEngineering('powertransmission(1500, 1800, 0.85)')).toContain('P_out');
