@@ -1948,7 +1948,7 @@ function erf(value) {
   return sign * (1 - polynomial * Math.exp(-(absolute ** 2)));
 }
 
-function solveDiscreteFormula(mode, values) {
+function solveDiscreteFormulaLegacy(mode, values) {
   const requireArgs = (count, syntax) => {
     if (values.length !== count) throw new Error(`Use ${syntax}.`);
   };
