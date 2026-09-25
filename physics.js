@@ -557,15 +557,15 @@ function solvePhotonEnergy(args) {
   ].join("\n");
 }
 
-// Thin lens equation: lens(do, di)
+// Thin lens equation: lens(objectDistance, imageDistance)
 function solveLens(args) {
   if (args.length < 2) throw new Error("Use lens(objectDistance, imageDistance)");
-  const [do, di] = args.map(Number);
-  const f = 1 / ((1 / do) + (1 / di));
+  const [objectDistance, imageDistance] = args.map(Number);
+  const f = 1 / ((1 / objectDistance) + (1 / imageDistance));
 
   return [
     "Thin Lens Equation",
-    `dₒ = ${do} m, dᵢ = ${di} m`,
+    `dₒ = ${objectDistance} m, dᵢ = ${imageDistance} m`,
     `1/f = 1/dₒ + 1/dᵢ`,
     `f = 1 / (1/dₒ + 1/dᵢ) = ${f} m`,
     "Conclusion: Focal length computed."
