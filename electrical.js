@@ -34,6 +34,7 @@ throw new Error("Invalid electrical formula syntax.");
 const mode = match[1].toLowerCase();
 const args = splitElectricalArgs(match[2]).map(Number);
  
+const result = (() => {
 switch(mode) {
  
 case 'ohmslaw':
@@ -99,6 +100,15 @@ return solveMagneticFlux(args);
 default:
 throw new Error("Unknown Electrical Engineering formula.");
 }
+})();
+const outputUnits = {
+ohmslaw: 'A', electricpower: 'W', resistance: 'Ω', conductance: 'S', capacitance: 'F',
+inductance: 'H', reactance: 'Ω', impedance: 'Ω', kirchhoffcurrent: 'A', kirchhoffvoltage: 'V',
+rccharge: 'V', rldecay: 'A', resonance: 'Hz', transformer: 'V', threephasepower: 'W',
+powerfactor: 'dimensionless ratio', apparentpower: 'VA', reactivepower: 'var', electricfield: 'N/C',
+magneticflux: 'Wb'
+};
+return `${result}\nOutput units: ${outputUnits[mode]}.`;
 }
  
 function splitElectricalArgs(statement) {

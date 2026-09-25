@@ -34,7 +34,8 @@ function solveCivil(input) {
   const mode = match[1].toLowerCase();
   const args = match[2].split(',').map(x => Number(x.trim()));
 
-  switch (mode) {
+  const result = (() => {
+    switch (mode) {
     case 'bendingstress':
       return `σ = My/I = ${(args[0]*args[1])/args[2]}`;
 
@@ -97,5 +98,14 @@ function solveCivil(input) {
 
     default:
       throw new Error("Unknown Civil Engineering formula.");
-  }
+    }
+  })();
+  const outputUnits = {
+    bendingstress: 'Pa', shearstresscivil: 'Pa', soilpressure: 'Pa', bearingcapacity: 'Pa',
+    columnload: 'N', trussforce: 'N', manning: 'm/s', hydraulicradius: 'm', flowrate: 'm³/s',
+    roadgrade: '%', concretestress: 'Pa', momentofinertia: 'm⁴', beamreaction: 'N',
+    earthpressure: 'Pa', retainingwall: 'N/m of wall width', settlement: 'm', compaction: '%',
+    channelvelocity: 'm/s', runoff: 'm³/s (SI inputs)', culvertflow: 'm³/s'
+  };
+  return `${result}\nOutput units: ${outputUnits[mode]}.`;
 }

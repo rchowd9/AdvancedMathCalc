@@ -34,6 +34,7 @@ throw new Error("Invalid mechanical formula syntax.");
 const mode = match[1].toLowerCase();
 const args = splitMechanicalArgs(match[2]).map(Number);
 
+const result = (() => {
 switch (mode) {
 case 'stress': return solveStress(args);
 case 'strain': return solveStrain(args);
@@ -59,6 +60,15 @@ case 'bearinglife': return solveBearingLife(args);
 default:
 throw new Error("Unknown Mechanical Engineering formula.");
 }
+})();
+const outputUnits = {
+stress: 'Pa', strain: 'dimensionless strain', youngsmodulus: 'Pa', shearstress: 'Pa', torsion: 'Pa',
+beamdeflection: 'm', springforce: 'N', buckling: 'N', kineticenergy: 'J', potentialenergy: 'J',
+angularmomentum: 'kg·m²/s', flywheelenergy: 'J', gearratio: 'dimensionless ratio', shafttorque: 'N·m',
+brakepower: 'W', thermalexpansion: 'm', thermalstress: 'Pa', vibrationfrequency: 'Hz',
+fluidpower: 'W', bearinglife: 'cycles'
+};
+return `${result}\nOutput units: ${outputUnits[mode]}.`;
 }
 
 function splitMechanicalArgs(statement) {

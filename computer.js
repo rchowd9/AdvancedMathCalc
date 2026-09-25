@@ -35,7 +35,8 @@ function solveComputer(input) {
   const mode = match[1].toLowerCase();
   const args = match[2].split(',').map(x => Number(x.trim()));
 
-  switch(mode) {
+  const result = (() => {
+    switch(mode) {
 
     case 'binaryaddition':
       return (args[0] + args[1]).toString(2);
@@ -99,5 +100,15 @@ function solveComputer(input) {
 
     default:
       throw new Error("Unknown Computer Engineering formula.");
-  }
+    }
+  })();
+  const outputUnits = {
+    binaryaddition: 'dimensionless binary integer', cachehitrate: '%', cpuperformance: 's⁻¹ (execution time in s)',
+    amdahllaw: 'dimensionless speedup', memorybandwidth: 'bytes/s', networkthroughput: 'bps',
+    instructioncycles: 'cycles', samplingrate: 'samples/s', nyquist: 'Hz', shannoncapacity: 'bps',
+    latency: 'ms', speedup: 'dimensionless ratio', biterrorrate: 'dimensionless ratio', packetloss: '%',
+    cachemisspenalty: 'ns', pipelineefficiency: '%', diskthroughput: 'MB/s', clockcycles: 'cycles',
+    processorutilization: '%', parallelfraction: 'dimensionless ratio'
+  };
+  return `${result}\nOutput units: ${outputUnits[mode]}.`;
 }
