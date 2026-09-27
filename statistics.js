@@ -1,13 +1,13 @@
 const STATISTICS_MODE_NAMES = new Set([
   'stats', 'samplevariance', 'populationvariance', 'quartile', 'percentile', 'iqr', 'outlierfences',
-  'zscore', 'standarderror', 'proportionstandarderror', 'additionrule', 'multiplicationrule',
+  'zscore', 'zcriticalvalue', 'empiricalrule', 'standarderror', 'proportionstandarderror', 'differenceMeanStandardError', 'additionrule', 'multiplicationrule',
   'complementrule', 'conditionalprobability', 'binomialpmf', 'binomialstats', 'poissonpmf',
   'exponentialpdf', 'exponentialstats', 'geometricpmf', 'geometricstats', 'normalpdf', 'normalcdf',
   'meanconfidenceinterval', 'ztest', 'ttest', 'pairedttest', 'twosampleztest', 'twosamplettest',
   'cohensd', 'correlation', 'linearregression', 'chisquaregof', 'chisquareindependence', 'onewayanova'
 ]);
 
-const format = (value) => Number.isFinite(value) ? String(Number(value.toPrecision(8))) : String(value);
+const format = (value) => Number.isNaN(value) ? 'undefined' : Number.isFinite(value) ? String(Number(value.toPrecision(8))) : String(value);
 
 function solveStatistics(mode, values) {
   const requireArgs = (count, syntax) => {
@@ -113,6 +113,20 @@ function solveStatistics(mode, values) {
     requirePositive(deviation, 'Standard deviation');
     return `Z = (x - μ) / σ = (${format(value)} - ${format(center)}) / ${format(deviation)} = ${format((value - center) / deviation)}.`;
   }
+  if (modeName === 'zcriticalvalue') {
+    requireArgs(1, 'zCriticalValue(confidenceLevel)');
+    const level = requireFinite(values[0], 'Confidence level');
+    const confidence = level > 1 ? level / 100 : level;
+    const criticalValues = new Map([[0.9, 1.645], [0.95, 1.96], [0.99, 2.576]]);
+    if (!criticalValues.has(confidence)) throw new Error('Supported two-sided confidence levels are 90%, 95%, and 99%.');
+    return `Two-sided z critical value for ${format(confidence * 100)}% confidence = ${criticalValues.get(confidence)}.`;
+  }
+  if (modeName === 'empiricalrule') {
+    requireArgs(2, 'empiricalRule(mean, standardDeviation)');
+    const center = requireFinite(values[0], 'Mean');
+    const deviation = requirePositive(values[1], 'Standard deviation');
+    return [1, 2, 3].map((multiple, index) => `About ${[68, 95, 99.7][index]}% lies within ${multiple} SD: [${format(center - multiple * deviation)}, ${format(center + multiple * deviation)}].`).join('\n');
+  }
   if (modeName === 'standarderror' || modeName === 'proportionstandarderror') {
     requireArgs(2, modeName === 'standarderror' ? 'standardError(standardDeviation, n)' : 'proportionStandardError(p, n)');
     const [measure, sampleSize] = values;
@@ -127,6 +141,16 @@ function solveStatistics(mode, values) {
       result = Math.sqrt(proportion * (1 - proportion) / sampleSize);
     }
     return `Standard error = ${format(result)}.`;
+  }
+  if (modeName === 'differencemeanstandarderror') {
+    requireArgs(4, 'differenceMeanStandardError(sd1, n1, sd2, n2)');
+    const [sd1, n1, sd2, n2] = values;
+    requireFinite(sd1, 'Standard deviation 1');
+    requireFinite(sd2, 'Standard deviation 2');
+    if (sd1 < 0 || sd2 < 0) throw new Error('Standard deviations must be non-negative.');
+    requireCount(n1, 'Sample size 1');
+    requireCount(n2, 'Sample size 2');
+    return `SE(x̄₁-x̄₂) = √(σ₁²/n₁ + σ₂²/n₂) = ${format(Math.sqrt(sd1 ** 2 / n1 + sd2 ** 2 / n2))}.`;
   }
 
   if (['additionrule', 'multiplicationrule', 'complementrule', 'conditionalprobability'].includes(modeName)) {
@@ -231,8 +255,8 @@ function solveStatistics(mode, values) {
     [mean1, mean2, nullDifference].forEach((value, index) => requireFinite(value, ['Mean 1', 'Mean 2', 'Null difference'][index]));
     requirePositive(sd1, 'Standard deviation 1');
     requirePositive(sd2, 'Standard deviation 2');
-    requireCount(n1, 'Sample size 1');
-    requireCount(n2, 'Sample size 2');
+    requireCount(n1, 'Sample size 1', modeName === 'twosamplettest' ? 2 : 1);
+    requireCount(n2, 'Sample size 2', modeName === 'twosamplettest' ? 2 : 1);
     let standardError;
     if (modeName === 'twosampleztest') {
       standardError = Math.sqrt(sd1 ** 2 / n1 + sd2 ** 2 / n2);

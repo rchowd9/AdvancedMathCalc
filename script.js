@@ -1001,6 +1001,11 @@ function plotFunction() {
     setPlotStatus('The start of the range must be less than its end.');
     return;
   }
+  if (mode === 'area' && scale === 'log') {
+    clearPlot();
+    setPlotStatus('Area-to-zero mode requires a linear y-scale.');
+    return;
+  }
 
   try {
     const step = (upper - lower) / (pointCount - 1);
@@ -1053,7 +1058,7 @@ function plotFunction() {
       }
       const uniqueRoots = roots.filter((root, index) => index === 0 || Math.abs(root - roots[index - 1]) > step / 2);
       rootCount += uniqueRoots.length;
-      if (uniqueRoots.length) {
+      if (uniqueRoots.length && scale === 'linear') {
         traces.push({
           x: uniqueRoots,
           y: uniqueRoots.map(() => 0),
@@ -1081,7 +1086,8 @@ function plotFunction() {
       uirevision: `${expressions.join(';')}:${variable}:${lower}:${upper}:${mode}:${pointCount}:${scale}`
     }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
     const modeLabel = mode === 'derivative' ? 'Derivative' : mode === 'area' ? 'Area' : 'Function';
-    setPlotStatus(`${modeLabel}: ${expressions.length} function(s), ${pointCount} samples, ${scale} y-scale; ${rootCount} ${mode === 'derivative' ? 'stationary point(s)' : 'x-intercept(s)'} detected over [${lower}, ${upper}].`);
+    const interceptNote = scale === 'log' ? '; intercept markers require linear y-scale' : '';
+    setPlotStatus(`${modeLabel}: ${expressions.length} function(s), ${pointCount} samples, ${scale} y-scale; ${rootCount} ${mode === 'derivative' ? 'stationary point(s)' : 'x-intercept(s)'} detected${interceptNote} over [${lower}, ${upper}].`);
     state.xp += 15;
     saveGameState();
     updateGameHud();

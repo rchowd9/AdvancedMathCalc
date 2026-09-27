@@ -189,7 +189,17 @@ product(i, i, 1, 6)
 **Statistics**
 ```
 stats([4, 8, 15, 16, 23, 42])
+sampleVariance([2, 4, 6, 8])
+quartile([1, 2, 3, 4, 5, 6, 7, 8], 3)
+standardError(12, 36)
+meanConfidenceInterval(50, 12, 36, 1.96)
+binomialPmf(2, 5, 0.4)
+poissonPmf(3, 2.5)
+linearRegression([1, 2, 3], [2, 4, 5])
+chiSquareIndependence([[20, 30], [30, 20]])
+oneWayAnova([[1, 2, 3], [4, 5, 6]])
 ```
+The statistics backend also supports probability rules, normal/exponential/geometric distributions, confidence levels (`zCriticalValue(95)`), z/t test statistics, effect sizes, chi-square tests, and ANOVA. Formula conventions follow the [StatsCalculators statistics formula sheet](https://www.statscalculators.com/resources/formula-sheet/statistics-formula-sheet.pdf).
 
 **Combinatorics & Number Theory**
 ```
@@ -211,12 +221,14 @@ convert(5 km, mi)
 
 **Graph Plotting**
 
-Enter a function and range:
+Enter one or more semicolon-separated functions and a range. The graph marks sampled x-intercepts, and its controls set sample resolution and y-axis scale:
 ```
-Function: sin(x)
+Functions: sin(x); cos(x)
 Variable: x
 From: -10
 To: 10
+Samples: 800
+Y scale: Linear
 ```
 
 ## 📁 Project Structure
