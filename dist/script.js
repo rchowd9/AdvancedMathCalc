@@ -25,6 +25,8 @@ const plotVariableInput = document.getElementById('plotVariable');
 const plotMinInput = document.getElementById('plotMin');
 const plotMaxInput = document.getElementById('plotMax');
 const plotModeInput = document.getElementById('plotMode');
+const plotPointsInput = document.getElementById('plotPoints');
+const plotScaleInput = document.getElementById('plotScale');
 const plotEl = document.getElementById('plot');
 const plotStatusEl = document.getElementById('plotStatus');
 const achievementItems = [...document.querySelectorAll('.achievement')];
@@ -606,15 +608,15 @@ if (expr.startsWith("integrationByParts(")) {
       }
     }
 
-    if (expr.startsWith("stats(")) {
-      const parts = expr.match(/^stats\((\[[\s\S]*\])\)$/);
-      if (parts) {
-        const data = mathInstance.evaluate(parts[1]);
-        solvedMessage = explainStats(data);
-        awardProgress(40, 'Data analyzed!', 'statistics');
-        resultEl.textContent = solvedMessage;
-        return;
-      }
+    const statisticsMatch = expr.match(/^([a-zA-Z]\w*)\(/);
+    if (statisticsMatch && window.STATISTICS_MODE_NAMES?.has(statisticsMatch[1].toLowerCase())) {
+      const call = mathInstance.parse(expr);
+      if (call.type !== 'FunctionNode') throw new Error('Enter a valid statistics formula call.');
+      const values = call.args.map((argument) => argument.compile().evaluate());
+      solvedMessage = window.solveStatistics(statisticsMatch[1], values);
+      awardProgress(40, 'Statistics formula solved!', 'statistics');
+      resultEl.textContent = solvedMessage;
+      return;
     }
 
     if (expr.startsWith("distributionStats(")) {
@@ -628,22 +630,6 @@ if (expr.startsWith("integrationByParts(")) {
         return;
       }
       resultEl.textContent = 'Use syntax: distributionStats(density, variable, lower, upper)';
-      setStatus('Syntax check', 'warning');
-      return;
-    }
-
-    if (expr.startsWith("normalPdf(") || expr.startsWith("normalCdf(")) {
-      const parts = expr.match(/^(normalPdf|normalCdf)\(([-\d.]+),\s*([-\d.]+),\s*([\d.]+)\)$/);
-      if (parts) {
-        const value = Number(parts[2]);
-        const mean = Number(parts[3]);
-        const standardDeviation = Number(parts[4]);
-        solvedMessage = explainNormalDistribution(parts[1], value, mean, standardDeviation);
-        awardProgress(35, 'Distribution formula solved!', 'statistics');
-        resultEl.textContent = solvedMessage;
-        return;
-      }
-      resultEl.textContent = 'Use normalPdf(x, mean, stdDev) or normalCdf(x, mean, stdDev)';
       setStatus('Syntax check', 'warning');
       return;
     }

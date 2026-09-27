@@ -384,7 +384,7 @@ pre {
 
 .graph-controls {
   display: grid;
-  grid-template-columns: minmax(180px, 2fr) repeat(4, minmax(80px, 1fr));
+  grid-template-columns: minmax(180px, 2fr) repeat(6, minmax(80px, 1fr));
   gap: 12px;
   margin-bottom: 16px;
 }

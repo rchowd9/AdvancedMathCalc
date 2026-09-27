@@ -982,15 +982,17 @@ function newtonSolve(fnStr, variable, guess = 1) {
 
 // Plotting
 function plotFunction() {
-  const expression = plotExprInput.value.trim();
+  const expressions = plotExprInput.value.split(';').map((expression) => expression.trim()).filter(Boolean);
   const variable = plotVariableInput.value.trim();
   const lower = Number(plotMinInput.value);
   const upper = Number(plotMaxInput.value);
   const mode = plotModeInput.value;
+  const pointCount = Number(plotPointsInput.value);
+  const scale = plotScaleInput.value;
 
-  if (!expression || !/^\w+$/.test(variable)) {
+  if (!expressions.length || expressions.length > 6 || !/^\w+$/.test(variable)) {
     clearPlot();
-    setPlotStatus('Enter a function and a valid variable name.');
+    setPlotStatus('Enter 1 to 6 semicolon-separated functions and a valid variable name.');
     return;
   }
 
@@ -1001,40 +1003,72 @@ function plotFunction() {
   }
 
   try {
-    const compiled = mode === 'derivative'
-      ? mathInstance.derivative(expression, variable).compile()
-      : mathInstance.compile(expression);
-    const pointCount = 800;
     const step = (upper - lower) / (pointCount - 1);
-    const xValues = [];
-    const yValues = [];
+    const palette = ['#38bdf8', '#fb7185', '#a3e635', '#fbbf24', '#c084fc', '#2dd4bf'];
+    const traces = [];
+    let rootCount = 0;
 
-    for (let index = 0; index < pointCount; index += 1) {
-      const x = lower + index * step;
-      let y;
-      try {
-        y = compiled.evaluate({ [variable]: x });
-      } catch (error) {
-        y = NaN;
+    expressions.forEach((expression, expressionIndex) => {
+      const compiled = mode === 'derivative'
+        ? mathInstance.derivative(expression, variable).compile()
+        : mathInstance.compile(expression);
+      const xValues = [];
+      const yValues = [];
+
+      for (let index = 0; index < pointCount; index += 1) {
+        const x = lower + index * step;
+        let y;
+        try {
+          y = compiled.evaluate({ [variable]: x });
+        } catch (error) {
+          y = NaN;
+        }
+        xValues.push(x);
+        yValues.push(typeof y === 'number' && Number.isFinite(y) ? y : null);
       }
-      xValues.push(x);
-      yValues.push(typeof y === 'number' && Number.isFinite(y) ? y : null);
-    }
 
-    if (!yValues.some((value) => value !== null)) {
-      throw new Error('No real values were found in this range.');
-    }
+      if (!yValues.some((value) => value !== null)) {
+        throw new Error(`No real values were found for ${expression} in this range.`);
+      }
 
-    const trace = {
-      x: xValues,
-      y: yValues,
-      type: 'scatter',
-      mode: 'lines',
-      name: mode === 'derivative' ? `d/d${variable} (${expression})` : expression,
-      line: { color: mode === 'area' ? '#fbbf24' : '#38bdf8', width: 2 },
-      ...(mode === 'area' ? { fill: 'tozeroy', fillcolor: 'rgba(251, 191, 36, 0.18)' } : {})
-    };
-    Plotly.react(plotEl, [trace], {
+      const traceName = mode === 'derivative' ? `d/d${variable} (${expression})` : expression;
+      traces.push({
+        x: xValues,
+        y: yValues,
+        type: 'scatter',
+        mode: 'lines',
+        name: traceName,
+        line: { color: mode === 'area' ? '#fbbf24' : palette[expressionIndex], width: 2 },
+        ...(mode === 'area' ? { fill: 'tozeroy', fillcolor: 'rgba(251, 191, 36, 0.18)' } : {})
+      });
+
+      const roots = [];
+      for (let index = 1; index < pointCount; index += 1) {
+        const left = yValues[index - 1];
+        const right = yValues[index];
+        if (left === null || right === null) continue;
+        if (left === 0) roots.push(xValues[index - 1]);
+        else if (left * right < 0) roots.push(xValues[index - 1] - left * step / (right - left));
+        if (index === pointCount - 1 && right === 0) roots.push(xValues[index]);
+      }
+      const uniqueRoots = roots.filter((root, index) => index === 0 || Math.abs(root - roots[index - 1]) > step / 2);
+      rootCount += uniqueRoots.length;
+      if (uniqueRoots.length) {
+        traces.push({
+          x: uniqueRoots,
+          y: uniqueRoots.map(() => 0),
+          type: 'scatter',
+          mode: 'markers',
+          name: mode === 'derivative' ? 'Stationary points' : 'X-intercepts',
+          legendgroup: `roots-${expressionIndex}`,
+          marker: { color: palette[expressionIndex], size: 9, symbol: 'circle-open', line: { width: 2 } },
+          hovertemplate: `${variable} = %{x:.5g}<br>y = 0<extra>${expression}</extra>`
+        });
+      }
+    });
+
+    const graphTitle = expressions.length === 1 ? expressions[0] : `${expressions.length} functions`;
+    Plotly.react(plotEl, traces, {
       margin: { top: 24, right: 24, bottom: 48, left: 56 },
       paper_bgcolor: 'transparent',
       plot_bgcolor: '#020617',
@@ -1043,10 +1077,11 @@ function plotFunction() {
       showlegend: true,
       legend: { orientation: 'h', y: 1.12, x: 0 },
       xaxis: { title: variable, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
-      yaxis: { title: mode === 'derivative' ? `d/d${variable} (${expression})` : expression, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
-      uirevision: `${expression}:${variable}:${lower}:${upper}:${mode}`
+      yaxis: { title: mode === 'derivative' ? `d/d${variable} (${graphTitle})` : graphTitle, type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
+      uirevision: `${expressions.join(';')}:${variable}:${lower}:${upper}:${mode}:${pointCount}:${scale}`
     }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
-    setPlotStatus(`${mode === 'derivative' ? 'Derivative' : mode === 'area' ? 'Area' : 'Function'} plotted over [${lower}, ${upper}]. Scroll to zoom.`);
+    const modeLabel = mode === 'derivative' ? 'Derivative' : mode === 'area' ? 'Area' : 'Function';
+    setPlotStatus(`${modeLabel}: ${expressions.length} function(s), ${pointCount} samples, ${scale} y-scale; ${rootCount} ${mode === 'derivative' ? 'stationary point(s)' : 'x-intercept(s)'} detected over [${lower}, ${upper}].`);
     state.xp += 15;
     saveGameState();
     updateGameHud();

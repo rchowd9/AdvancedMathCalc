@@ -3,6 +3,7 @@ import vm from 'node:vm';
 import { describe, it, expect } from 'vitest';
 import { all, create } from 'mathjs';
 import { solveWordProblem, classifyWordProblem } from './wordProblemSolver';
+import { solveStatistics } from '../../statistics.js';
 
 function loadCalculatorScript(fileName) {
   const code = fs.readFileSync(new URL(`../../${fileName}`, import.meta.url), 'utf8');
@@ -120,5 +121,36 @@ describe('word problem solver', () => {
     expect(discreteMath.solveDiscreteFormula('divisorcount', [360])).toContain('τ(360) = 24');
     expect(discreteMath.solveDiscreteFormula('starsandbars', [10, 4])).toContain('C(13, 3) = 286');
     expect(discreteMath.solveDiscreteFormula('derangements', [6])).toContain('!6 = 265');
+  });
+});
+
+describe('statistics formula sheet', () => {
+  it('calculates descriptive and sampling statistics', () => {
+    expect(solveStatistics('stats', [[1, 2, 3, 4, 5]])).toContain('Sample variance = 2.5');
+    expect(solveStatistics('quartile', [[1, 2, 3, 4, 5, 6, 7, 8], 3])).toContain('Q3 = 6');
+    expect(solveStatistics('standardError', [12, 36])).toContain('Standard error = 2');
+    expect(solveStatistics('proportionStandardError', [0.5, 100])).toContain('0.05');
+  });
+
+  it('calculates probability distributions and probability rules', () => {
+    expect(solveStatistics('additionRule', [0.4, 0.5, 0.2])).toContain('Probability = 0.7');
+    expect(solveStatistics('binomialPmf', [2, 5, 0.5])).toContain('0.3125');
+    expect(solveStatistics('poissonPmf', [2, 3])).toContain('0.22404181');
+    expect(solveStatistics('exponentialStats', [2])).toContain('variance = 1/λ² = 0.25');
+    expect(solveStatistics('geometricPmf', [3, 0.5])).toContain('0.125');
+  });
+
+  it('calculates confidence intervals, tests, regression, and effects', () => {
+    expect(solveStatistics('meanConfidenceInterval', [50, 12, 36, 1.96])).toContain('[46.08, 53.92]');
+    expect(solveStatistics('zTest', [52, 50, 12, 36])).toContain('Z = (x̄ - μ₀)/(s/√n) = 1');
+    expect(solveStatistics('linearRegression', [[1, 2, 3], [2, 4, 6]])).toContain('0 + 2x');
+    expect(solveStatistics('cohensD', [5, 2, 10, 3, 2, 10])).toContain("Cohen's d");
+  });
+
+  it('calculates chi-square tests and one-way ANOVA', () => {
+    expect(solveStatistics('chiSquareGoF', [[10, 20], [15, 15]])).toContain('χ² = Σ(O-E)²/E = 3.3333333');
+    expect(solveStatistics('chiSquareIndependence', [[[20, 30], [30, 20]]])).toContain('degrees of freedom = 1');
+    expect(solveStatistics('oneWayAnova', [[[1, 2, 3], [4, 5, 6]]])).toContain('F = 13.5');
+    expect(() => solveStatistics('binomialPmf', [2, 5, 1.2])).toThrow('between 0 and 1');
   });
 });
