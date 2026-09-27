@@ -132,6 +132,8 @@ describe('statistics formula sheet', () => {
     expect(solveStatistics('proportionStandardError', [0.5, 100])).toContain('0.05');
     expect(solveStatistics('differenceMeanStandardError', [2, 25, 3, 36])).toContain('= 0.64031242');
     expect(solveStatistics('zCriticalValue', [95])).toContain('= 1.96');
+    expect(solveStatistics('tCriticalValue', [10, 95])).toContain('= 2.228');
+    expect(solveStatistics('tCriticalValue', [Infinity, 99])).toContain('= 2.576');
     expect(solveStatistics('empiricalRule', [100, 10])).toContain('[70, 130]');
   });
 

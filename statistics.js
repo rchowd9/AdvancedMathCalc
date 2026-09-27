@@ -1,6 +1,6 @@
 const STATISTICS_MODE_NAMES = new Set([
   'stats', 'samplevariance', 'populationvariance', 'quartile', 'percentile', 'iqr', 'outlierfences',
-  'zscore', 'zcriticalvalue', 'empiricalrule', 'standarderror', 'proportionstandarderror', 'differenceMeanStandardError', 'additionrule', 'multiplicationrule',
+  'zscore', 'zcriticalvalue', 'tcriticalvalue', 'empiricalrule', 'standarderror', 'proportionstandarderror', 'differenceMeanStandardError', 'additionrule', 'multiplicationrule',
   'complementrule', 'conditionalprobability', 'binomialpmf', 'binomialstats', 'poissonpmf',
   'exponentialpdf', 'exponentialstats', 'geometricpmf', 'geometricstats', 'normalpdf', 'normalcdf',
   'meanconfidenceinterval', 'ztest', 'ttest', 'pairedttest', 'twosampleztest', 'twosamplettest',
@@ -120,6 +120,23 @@ function solveStatistics(mode, values) {
     const criticalValues = new Map([[0.9, 1.645], [0.95, 1.96], [0.99, 2.576]]);
     if (!criticalValues.has(confidence)) throw new Error('Supported two-sided confidence levels are 90%, 95%, and 99%.');
     return `Two-sided z critical value for ${format(confidence * 100)}% confidence = ${criticalValues.get(confidence)}.`;
+  }
+  if (modeName === 'tcriticalvalue') {
+    requireArgs(2, 'tCriticalValue(degreesOfFreedom, confidenceLevel)');
+    const degreesOfFreedom = values[0];
+    if (degreesOfFreedom !== Infinity) requireCount(degreesOfFreedom, 'Degrees of freedom');
+    const level = requireFinite(values[1], 'Confidence level');
+    const confidence = level > 1 ? level / 100 : level;
+    const column = new Map([[0.9, 0], [0.95, 1], [0.99, 2]]).get(confidence);
+    const table = {
+      10: [1.812, 2.228, 3.169],
+      20: [1.725, 2.086, 2.845],
+      30: [1.697, 2.042, 2.75],
+      infinity: [1.645, 1.96, 2.576]
+    };
+    const row = degreesOfFreedom === Infinity ? 'infinity' : String(degreesOfFreedom);
+    if (column === undefined || !table[row]) throw new Error('The formula sheet provides t critical values for df 10, 20, 30, and Infinity at 90%, 95%, and 99% confidence.');
+    return `Two-sided t critical value for df = ${row} at ${format(confidence * 100)}% confidence = ${table[row][column]}.`;
   }
   if (modeName === 'empiricalrule') {
     requireArgs(2, 'empiricalRule(mean, standardDeviation)');

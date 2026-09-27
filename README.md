@@ -196,10 +196,11 @@ meanConfidenceInterval(50, 12, 36, 1.96)
 binomialPmf(2, 5, 0.4)
 poissonPmf(3, 2.5)
 linearRegression([1, 2, 3], [2, 4, 5])
+tCriticalValue(10, 95)
 chiSquareIndependence([[20, 30], [30, 20]])
 oneWayAnova([[1, 2, 3], [4, 5, 6]])
 ```
-The statistics backend also supports probability rules, normal/exponential/geometric distributions, confidence levels (`zCriticalValue(95)`), z/t test statistics, effect sizes, chi-square tests, and ANOVA. Formula conventions follow the [StatsCalculators statistics formula sheet](https://www.statscalculators.com/resources/formula-sheet/statistics-formula-sheet.pdf).
+The statistics backend also supports probability rules, normal/exponential/geometric distributions, z/t critical values, z/t test statistics, effect sizes, chi-square tests, and ANOVA. Tabulated t critical values are available for df 10, 20, 30, and Infinity. Formula conventions follow the [StatsCalculators statistics formula sheet](https://www.statscalculators.com/resources/formula-sheet/statistics-formula-sheet.pdf).
 
 **Combinatorics & Number Theory**
 ```
