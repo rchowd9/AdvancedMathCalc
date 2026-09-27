@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { all, create } from 'mathjs';
 import Plotly from 'plotly.js-dist-min';
+import { STATISTICS_MODE_NAMES, solveStatistics } from '../statistics.js';
 import '../style.css';
 import * as aerospaceEngineering from '../engineering/aerospace.js';
 import * as biomedicalEngineering from '../engineering/biomedical.js';
@@ -18,6 +19,8 @@ window.math = {
   create: (config) => create(all, config),
 };
 window.Plotly = Plotly;
+window.STATISTICS_MODE_NAMES = STATISTICS_MODE_NAMES;
+window.solveStatistics = solveStatistics;
 
 const engineeringDisciplineModules = {
   aerospace: aerospaceEngineering,
@@ -251,8 +254,8 @@ function App() {
 
         <div className="graph-controls">
           <label>
-            Function
-            <input id="plotExpr" type="text" defaultValue="sin(x)" placeholder="e.g. x^2 - 4" />
+            Functions
+            <input id="plotExpr" type="text" defaultValue="sin(x)" placeholder="e.g. x^2 - 4; cos(x)" />
           </label>
           <label>
             Variable
@@ -272,6 +275,21 @@ function App() {
               <option value="function">Function</option>
               <option value="derivative">Derivative</option>
               <option value="area">Area to zero</option>
+            </select>
+          </label>
+          <label>
+            Samples
+            <select id="plotPoints" defaultValue="800">
+              <option value="400">400</option>
+              <option value="800">800</option>
+              <option value="1600">1600</option>
+            </select>
+          </label>
+          <label>
+            Y scale
+            <select id="plotScale" defaultValue="linear">
+              <option value="linear">Linear</option>
+              <option value="log">Logarithmic</option>
             </select>
           </label>
         </div>
@@ -331,6 +349,20 @@ function App() {
               <li>distributionStats(exp(-x^2 / 2), x, -5, 5)</li>
               <li>normalPdf(1.96, 0, 1)</li>
               <li>normalCdf(1.96, 0, 1)</li>
+            </ul>
+          </div>
+          <div className="examples-group">
+            <h3>Statistics Formula Sheet</h3>
+            <ul>
+              <li>sampleVariance([2, 4, 6, 8])</li>
+              <li>quartile([1, 2, 3, 4, 5, 6, 7, 8], 3)</li>
+              <li>standardError(12, 36)</li>
+              <li>meanConfidenceInterval(50, 12, 36, 1.96)</li>
+              <li>binomialPmf(2, 5, 0.4)</li>
+              <li>poissonPmf(3, 2.5)</li>
+              <li>linearRegression([1, 2, 3], [2, 4, 5])</li>
+              <li>chiSquareIndependence([[20, 30], [30, 20]])</li>
+              <li>oneWayAnova([[1, 2, 3], [4, 5, 6]])</li>
             </ul>
           </div>
           <div className="examples-group">
