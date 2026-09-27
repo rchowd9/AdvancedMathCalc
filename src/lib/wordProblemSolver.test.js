@@ -130,7 +130,7 @@ describe('statistics formula sheet', () => {
     expect(solveStatistics('quartile', [[1, 2, 3, 4, 5, 6, 7, 8], 3])).toContain('Q3 = 6');
     expect(solveStatistics('standardError', [12, 36])).toContain('Standard error = 2');
     expect(solveStatistics('proportionStandardError', [0.5, 100])).toContain('0.05');
-    expect(solveStatistics('differenceMeanStandardError', [2, 25, 3, 36])).toContain('= 0.5');
+    expect(solveStatistics('differenceMeanStandardError', [2, 25, 3, 36])).toContain('= 0.64031242');
     expect(solveStatistics('zCriticalValue', [95])).toContain('= 1.96');
     expect(solveStatistics('empiricalRule', [100, 10])).toContain('[70, 130]');
   });
