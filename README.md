@@ -25,6 +25,9 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 - Determinants — `det(matrix)`
 - Matrix inverse — `inv(matrix)`
 - Eigenvalues — `eigenvalues(matrix)`
+- Transpose, rank, and trace — `transpose(A)`, `rank(A)`, `trace(A)`
+- Matrix addition and multiplication — `matrixAdd(A, B)`, `matrixMultiply(A, B)`
+- Scalar multiplication — `scalarMultiply(A, c)`
 
 ### Equation Solvers
 - Linear systems — `solveSystem(A, b)`
@@ -36,6 +39,11 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 ### Sequences & Series
 - Summation — `sum(expr, i, start, end)`
 - Products — `product(expr, i, start, end)`
+- Arithmetic terms and partial sum — `arithmeticSequence(first, difference, count)`
+- Geometric terms and partial sum — `geometricSequence(first, ratio, count)`
+- Harmonic and alternating harmonic partial sums — `harmonicSequence(count)`, `alternatingHarmonic(count)`
+- Finite p-series partial sum — `pSeries(p, count)`
+- Fibonacci terms and partial sum — `fibonacciSequence(count)`
 
 ### Statistics
 - Descriptive statistics (mean, median, variance, standard deviation, range, mode) — `stats([data])`
@@ -184,6 +192,23 @@ solve(sin(x) = 0.5, x)
 ```
 sum(i^2, i, 1, 10)
 product(i, i, 1, 6)
+arithmeticSequence(2, 3, 6)
+geometricSequence(2, 3, 6)
+harmonicSequence(6)
+alternatingHarmonic(6)
+pSeries(2, 6)
+fibonacciSequence(8)
+```
+Sequence helpers show the requested terms and their finite partial sum. `fibonacciSequence(n)` starts at `F₀ = 0`; generated sequences are limited to 1,000 terms.
+
+**More Linear Algebra**
+```
+transpose([[1, 2], [3, 4]])
+rank([[1, 2], [2, 4]])
+trace([[1, 2], [3, 4]])
+matrixMultiply([[1, 2], [3, 4]], [[2], [1]])
+matrixAdd([[1, 2], [3, 4]], [[4, 3], [2, 1]])
+scalarMultiply([[1, 2], [3, 4]], 3)
 ```
 
 **Statistics**
