@@ -3,6 +3,7 @@ import vm from 'node:vm';
 import { describe, it, expect } from 'vitest';
 import { all, create } from 'mathjs';
 import { solveWordProblem, classifyWordProblem } from './wordProblemSolver';
+import { solveLinearAlgebra, solveSequence } from './linearAlgebraSequences';
 import { solveStatistics } from '../../statistics.js';
 
 function loadCalculatorScript(fileName) {
@@ -157,5 +158,30 @@ describe('statistics formula sheet', () => {
     expect(solveStatistics('chiSquareIndependence', [[[20, 30], [30, 20]]])).toContain('degrees of freedom = 1');
     expect(solveStatistics('oneWayAnova', [[[1, 2, 3], [4, 5, 6]]])).toContain('F = 13.5');
     expect(() => solveStatistics('binomialPmf', [2, 5, 1.2])).toThrow('between 0 and 1');
+  });
+});
+
+describe('linear algebra and sequence formulas', () => {
+  const math = create(all, { matrix: 'Array' });
+
+  it('computes common matrix operations', () => {
+    expect(solveLinearAlgebra('transpose', [[[1, 2], [3, 4]]], math)).toContain('[[1,3],[2,4]]');
+    expect(solveLinearAlgebra('rank', [[[1, 2], [2, 4]]], math)).toContain('Rank(A) = 1');
+    expect(solveLinearAlgebra('trace', [[[1, 2], [3, 4]]], math)).toContain('Trace(A) = Σ diagonal entries = 5');
+    expect(solveLinearAlgebra('matrixMultiply', [[[1, 2], [3, 4]], [[2], [1]]], math)).toContain('[[4],[10]]');
+  });
+
+  it('returns arithmetic, geometric, harmonic, and other sequence sums', () => {
+    expect(solveSequence('arithmeticSequence', [2, 3, 4])).toContain('Terms: 2, 5, 8, 11');
+    expect(solveSequence('geometricSequence', [3, 2, 4])).toContain('Partial sum = 45');
+    expect(solveSequence('harmonicSequence', [4])).toContain('Partial sum = 2.083333333');
+    expect(solveSequence('alternatingHarmonic', [4])).toContain('Partial sum = 0.5833333333');
+    expect(solveSequence('pSeries', [2, 3])).toContain('Partial sum = 1.361111111');
+    expect(solveSequence('fibonacciSequence', [7])).toContain('Terms: 0, 1, 1, 2, 3, 5, 8');
+  });
+
+  it('rejects invalid sequence sizes and p-series powers', () => {
+    expect(() => solveSequence('harmonicSequence', [0])).toThrow('Term count');
+    expect(() => solveSequence('pSeries', [0, 5])).toThrow('p > 0');
   });
 });
