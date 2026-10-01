@@ -281,6 +281,17 @@ if (expr.startsWith("quotient(")) {
       }
     }
 
+    const linearAlgebraMatch = expr.match(/^([a-zA-Z]\w*)\(/);
+    if (linearAlgebraMatch && window.LINEAR_ALGEBRA_MODE_NAMES?.has(linearAlgebraMatch[1].toLowerCase())) {
+      const call = mathInstance.parse(expr);
+      if (call.type !== 'FunctionNode') throw new Error('Enter a valid linear algebra formula call.');
+      const values = call.args.map((argument) => argument.compile().evaluate());
+      solvedMessage = window.solveLinearAlgebra(linearAlgebraMatch[1], values, mathInstance);
+      awardProgress(40, 'Linear algebra solved!', 'linearalgebra');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
     if (expr.startsWith("solveSystem(")) {
       const parts = expr.match(/^solveSystem\(\s*(\[[\s\S]*\])\s*,\s*(\[[\s\S]*\])\s*\)$/);
       if (parts) {
@@ -578,6 +589,17 @@ if (expr.startsWith("integrationByParts(")) {
         resultEl.textContent = solvedMessage;
         return;
       }
+    }
+
+    const sequenceMatch = expr.match(/^([a-zA-Z]\w*)\(/);
+    if (sequenceMatch && window.SEQUENCE_MODE_NAMES?.has(sequenceMatch[1].toLowerCase())) {
+      const call = mathInstance.parse(expr);
+      if (call.type !== 'FunctionNode') throw new Error('Enter a valid sequence formula call.');
+      const values = call.args.map((argument) => argument.compile().evaluate());
+      solvedMessage = window.solveSequence(sequenceMatch[1], values);
+      awardProgress(35, 'Sequence calculated!', 'sequences');
+      resultEl.textContent = solvedMessage;
+      return;
     }
 
     if (expr.startsWith("sum(")) {
