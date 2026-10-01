@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { all, create } from 'mathjs';
 import Plotly from 'plotly.js-dist-min';
+import { solveLinearAlgebra, solveSequence } from './lib/linearAlgebraSequences.js';
 import { STATISTICS_MODE_NAMES, solveStatistics } from '../statistics.js';
 import '../style.css';
 import * as aerospaceEngineering from '../engineering/aerospace.js';
@@ -21,6 +22,10 @@ window.math = {
 window.Plotly = Plotly;
 window.STATISTICS_MODE_NAMES = STATISTICS_MODE_NAMES;
 window.solveStatistics = solveStatistics;
+window.LINEAR_ALGEBRA_MODE_NAMES = new Set(['transpose', 'rank', 'trace', 'matrixmultiply', 'matrixadd', 'scalarmultiply']);
+window.SEQUENCE_MODE_NAMES = new Set(['arithmeticsequence', 'geometricsequence', 'harmonicsequence', 'alternatingharmonic', 'pseries', 'fibonaccisequence']);
+window.solveLinearAlgebra = solveLinearAlgebra;
+window.solveSequence = solveSequence;
 
 const engineeringDisciplineModules = {
   aerospace: aerospaceEngineering,
@@ -132,6 +137,10 @@ function App() {
           <button className="challenge-chip" data-expression="integrate(x^2, x, 0, 1)" type="button">Integral launch</button>
           <button className="challenge-chip" data-expression="limit(sin(x)/x, x, 0)" type="button">Limit test</button>
           <button className="challenge-chip" data-expression="det([[1,2],[3,4]])" type="button">Matrix power</button>
+          <button className="challenge-chip" data-expression="matrixMultiply([[1,2],[3,4]], [[2],[1]])" type="button">Matrix product</button>
+          <button className="challenge-chip" data-expression="transpose([[1,2,3],[4,5,6]])" type="button">Transpose drill</button>
+          <button className="challenge-chip" data-expression="geometricSequence(2, 3, 5)" type="button">Geometric series</button>
+          <button className="challenge-chip" data-expression="harmonicSequence(6)" type="button">Harmonic series</button>
           <button className="challenge-chip" data-expression="taylor(sin(x), x, 0, 4)" type="button">Taylor series</button>
           <button className="challenge-chip" data-expression="stats([4, 8, 15, 16, 23, 42])" type="button">Stats check</button>
           <button className="challenge-chip" data-expression="distributionStats(exp(-x^2 / 2), x, -5, 5)" type="button">Distribution moments</button>
@@ -338,6 +347,12 @@ function App() {
               <li>det([[1,2],[3,4]])</li>
               <li>inv([[1,2],[3,4]])</li>
               <li>eigenvalues([[2,1],[1,2]])</li>
+              <li>transpose([[1,2],[3,4]])</li>
+              <li>rank([[1,2],[2,4]])</li>
+              <li>trace([[1,2],[3,4]])</li>
+              <li>matrixMultiply([[1,2],[3,4]], [[2],[1]])</li>
+              <li>matrixAdd([[1,2],[3,4]], [[4,3],[2,1]])</li>
+              <li>scalarMultiply([[1,2],[3,4]], 3)</li>
             </ul>
           </div>
           <div className="examples-group">
@@ -345,6 +360,12 @@ function App() {
             <ul>
               <li>sum(i^2, i, 1, 10)</li>
               <li>product(i, i, 1, 6)</li>
+              <li>arithmeticSequence(2, 3, 6)</li>
+              <li>geometricSequence(2, 3, 6)</li>
+              <li>harmonicSequence(6)</li>
+              <li>alternatingHarmonic(6)</li>
+              <li>pSeries(2, 6)</li>
+              <li>fibonacciSequence(8)</li>
               <li>stats([4, 8, 15, 16, 23, 42])</li>
               <li>distributionStats(exp(-x^2 / 2), x, -5, 5)</li>
               <li>normalPdf(1.96, 0, 1)</li>
