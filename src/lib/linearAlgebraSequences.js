@@ -8,7 +8,7 @@ export function solveLinearAlgebra(name, args, math) {
     case 'transpose':
       return `Transpose Aᵀ = ${matrixText(math.transpose(matrix))}`;
     case 'rank':
-      return `Rank(A) = ${math.rank(matrix)}`;
+      return `Rank(A) = ${matrixRank(matrix)}`;
     case 'trace':
       return `Trace(A) = Σ diagonal entries = ${math.trace(matrix)}`;
     case 'matrixmultiply':
@@ -20,6 +20,32 @@ export function solveLinearAlgebra(name, args, math) {
     default:
       throw new Error(`Unknown linear algebra formula: ${name}`);
   }
+}
+
+function matrixRank(matrix) {
+  const rows = matrix.map((row) => row.map(Number));
+  const rowCount = rows.length;
+  const columnCount = rows[0]?.length ?? 0;
+  let rank = 0;
+
+  for (let column = 0; column < columnCount && rank < rowCount; column += 1) {
+    let pivot = rank;
+    for (let row = rank + 1; row < rowCount; row += 1) {
+      if (Math.abs(rows[row][column]) > Math.abs(rows[pivot][column])) pivot = row;
+    }
+    if (Math.abs(rows[pivot][column]) < 1e-12) continue;
+    [rows[rank], rows[pivot]] = [rows[pivot], rows[rank]];
+
+    for (let row = rank + 1; row < rowCount; row += 1) {
+      const factor = rows[row][column] / rows[rank][column];
+      for (let nextColumn = column; nextColumn < columnCount; nextColumn += 1) {
+        rows[row][nextColumn] -= factor * rows[rank][nextColumn];
+      }
+    }
+    rank += 1;
+  }
+
+  return rank;
 }
 
 export function solveSequence(name, args) {
