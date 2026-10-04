@@ -127,6 +127,21 @@ evalBtn.addEventListener('click', () => {
       return;
     }
 
+    const subjectModeMatch = expr.match(/^([a-zA-Z]\w*)\(/);
+    if (subjectModeMatch && window.REAL_ANALYSIS_FORMULAS?.has(subjectModeMatch[1].toLowerCase())) {
+      solvedMessage = window.solveRealAnalysis(expr);
+      awardProgress(30, 'Real analysis concept unlocked!', 'realanalysis');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
+    if (subjectModeMatch && window.TOPOLOGY_FORMULAS?.has(subjectModeMatch[1].toLowerCase())) {
+      solvedMessage = window.solveTopology(expr);
+      awardProgress(30, 'Topology concept unlocked!', 'topology');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
     const disciplineFunctionName = physicsNameMatch?.[1]?.toLowerCase();
     const disciplineFunction = window.ENGINEERING_DISCIPLINE_FUNCTIONS?.[disciplineFunctionName];
     if (disciplineFunction) {

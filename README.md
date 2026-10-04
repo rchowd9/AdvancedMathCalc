@@ -48,6 +48,14 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 ### Statistics
 - Descriptive statistics (mean, median, variance, standard deviation, range, mode) — `stats([data])`
 
+### Real Analysis
+- Concept references for limits, sequences, series, continuity, differentiability, integration, bounds, and classic theorems
+- Examples: `epsilonDelta()`, `sequenceLimit()`, `uniformContinuity()`, `bolzanoWeierstrass()`, `heineBorel()`
+
+### Topology
+- Concept references for open and closed sets, compactness, connectedness, boundaries, closures, interiors, metrics, and continuity
+- Examples: `openSet()`, `compactSet()`, `metric()`, `homeomorphism()`, `continuityTopological()`
+
 ### Combinatorics & Number Theory
 - Factorials — `factorial(n)`
 - Permutations — `permutations(n, r)`
@@ -226,6 +234,21 @@ chiSquareIndependence([[20, 30], [30, 20]])
 oneWayAnova([[1, 2, 3], [4, 5, 6]])
 ```
 The statistics backend also supports probability rules, normal/exponential/geometric distributions, z/t critical values, z/t test statistics, effect sizes, chi-square tests, and ANOVA. Tabulated t critical values are available for df 10, 20, 30, and Infinity. Formula conventions follow the [StatsCalculators statistics formula sheet](https://www.statscalculators.com/resources/formula-sheet/statistics-formula-sheet.pdf).
+
+**Real Analysis & Topology**
+```
+epsilonDelta()
+seriesConvergence()
+continuity()
+supremum()
+heineBorel()
+openSet()
+compactSet()
+boundary()
+hausdorff()
+homeomorphism()
+```
+These commands display concise definitions and theorem summaries; they are concept references rather than numerical theorem provers. The Quick examples section in the app lists every available command.
 
 **Combinatorics & Number Theory**
 ```

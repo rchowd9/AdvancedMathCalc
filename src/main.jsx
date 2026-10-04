@@ -69,7 +69,7 @@ const loadLegacyScripts = async () => {
   window.__mathcalcLegacyLoaded = true;
 
   try {
-    const legacyScripts = ['wordProblems.js', 'proof.js', 'geometryProofs.js', 'chemistry.js', 'physics.js', 'engineering.js', 'calculus.js', 'discreteMath.js', 'script.js'];
+    const legacyScripts = ['wordProblems.js', 'proof.js', 'geometryProofs.js', 'chemistry.js', 'physics.js', 'engineering.js', 'calculus.js', 'discreteMath.js', 'realAnalysis.js', 'topology.js', 'script.js'];
     for (const src of legacyScripts) {
       await loadScript(`${import.meta.env.BASE_URL}${src}`);
     }
@@ -151,6 +151,9 @@ function App() {
           <button className="challenge-chip" data-expression="pigeonhole(100, 50)" type="button">Pigeonhole principle</button>
           <button className="challenge-chip" data-expression="combinatorial(C(n,k)=C(n,n-k))" type="button">Combinatorial proof</button>
           <button className="challenge-chip" data-expression="lawOfCosines(3, 4, 90, 5)" type="button">Cosine proof</button>
+          <button className="challenge-chip" data-expression="epsilonDelta()" type="button">ε-δ definition</button>
+          <button className="challenge-chip" data-expression="compactSet()" type="button">Compactness</button>
+          <button className="challenge-chip" data-expression="metric()" type="button">Metric space</button>
         </div>
       </section>
 
@@ -325,6 +328,47 @@ function App() {
               <li>tripleIntegral(x + y + z, x, 0, 1, y, 0, 1, z, 0, 1)</li>
               <li>divergence([x^2, y^2, z^2], [x, y, z], [1, 2, 3])</li>
               <li>curl([-y, x, 0], [x, y, z], [1, 2, 3])</li>
+            </ul>
+          </div>
+          <div className="examples-group">
+            <h3>Real Analysis</h3>
+            <ul>
+              <li>epsilonDelta()</li>
+              <li>sequenceLimit()</li>
+              <li>seriesConvergence()</li>
+              <li>monotoneConvergence()</li>
+              <li>cauchy()</li>
+              <li>uniformContinuity()</li>
+              <li>continuity()</li>
+              <li>differentiability()</li>
+              <li>integrability()</li>
+              <li>supremum()</li>
+              <li>infimum()</li>
+              <li>bounded()</li>
+              <li>bolzanoWeierstrass()</li>
+              <li>heineBorel()</li>
+              <li>taylorTheorem()</li>
+              <li>powerSeries()</li>
+              <li>fourierSeries()</li>
+            </ul>
+          </div>
+          <div className="examples-group">
+            <h3>Topology</h3>
+            <ul>
+              <li>openSet()</li>
+              <li>closedSet()</li>
+              <li>compactSet()</li>
+              <li>connectedSet()</li>
+              <li>boundary()</li>
+              <li>closure()</li>
+              <li>interior()</li>
+              <li>metric()</li>
+              <li>hausdorff()</li>
+              <li>neighborhood()</li>
+              <li>denseSet()</li>
+              <li>accumulationPoint()</li>
+              <li>homeomorphism()</li>
+              <li>continuityTopological()</li>
             </ul>
           </div>
           <div className="examples-group">
