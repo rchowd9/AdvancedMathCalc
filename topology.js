@@ -121,3 +121,15 @@ return [
 "Continuous bijection",
 "with continuous inverse."
 ].join("\n");
+
+case 'continuitytopological':
+return [
+"Topological Continuity",
+"Preimage of every",
+"open set is open."
+].join("\n");
+ 
+default:
+throw new Error("Unknown topology operation");
+}
+}
