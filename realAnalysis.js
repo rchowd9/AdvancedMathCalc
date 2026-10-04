@@ -137,3 +137,20 @@ return [
 "Taylor Theorem",
 "f(x)=Σ f⁽ⁿ⁾(a)/n! (x-a)^n"
 ].join("\n");
+
+case 'powerseries':
+return [
+"Power Series",
+"Σ an(x-c)^n"
+].join("\n");
+ 
+case 'fourierseries':
+return [
+"Fourier Series",
+"f(x)=a₀/2+Σ(an cos(nx)+bn sin(nx))"
+].join("\n");
+ 
+default:
+throw new Error("Unknown real analysis operation");
+}
+}
