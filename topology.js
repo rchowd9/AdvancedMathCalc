@@ -71,3 +71,53 @@ return [
 "Closure",
 "cl(A)=A ∪ limit points"
 ].join("\n");
+
+case 'interior':
+return [
+"Interior",
+"Largest open subset of A"
+].join("\n");
+ 
+case 'metric':
+return [
+"Metric Space Conditions",
+"1. d(x,y) ≥ 0",
+"2. d(x,y)=0 iff x=y",
+"3. symmetry",
+"4. triangle inequality"
+].join("\n");
+ 
+case 'hausdorff':
+return [
+"Hausdorff Space",
+"Distinct points possess",
+"disjoint neighborhoods."
+].join("\n");
+ 
+case 'neighborhood':
+return [
+"Neighborhood",
+"Contains an open ball",
+"around a point."
+].join("\n");
+ 
+case 'denseset':
+return [
+"Dense Set",
+"closure(A)=X"
+].join("\n");
+ 
+case 'accumulationpoint':
+return [
+"Accumulation Point",
+"Every neighborhood",
+"contains infinitely many",
+"points of the set."
+].join("\n");
+ 
+case 'homeomorphism':
+return [
+"Homeomorphism",
+"Continuous bijection",
+"with continuous inverse."
+].join("\n");
