@@ -1,0 +1,19 @@
+window.REAL_ANALYSIS_FORMULAS = new Set([
+'epsilondelta',
+'sequencelimit',
+'seriesconvergence',
+'monotoneconvergence',
+'cauchy',
+'uniformcontinuity',
+'continuity',
+'differentiability',
+'integrability',
+'supremum',
+'infimum',
+'bounded',
+'bolzanoweierstrass',
+'heineborel',
+'taylortheorem',
+'powerseries',
+'fourierseries'
+]);
