@@ -111,6 +111,14 @@ evalBtn.addEventListener('click', () => {
       return;
     }
 
+    const differentialEquationModeNames = window.DIFFERENTIAL_EQUATION_MODE_NAMES ?? new Set();
+    if (physicsNameMatch && differentialEquationModeNames.has(physicsNameMatch[1].toLowerCase())) {
+      solvedMessage = window.solveDifferentialEquation(expr);
+      awardProgress(50, 'Differential equation solved!', 'differentialequations');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
     const engineeringModeNames = window.ENGINEERING_MODE_NAMES ?? new Set();
     if (physicsNameMatch && engineeringModeNames.has(physicsNameMatch[1].toLowerCase())) {
       solvedMessage = solveEngineering(expr);
