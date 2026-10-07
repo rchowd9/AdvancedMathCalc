@@ -151,6 +151,7 @@ function App() {
           <button className="challenge-chip" data-expression="transpose([[1,2,3],[4,5,6]])" type="button">Transpose drill</button>
           <button className="challenge-chip" data-expression="geometricSequence(2, 3, 5)" type="button">Geometric series</button>
           <button className="challenge-chip" data-expression="harmonicSequence(6)" type="button">Harmonic series</button>
+          <button className="challenge-chip" data-expression="solveOde(x - y, x, y, 0, 1, 2, 100)" type="button">ODE solver</button>
           <button className="challenge-chip" data-expression="taylor(sin(x), x, 0, 4)" type="button">Taylor series</button>
           <button className="challenge-chip" data-expression="stats([4, 8, 15, 16, 23, 42])" type="button">Stats check</button>
           <button className="challenge-chip" data-expression="distributionStats(exp(-x^2 / 2), x, -5, 5)" type="button">Distribution moments</button>
@@ -338,6 +339,15 @@ function App() {
               <li>tripleIntegral(x + y + z, x, 0, 1, y, 0, 1, z, 0, 1)</li>
               <li>divergence([x^2, y^2, z^2], [x, y, z], [1, 2, 3])</li>
               <li>curl([-y, x, 0], [x, y, z], [1, 2, 3])</li>
+              <li>jacobian([x^2*y, sin(x*y)], [x, y], [1, 2])</li>
+              <li>laplacian(exp(x*y), [x, y], [1, 2])</li>
+            </ul>
+          </div>
+          <div className="examples-group">
+            <h3>Differential Equations</h3>
+            <ul>
+              <li>solveOde(x - y, x, y, 0, 1, 2, 100)</li>
+              <li>solveOdeSystem([v, -2*v - 5*x], [x, v], t, 0, [1, 0], 4, 200)</li>
             </ul>
           </div>
           <div className="examples-group">
@@ -391,6 +401,7 @@ function App() {
               <li>ohm(12, 4)</li>
               <li>gravitation(5.97e24, 7.35e22, 384400000)</li>
               <li>bernoulli(100000, 2, 1000, 0.5, 0, 1000, 1)</li>
+              <li>dampedOscillator(1, 0.4, 4, 1, 0, 5)</li>
             </ul>
           </div>
           <div className="examples-group">
