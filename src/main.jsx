@@ -4,6 +4,7 @@ import { all, create } from 'mathjs';
 import Plotly from 'plotly.js-dist-min';
 import { solveLinearAlgebra, solveSequence } from './lib/linearAlgebraSequences.js';
 import { STATISTICS_MODE_NAMES, solveStatistics } from '../statistics.js';
+import { DIFFERENTIAL_EQUATION_MODE_NAMES, solveDifferentialEquation } from '../differentialEquations.js';
 import '../style.css';
 import * as aerospaceEngineering from '../engineering/aerospace.js';
 import * as biomedicalEngineering from '../engineering/biomedical.js';
@@ -22,6 +23,8 @@ window.math = {
 window.Plotly = Plotly;
 window.STATISTICS_MODE_NAMES = STATISTICS_MODE_NAMES;
 window.solveStatistics = solveStatistics;
+window.DIFFERENTIAL_EQUATION_MODE_NAMES = DIFFERENTIAL_EQUATION_MODE_NAMES;
+window.solveDifferentialEquation = (expression) => solveDifferentialEquation(expression, window.math.create({ matrix: 'Array' }));
 window.LINEAR_ALGEBRA_MODE_NAMES = new Set(['transpose', 'rank', 'trace', 'matrixmultiply', 'matrixadd', 'scalarmultiply']);
 window.SEQUENCE_MODE_NAMES = new Set(['arithmeticsequence', 'geometricsequence', 'harmonicsequence', 'alternatingharmonic', 'pseries', 'fibonaccisequence']);
 window.solveLinearAlgebra = solveLinearAlgebra;
@@ -76,6 +79,13 @@ const loadLegacyScripts = async () => {
   } catch (error) {
     window.__mathcalcLegacyLoaded = false;
     console.error(error);
+    const result = document.getElementById('result');
+    const status = document.getElementById('statusBadge');
+    if (result) result.textContent = `Calculator initialization failed: ${error.message}`;
+    if (status) {
+      status.textContent = 'Initialization error';
+      status.className = 'status-badge warning';
+    }
   }
 };
 
