@@ -17,6 +17,12 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 - Triple integrals — `tripleIntegral(f, x=a..b, y=c..d, z=e..f, steps=n)`
 - Limits — `limit(f, x, a)`
 - Taylor series expansion — `taylor(f, x, point, order)`
+- Jacobian matrices and Laplacians — `jacobian([f1, f2], [x, y], [x0, y0])`, `laplacian(f, [x, y], [x0, y0])`
+
+### Differential Equations
+- First-order initial-value problems using fourth-order Runge-Kutta — `solveOde(rhs, x, y, x0, y0, xEnd, steps)`
+- Coupled first-order systems (including second-order equations rewritten as systems) — `solveOdeSystem([rhs1, rhs2], [y1, y2], x, x0, [y10, y20], xEnd, steps)`
+- Damped harmonic oscillator response across underdamped, critically damped, and overdamped regimes — `dampedOscillator(massKg, dampingNsPerM, stiffnessNM, initialDisplacementM, initialVelocityMs, timeS)`
 
 ### Algebra
 - Symbolic simplification — `simplify(expr)`
@@ -134,6 +140,8 @@ If deployed on GitHub Pages, add your link here:
 https://YOUR_USERNAME.github.io/YOUR_REPO_NAME/
 ```
 
+For this repository, set **Settings → Pages → Build and deployment → Source** to **GitHub Actions**. The deployment workflow builds the Vite app into `dist`; serving the repository root directly leaves the browser pointed at uncompiled JSX and displays the source-deployment diagnostic instead of the app.
+
 ## 🧠 Usage Examples
 
 **Derivatives**
@@ -152,6 +160,13 @@ integrate(x^2, x, 0, 1)
 **Limits**
 ```
 limit(sin(x)/x, x, 0)
+```
+
+**Differential equations**
+```
+solveOde(x - y, x, y, 0, 1, 2, 100)
+solveOdeSystem([v, -2*v - 5*x], [x, v], t, 0, [1, 0], 4, 200)
+dampedOscillator(1, 0.4, 4, 1, 0, 5)
 ```
 
 **Algebra**
