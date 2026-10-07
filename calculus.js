@@ -4,7 +4,9 @@ window.CALCULUS_MODE_NAMES = new Set([
   'doubleintegral',
   'tripleintegral',
   'divergence',
-  'curl'
+  'curl',
+  'jacobian',
+  'laplacian'
 ]);
 
 function solveCalculus(input) {
@@ -22,6 +24,8 @@ function solveCalculus(input) {
     case 'tripleintegral': return solveMultipleIntegral(args, math, 3);
     case 'divergence': return solveVectorFieldDerivative(args, math, 'divergence');
     case 'curl': return solveVectorFieldDerivative(args, math, 'curl');
+    case 'jacobian': return solveJacobian(args, math);
+    case 'laplacian': return solveLaplacian(args, math);
     default: throw new Error('Unknown Calculus III mode.');
   }
 }
@@ -56,6 +60,50 @@ function evaluateCalculusExpression(expression, variables, values, math) {
 function derivativeAt(expression, variable, variables, values, math) {
   const derivative = math.derivative(expression, variable).toString();
   return evaluateCalculusExpression(derivative, variables, values, math);
+}
+
+function parseDifferentialPoint(variableText, pointText, math) {
+  const variables = parseCalculusArray(variableText, math, false);
+  const point = parseCalculusArray(pointText, math).map(Number);
+  if (
+    !variables.length ||
+    variables.length !== point.length ||
+    new Set(variables).size !== variables.length ||
+    variables.some((variable) => !/^[a-zA-Z]\w*$/.test(variable)) ||
+    point.some((value) => !Number.isFinite(value))
+  ) {
+    throw new Error('Use distinct variable names and a matching point of finite numbers.');
+  }
+  return { variables, point };
+}
+
+function solveJacobian(args, math) {
+  if (args.length !== 3) throw new Error('Use jacobian([f1, f2], [x, y], [x0, y0]).');
+  const fields = parseCalculusArray(args[0], math, false);
+  if (!fields.length) throw new Error('Jacobian requires at least one vector-field component.');
+  const { variables, point } = parseDifferentialPoint(args[1], args[2], math);
+  const rows = fields.map((field) => variables.map((variable) => derivativeAt(field, variable, variables, point, math)));
+  return [
+    `Vector function: F = [${fields.join(', ')}]`,
+    `Jacobian at [${point.join(', ')}]: J = [${rows.map((row) => `[${row.join(', ')}]`).join(', ')}]`,
+    'Each entry is a partial derivative of one output component with respect to one input variable.'
+  ].join('\n');
+}
+
+function solveLaplacian(args, math) {
+  if (args.length !== 3) throw new Error('Use laplacian(expression, [x, y], [x0, y0]).');
+  const { variables, point } = parseDifferentialPoint(args[1], args[2], math);
+  const secondPartials = variables.map((variable) => {
+    const firstDerivative = math.derivative(args[0], variable).toString();
+    const secondDerivative = math.derivative(firstDerivative, variable).toString();
+    return evaluateCalculusExpression(secondDerivative, variables, point, math);
+  });
+  const value = secondPartials.reduce((sum, term) => sum + term, 0);
+  return [
+    `Scalar field: f = ${args[0]}`,
+    `Second partial derivatives at [${point.join(', ')}]: [${secondPartials.join(', ')}]`,
+    `Laplacian: ∇²f = ${secondPartials.join(' + ')} = ${value}`
+  ].join('\n');
 }
 
 function solveDirectionalDerivative(args, math) {
