@@ -12,7 +12,9 @@ const legacyAssets = [
   'engineering.js',
   'calculus.js',
   'discreteMath.js',
-  'script.js'
+  'script.js',
+  'realAnalysis.js',
+  'topology.js'
 ];
 
 function copyLegacyAssets() {
