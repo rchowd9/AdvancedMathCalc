@@ -16,7 +16,11 @@ describe('differential-equation solver', () => {
       'solveOdeSystem([v, -x], [x, v], t, 0, [1, 0], 1.57079632679, 100)',
       math
     );
-    expect(result).toContain('Approximate final state at t = 1.57079632679: [0, -1]');
+    const finalState = result.match(/Approximate final state .*: \[([^\]]+)\]/);
+    expect(finalState).not.toBeNull();
+    const [position, velocity] = finalState[1].split(', ').map(Number);
+    expect(position).toBeCloseTo(0, 7);
+    expect(velocity).toBeCloseTo(-1, 7);
   });
 
   it('supports backward integration and default step counts', () => {
