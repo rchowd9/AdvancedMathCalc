@@ -31,7 +31,7 @@ function copyLegacyAssets() {
 
 export default defineConfig({
   plugins: [react(), copyLegacyAssets()],
-  base: process.env.GITHUB_ACTIONS ? '/AdvancedMathCalc/' : '/',
+  base: './',
   test: {
     environment: 'node',
   },
