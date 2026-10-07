@@ -31,7 +31,8 @@ window.PHYSICS_MODE_NAMES = new Set([
   'bernoulli',
   'radioactivedecay',
   'photonenergy',
-  'lens'
+  'lens',
+  'dampedoscillator'
 ]);
 
 function solvePhysics(input) {
@@ -69,6 +70,7 @@ function solvePhysics(input) {
     case 'radioactivedecay': return solveRadioactiveDecay(args);
     case 'photonenergy': return solvePhotonEnergy(args);
     case 'lens': return solveLens(args);
+    case 'dampedoscillator': return solveDampedOscillator(args);
 
     // Electromagnetism
     case 'electricfield': return solveElectricField(args);
@@ -98,9 +100,62 @@ function solvePhysics(input) {
     friction: 'force N', torque: 'torque N·m', rotationalke: 'energy J', thermalenergy: 'heat J',
     idealgas: 'PV and nRT J', snelllaw: 'angle degrees; refractive index dimensionless',
     bernoulli: 'pressure Pa', radioactivedecay: 'same quantity units as N₀', photonenergy: 'energy J',
-    lens: 'focal length m'
+    lens: 'focal length m', dampedoscillator: 'displacement m; velocity m/s'
   };
   return `${result}\nOutput units: ${outputUnits[mode]}.`;
+}
+
+function solveDampedOscillator(args) {
+  if (args.length !== 6) throw new Error('Use dampedOscillator(massKg, dampingNsPerM, stiffnessNM, initialDisplacementM, initialVelocityMs, timeS).');
+  const [mass, damping, stiffness, initialDisplacement, initialVelocity, time] = args.map(Number);
+  if (![mass, damping, stiffness, initialDisplacement, initialVelocity, time].every(Number.isFinite)) {
+    throw new Error('Damped-oscillator inputs must be finite numbers.');
+  }
+  if (mass <= 0 || stiffness <= 0 || damping < 0 || time < 0) {
+    throw new Error('Mass and stiffness must be positive; damping and time must be non-negative.');
+  }
+
+  const discriminant = damping ** 2 - 4 * mass * stiffness;
+  const alpha = damping / (2 * mass);
+  let displacement;
+  let velocity;
+  let regime;
+  if (discriminant < 0) {
+    const omega = Math.sqrt(4 * mass * stiffness - damping ** 2) / (2 * mass);
+    const sineCoefficient = (initialVelocity + alpha * initialDisplacement) / omega;
+    const envelope = Math.exp(-alpha * time);
+    const cosine = Math.cos(omega * time);
+    const sine = Math.sin(omega * time);
+    displacement = envelope * (initialDisplacement * cosine + sineCoefficient * sine);
+    velocity = envelope * (
+      initialVelocity * cosine -
+      (alpha * sineCoefficient + omega * initialDisplacement) * sine
+    );
+    regime = 'underdamped';
+  } else if (discriminant === 0) {
+    const coefficient = initialVelocity + alpha * initialDisplacement;
+    const envelope = Math.exp(-alpha * time);
+    displacement = (initialDisplacement + coefficient * time) * envelope;
+    velocity = (initialVelocity - alpha * coefficient * time) * envelope;
+    regime = 'critically damped';
+  } else {
+    const root = Math.sqrt(discriminant);
+    const firstRoot = (-damping + root) / (2 * mass);
+    const secondRoot = (-damping - root) / (2 * mass);
+    const firstCoefficient = (initialVelocity - secondRoot * initialDisplacement) / (firstRoot - secondRoot);
+    const secondCoefficient = (firstRoot * initialDisplacement - initialVelocity) / (firstRoot - secondRoot);
+    const firstTerm = firstCoefficient * Math.exp(firstRoot * time);
+    const secondTerm = secondCoefficient * Math.exp(secondRoot * time);
+    displacement = firstTerm + secondTerm;
+    velocity = firstRoot * firstTerm + secondRoot * secondTerm;
+    regime = 'overdamped';
+  }
+
+  return [
+    'Damped harmonic oscillator: m·x″ + c·x′ + k·x = 0',
+    `Regime: ${regime}`,
+    `At t = ${time} s: x = ${displacement} m, v = ${velocity} m/s`
+  ].join('\n');
 }
 
 function splitPhysicsArgs(statement) {
