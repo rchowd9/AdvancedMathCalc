@@ -188,7 +188,7 @@ function solveExponentialGrowth(args) {
 // ------------------------------------
 
 function solveLogisticGrowth(args) {
-  const [K, N0, r, t] = validateBiologyArgs(args, 4, 'logisticGrowth(K, N0, r, t)', (carryingCapacity, initialPopulation, rate, time) => carryingCapacity > 0 && initialPopulation >= 0 && time >= 0);
+  const [K, N0, r, t] = validateBiologyArgs(args, 4, 'logisticGrowth(K, N0, r, t)', (carryingCapacity, initialPopulation, rate, time) => carryingCapacity > 0 && initialPopulation > 0 && time >= 0);
   const pop = K / (1 + (((K - N0) / N0) * Math.exp(-r * t)));
   return `Population = ${pop}`;
 }
