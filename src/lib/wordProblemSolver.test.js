@@ -52,6 +52,7 @@ describe('word problem solver', () => {
     const physics = loadCalculatorScript('physics.js');
     const engineering = loadCalculatorScript('engineering.js');
     const geometry = loadCalculatorScript('geometryProofs.js');
+    const business = loadCalculatorScript('business.js');
     const civil = loadCalculatorScript('civil.js');
     const computer = loadCalculatorScript('computer.js');
     const electrical = loadCalculatorScript('electrical.js');
@@ -82,6 +83,10 @@ describe('word problem solver', () => {
 
     expect(geometry.window.GEOMETRY_PROOF_MODE_NAMES.has('lawofcosines')).toBe(true);
     expect(geometry.solveGeometryProof('lawOfCosines(3, 4, 90, 5)')).toContain('supplied side satisfies');
+
+    expect(business.window.BUSINESS_MODE_NAMES.has('grossprofit')).toBe(true);
+    expect(business.solveBusiness('grossProfit(120000, 75000)')).toContain('Gross profit');
+    expect(business.solveBusiness('roi(15000, 100000)')).toContain('ROI');
 
     expect(civil.solveCivil('bendingstress(10, 2, 1)')).toContain('Output units: Pa');
     expect(computer.solveComputer('memorybandwidth(4, 8)')).toContain('Output units: bytes/s');
