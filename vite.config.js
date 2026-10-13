@@ -10,6 +10,7 @@ const legacyAssets = [
   'chemistry.js',
   'physics.js',
   'engineering.js',
+  'business.js',
   'calculus.js',
   'discreteMath.js',
   'script.js',
