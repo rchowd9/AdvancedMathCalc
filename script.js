@@ -102,6 +102,15 @@ evalBtn.addEventListener('click', () => {
       return;
     }
 
+    const businessNameMatch = expr.match(/^([a-zA-Z]+)\(/);
+    const businessModeNames = window.BUSINESS_MODE_NAMES ?? new Set();
+    if (businessNameMatch && businessModeNames.has(businessNameMatch[1].toLowerCase())) {
+      solvedMessage = solveBusiness(expr);
+      awardProgress(40, 'Business formula solved!', 'business');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
     const physicsNameMatch = expr.match(/^([a-zA-Z]+)\(/);
     const physicsModeNames = window.PHYSICS_MODE_NAMES ?? new Set();
     if (physicsNameMatch && physicsModeNames.has(physicsNameMatch[1].toLowerCase())) {
