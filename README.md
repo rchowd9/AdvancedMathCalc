@@ -333,13 +333,9 @@ stokesTheorem([y, -x, 0], [0, 0, 1], x, y, 0, 1, 0, 2, steps=40)
 
 ## 🌐 Deploying to GitHub Pages
 
-1. Push your project to GitHub
-2. Go to **Settings → Pages**
-3. Select:
-   - Source: **Deploy from branch**
-   - Branch: **main**
-   - Folder: **/root**
-4. Save
+1. In your repository, open **Settings → Pages**.
+2. Set **Build and deployment → Source** to **GitHub Actions**.
+3. Push to `main` or manually run the **Deploy to GitHub Pages** workflow from the **Actions** tab.
 
 Your site will be live at:
 
@@ -347,27 +343,7 @@ Your site will be live at:
 https://YOUR_USERNAME.github.io/YOUR_REPO_NAME/
 ```
 
-## 🛠 GitHub Actions Auto-Deploy
-
-Add this workflow at `.github/workflows/deploy.yml`:
-
-```yaml
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches: [main]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
-```
+The repository already includes `.github/workflows/deploy-pages.yml`, which builds the Vite app and deploys the generated `dist` directory. Do not deploy the repository root; it contains the source `index.html`, not the production app.
 
 ## 📜 License
 
