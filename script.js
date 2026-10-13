@@ -54,6 +54,7 @@ challengeButtons.forEach((button) => {
     exprInput.value = button.dataset.expression;
     exprInput.focus();
     setStatus('Challenge loaded', 'ready');
+    evalBtn.click();
   });
 });
 
