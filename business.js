@@ -64,6 +64,15 @@ function formatBusinessNumber(value) {
   return Number(value.toPrecision(6));
 }
 
+function formatBusinessSteps(title, formula, steps, result) {
+  return [
+    `${title}:`,
+    `Step 1: Formula: ${formula}`,
+    ...steps.map((step, index) => `Step ${index + 2}: ${step}`),
+    `Result: ${formatBusinessNumber(result)}`
+  ].join('\n');
+}
+
 function solveGrossProfit(args) {
   requireBusinessArgs(args, 2, 'grossProfit(revenue, cogs)');
   const [revenue, cogs] = args;
@@ -137,50 +146,85 @@ function solveReturnOnAssets(args) {
 function solveFutureValue(args) {
   requireBusinessArgs(args, 3, 'futureValue(presentValue, rate, periods)');
   const [presentValue, rate, periods] = args;
-  const futureValue = presentValue * (1 + rate) ** periods;
-  return `Future value: FV = PV(1 + r)^n = ${formatBusinessNumber(futureValue)} currency units`;
+  const growthFactor = (1 + rate) ** periods;
+  const futureValue = presentValue * growthFactor;
+  return formatBusinessSteps('Future value', 'FV = PV × (1 + r)^n', [
+    `Substitute values: FV = ${presentValue} × (1 + ${rate})^${periods}`,
+    `Evaluate the growth factor: (1 + ${rate})^${periods} = ${growthFactor}`,
+    `Calculate: FV = ${presentValue} × ${growthFactor} = ${futureValue}`
+  ], futureValue);
 }
 
 function solvePresentValue(args) {
   requireBusinessArgs(args, 3, 'presentValue(futureValue, rate, periods)');
   const [futureValue, rate, periods] = args;
-  const presentValue = futureValue / (1 + rate) ** periods;
-  return `Present value: PV = FV / (1 + r)^n = ${formatBusinessNumber(presentValue)} currency units`;
+  const discountFactor = (1 + rate) ** periods;
+  const presentValue = futureValue / discountFactor;
+  return formatBusinessSteps('Present value', 'PV = FV / (1 + r)^n', [
+    `Substitute values: PV = ${futureValue} / (1 + ${rate})^${periods}`,
+    `Evaluate the denominator: (1 + ${rate})^${periods} = ${discountFactor}`,
+    `Calculate: PV = ${futureValue} / ${discountFactor} = ${presentValue}`
+  ], presentValue);
 }
 
 function solveSimpleInterest(args) {
   requireBusinessArgs(args, 3, 'simpleInterest(principal, rate, timeYears)');
   const [principal, rate, time] = args;
   const interest = principal * rate * time;
-  return `Simple interest: I = Prt = ${formatBusinessNumber(interest)} currency units`;
+  return formatBusinessSteps('Simple interest', 'I = P × r × t', [
+    `Substitute values: I = ${principal} × ${rate} × ${time}`,
+    `Multiply: I = ${principal * rate} × ${time} = ${interest}`
+  ], interest);
 }
 
 function solveCompoundInterest(args) {
   requireBusinessArgs(args, 3, 'compoundInterest(principal, rate, periods)');
   const [principal, rate, periods] = args;
-  const amount = principal * (1 + rate) ** periods;
-  return `Compound interest: A = P(1 + r)^n = ${formatBusinessNumber(amount)} currency units`;
+  const growthFactor = (1 + rate) ** periods;
+  const amount = principal * growthFactor;
+  return formatBusinessSteps('Compound interest', 'A = P × (1 + r)^n', [
+    `Substitute values: A = ${principal} × (1 + ${rate})^${periods}`,
+    `Evaluate the growth factor: (1 + ${rate})^${periods} = ${growthFactor}`,
+    `Calculate: A = ${principal} × ${growthFactor} = ${amount}`
+  ], amount);
 }
 
 function solveAnnuityPayment(args) {
   requireBusinessArgs(args, 3, 'annuityPayment(futureValue, rate, periods)');
   const [futureValue, rate, periods] = args;
-  const payment = futureValue * rate / (((1 + rate) ** periods) - 1);
-  return `Annuity payment: PMT = FV × r / ((1 + r)^n - 1) = ${formatBusinessNumber(payment)} currency units`;
+  const growthFactor = (1 + rate) ** periods;
+  const denominator = growthFactor - 1;
+  const payment = futureValue * rate / denominator;
+  return formatBusinessSteps('Annuity payment', 'PMT = FV × r / ((1 + r)^n - 1)', [
+    `Substitute values: PMT = ${futureValue} × ${rate} / ((1 + ${rate})^${periods} - 1)`,
+    `Evaluate the denominator: (1 + ${rate})^${periods} - 1 = ${denominator}`,
+    `Calculate: PMT = (${futureValue} × ${rate}) / ${denominator} = ${payment}`
+  ], payment);
 }
 
 function solveRoi(args) {
   requireBusinessArgs(args, 2, 'roi(gain, investment)');
   const [gain, investment] = args;
-  const roi = (gain / investment) * 100;
-  return `ROI: ROI = (gain / investment) × 100 = ${formatBusinessNumber(roi)}%`;
+  const ratio = gain / investment;
+  const roi = ratio * 100;
+  return formatBusinessSteps('ROI', 'ROI = (gain / investment) × 100', [
+    `Substitute values: ROI = (${gain} / ${investment}) × 100`,
+    `Divide: ${gain} / ${investment} = ${ratio}`,
+    `Convert to a percentage: ${ratio} × 100 = ${roi}%`
+  ], roi);
 }
 
 function solveLoanPayment(args) {
   requireBusinessArgs(args, 3, 'loanPayment(principal, rate, periods)');
   const [principal, rate, periods] = args;
-  const payment = (principal * rate) / (1 - (1 + rate) ** (-periods));
-  return `Loan payment: PMT = P·r / (1 - (1 + r)^-n) = ${formatBusinessNumber(payment)} currency units`;
+  const interestFactor = (1 + rate) ** (-periods);
+  const denominator = 1 - interestFactor;
+  const payment = (principal * rate) / denominator;
+  return formatBusinessSteps('Loan payment', 'PMT = P × r / (1 - (1 + r)^(-n))', [
+    `Substitute values: PMT = (${principal} × ${rate}) / (1 - (1 + ${rate})^(-${periods}))`,
+    `Evaluate the denominator: 1 - (1 + ${rate})^(-${periods}) = ${denominator}`,
+    `Calculate: PMT = (${principal} × ${rate}) / ${denominator} = ${payment}`
+  ], payment);
 }
 
 function solveGdp(args) {
@@ -228,43 +272,70 @@ function solveTaxMultiplier(args) {
 function solveConversionRate(args) {
   requireBusinessArgs(args, 2, 'conversionRate(conversions, visitors)');
   const [conversions, visitors] = args;
-  const rate = (conversions / visitors) * 100;
-  return `Conversion rate: CR = conversions / visitors × 100 = ${formatBusinessNumber(rate)}%`;
+  const ratio = conversions / visitors;
+  const rate = ratio * 100;
+  return formatBusinessSteps('Conversion rate', 'CR = (conversions / visitors) × 100', [
+    `Substitute values: CR = (${conversions} / ${visitors}) × 100`,
+    `Divide: ${conversions} / ${visitors} = ${ratio}`,
+    `Convert to a percentage: ${ratio} × 100 = ${rate}%`
+  ], rate);
 }
 
 function solveCustomerAcquisitionCost(args) {
   requireBusinessArgs(args, 2, 'customerAcquisitionCost(marketingSpend, customersAcquired)');
   const [marketingSpend, customersAcquired] = args;
   const cac = marketingSpend / customersAcquired;
-  return `Customer acquisition cost: CAC = marketing spend / customers acquired = ${formatBusinessNumber(cac)} currency units per customer`;
+  return formatBusinessSteps('Customer acquisition cost', 'CAC = marketing spend / customers acquired', [
+    `Substitute values: CAC = ${marketingSpend} / ${customersAcquired}`,
+    `Divide: CAC = ${marketingSpend} / ${customersAcquired} = ${cac}`
+  ], cac);
 }
 
 function solveClv(args) {
   requireBusinessArgs(args, 4, 'clv(averageRevenuePerCustomer, grossMargin, retentionRate, discountRate)');
   const [averageRevenuePerCustomer, grossMargin, retentionRate, discountRate] = args;
-  const clv = (averageRevenuePerCustomer * grossMargin * retentionRate) / (1 - retentionRate + discountRate);
-  return `Customer lifetime value: CLV = (ARPC × GM × retention) / (1 - retention + discount) = ${formatBusinessNumber(clv)} currency units`;
+  const numerator = averageRevenuePerCustomer * grossMargin * retentionRate;
+  const denominator = 1 - retentionRate + discountRate;
+  const clv = numerator / denominator;
+  return formatBusinessSteps('Customer lifetime value', 'CLV = (ARPC × GM × retention) / (1 - retention + discount)', [
+    `Substitute values: CLV = (${averageRevenuePerCustomer} × ${grossMargin} × ${retentionRate}) / (1 - ${retentionRate} + ${discountRate})`,
+    `Evaluate the numerator and denominator: ${numerator} / ${denominator}`,
+    `Divide: CLV = ${numerator} / ${denominator} = ${clv}`
+  ], clv);
 }
 
 function solveRoas(args) {
   requireBusinessArgs(args, 2, 'roas(revenue, adSpend)');
   const [revenue, adSpend] = args;
-  const roas = (revenue / adSpend) * 100;
-  return `ROAS: ROAS = revenue / ad spend × 100 = ${formatBusinessNumber(roas)}%`;
+  const ratio = revenue / adSpend;
+  const roas = ratio * 100;
+  return formatBusinessSteps('ROAS', 'ROAS = (revenue / ad spend) × 100', [
+    `Substitute values: ROAS = (${revenue} / ${adSpend}) × 100`,
+    `Divide: ${revenue} / ${adSpend} = ${ratio}`,
+    `Convert to a percentage: ${ratio} × 100 = ${roas}%`
+  ], roas);
 }
 
 function solveCtr(args) {
   requireBusinessArgs(args, 2, 'ctr(clicks, impressions)');
   const [clicks, impressions] = args;
-  const ctr = (clicks / impressions) * 100;
-  return `Click-through rate: CTR = clicks / impressions × 100 = ${formatBusinessNumber(ctr)}%`;
+  const ratio = clicks / impressions;
+  const ctr = ratio * 100;
+  return formatBusinessSteps('Click-through rate', 'CTR = (clicks / impressions) × 100', [
+    `Substitute values: CTR = (${clicks} / ${impressions}) × 100`,
+    `Divide: ${clicks} / ${impressions} = ${ratio}`,
+    `Convert to a percentage: ${ratio} × 100 = ${ctr}%`
+  ], ctr);
 }
 
 function solveBreakEvenCustomers(args) {
   requireBusinessArgs(args, 2, 'breakEvenCustomers(fixedCosts, contributionMarginPerCustomer)');
   const [fixedCosts, contributionMarginPerCustomer] = args;
   const breakEvenCustomers = fixedCosts / contributionMarginPerCustomer;
-  return `Break-even customers: Q = fixed costs / contribution margin per customer = ${formatBusinessNumber(breakEvenCustomers)} customers`;
+  return formatBusinessSteps('Break-even customers', 'Q = fixed costs / contribution margin per customer', [
+    `Substitute values: Q = ${fixedCosts} / ${contributionMarginPerCustomer}`,
+    `Divide: Q = ${fixedCosts} / ${contributionMarginPerCustomer} = ${breakEvenCustomers}`
+  ], breakEvenCustomers);
 }
 
 function solvePriceElasticity(args) {
