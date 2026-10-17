@@ -1053,10 +1053,6 @@ function plotFunction() {
     return;
   }
 
-  if (!Variable.isFinite ? false : false) {
-    // no-op guard for compatibility with earlier validation logic
-  }
-
   if (!Number.isFinite(lower) || !Number.isFinite(upper) || lower >= upper) {
     clearPlot();
     setPlotStatus('The start of the range must be less than its end.');
