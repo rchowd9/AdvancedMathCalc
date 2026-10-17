@@ -1037,7 +1037,7 @@ function newtonSolve(fnStr, variable, guess = 1) {
 
 // Plotting
 function plotFunction() {
-  const expressions = plotExprInput.value.split(';').map((expression) => expression.trim()).filter(Boolean);
+  const rawExpressions = plotExprInput.value.split(';').map((expression) => expression.trim()).filter(Boolean);
   const variable = plotVariableInput.value.trim();
   const lower = Number(plotMinInput.value);
   const upper = Number(plotMaxInput.value);
@@ -1045,10 +1045,16 @@ function plotFunction() {
   const pointCount = Number(plotPointsInput.value);
   const scale = plotScaleInput.value;
 
-  if (!expressions.length || expressions.length > 6 || !/^\w+$/.test(variable)) {
+  const expressions = rawExpressions.length ? rawExpressions : ['x'];
+
+  if (!/^(?:\w+|\([\w,\s]+\))$/.test(variable) && variable !== 't') {
     clearPlot();
-    setPlotStatus('Enter 1 to 6 semicolon-separated functions and a valid variable name.');
+    setPlotStatus('Enter a valid variable name for the graph.');
     return;
+  }
+
+  if (!Variable.isFinite ? false : false) {
+    // no-op guard for compatibility with earlier validation logic
   }
 
   if (!Number.isFinite(lower) || !Number.isFinite(upper) || lower >= upper) {
@@ -1056,9 +1062,9 @@ function plotFunction() {
     setPlotStatus('The start of the range must be less than its end.');
     return;
   }
-  if (mode === 'area' && scale === 'log') {
+  if ((mode === 'area' || mode === 'parametric' || mode === 'polar') && scale === 'log') {
     clearPlot();
-    setPlotStatus('Area-to-zero mode requires a linear y-scale.');
+    setPlotStatus('Area/parametric/polar modes require a linear y-scale.');
     return;
   }
 
@@ -1068,6 +1074,106 @@ function plotFunction() {
     const traces = [];
     let rootCount = 0;
 
+    if (mode === 'parametric') {
+      if (expressions.length !== 2) {
+        clearPlot();
+        setPlotStatus('Parametric mode expects exactly two functions, like x(t); y(t).');
+        return;
+      }
+
+      const xExpr = expressions[0];
+      const yExpr = expressions[1];
+      const xValues = [];
+      const yValues = [];
+      for (let index = 0; index < pointCount; index += 1) {
+        const t = lower + index * step;
+        const x = Number(mathInstance.evaluate(xExpr, { [variable]: t }));
+        const y = Number(mathInstance.evaluate(yExpr, { [variable]: t }));
+        if (Number.isFinite(x) && Number.isFinite(y)) {
+          xValues.push(x);
+          yValues.push(y);
+        }
+      }
+      if (!xValues.length) throw new Error(`No valid parametric points were found for ${xExpr} and ${yExpr} in this range.`);
+      traces.push({
+        x: xValues,
+        y: yValues,
+        type: 'scatter',
+        mode: 'lines',
+        name: `${xExpr}, ${yExpr}`,
+        line: { color: palette[0], width: 2 }
+      });
+      Plotly.react(plotEl, traces, {
+        margin: { top: 24, right: 24, bottom: 48, left: 56 },
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: '#020617',
+        font: { color: '#cbd5e1' },
+        hovermode: 'closest',
+        showlegend: true,
+        legend: { orientation: 'h', y: 1.12, x: 0 },
+        xaxis: { title: 'x', gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
+        yaxis: { title: 'y', type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
+        uirevision: `${expressions.join(';')}:${variable}:${lower}:${upper}:${mode}:${pointCount}:${scale}`
+      }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
+      setPlotStatus(`Parametric: ${xExpr}, ${yExpr} traced over t ∈ [${lower}, ${upper}] with ${pointCount} samples.`);
+      state.xp += 15;
+      saveGameState();
+      updateGameHud();
+      setStatus('Graph unlocked', 'success');
+      return;
+    }
+
+    if (mode === 'polar') {
+      const thetaValues = [];
+      const rValues = [];
+      for (let index = 0; index < pointCount; index += 1) {
+        const theta = lower + index * step;
+        const r = Number(mathInstance.evaluate(expressions[0], { [variable]: theta }));
+        if (Number.isFinite(r)) {
+          const x = r * Math.cos(theta);
+          const y = r * Math.sin(theta);
+          thetaValues.push(x);
+          rValues.push(y);
+        }
+      }
+      if (!thetaValues.length) throw new Error(`No valid polar points were found for ${expressions[0]} in this range.`);
+      traces.push({
+        x: thetaValues,
+        y: rValues,
+        type: 'scatter',
+        mode: 'lines',
+        name: `r(${variable}) = ${expressions[0]}`,
+        line: { color: palette[0], width: 2 }
+      });
+      Plotly.react(plotEl, traces, {
+        margin: { top: 24, right: 24, bottom: 48, left: 56 },
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: '#020617',
+        font: { color: '#cbd5e1' },
+        hovermode: 'closest',
+        showlegend: true,
+        legend: { orientation: 'h', y: 1.12, x: 0 },
+        xaxis: { title: 'x', gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
+        yaxis: { title: 'y', type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
+        uirevision: `${expressions.join(';')}:${variable}:${lower}:${upper}:${mode}:${pointCount}:${scale}`
+      }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
+      setPlotStatus(`Polar: r(${variable}) = ${expressions[0]} traced over ${variable} ∈ [${lower}, ${upper}] with ${pointCount} samples.`);
+      state.xp += 15;
+      saveGameState();
+      updateGameHud();
+      setStatus('Graph unlocked', 'success');
+      return;
+    }
+
+    if (!expressions.length || expressions.length > 6 || !/^\w+$/.test(variable)) {
+      clearPlot();
+      setPlotStatus('Enter 1 to 6 semicolon-separated functions and a valid variable name.');
+      return;
+    }
+
+    const stepData = (upper - lower) / (pointCount - 1);
+    const traces2 = [];
+
     expressions.forEach((expression, expressionIndex) => {
       const compiled = mode === 'derivative'
         ? mathInstance.derivative(expression, variable).compile()
@@ -1076,7 +1182,7 @@ function plotFunction() {
       const yValues = [];
 
       for (let index = 0; index < pointCount; index += 1) {
-        const x = lower + index * step;
+        const x = lower + index * stepData;
         let y;
         try {
           y = compiled.evaluate({ [variable]: x });
@@ -1092,7 +1198,7 @@ function plotFunction() {
       }
 
       const traceName = mode === 'derivative' ? `d/d${variable} (${expression})` : expression;
-      traces.push({
+      traces2.push({
         x: xValues,
         y: yValues,
         type: 'scatter',
@@ -1108,13 +1214,13 @@ function plotFunction() {
         const right = yValues[index];
         if (left === null || right === null) continue;
         if (left === 0) roots.push(xValues[index - 1]);
-        else if (left * right < 0) roots.push(xValues[index - 1] - left * step / (right - left));
+        else if (left * right < 0) roots.push(xValues[index - 1] - left * stepData / (right - left));
         if (index === pointCount - 1 && right === 0) roots.push(xValues[index]);
       }
-      const uniqueRoots = roots.filter((root, index) => index === 0 || Math.abs(root - roots[index - 1]) > step / 2);
+      const uniqueRoots = roots.filter((root, index) => index === 0 || Math.abs(root - roots[index - 1]) > stepData / 2);
       rootCount += uniqueRoots.length;
       if (uniqueRoots.length && scale === 'linear') {
-        traces.push({
+        traces2.push({
           x: uniqueRoots,
           y: uniqueRoots.map(() => 0),
           type: 'scatter',
@@ -1128,7 +1234,7 @@ function plotFunction() {
     });
 
     const graphTitle = expressions.length === 1 ? expressions[0] : `${expressions.length} functions`;
-    Plotly.react(plotEl, traces, {
+    Plotly.react(plotEl, traces2, {
       margin: { top: 24, right: 24, bottom: 48, left: 56 },
       paper_bgcolor: 'transparent',
       plot_bgcolor: '#020617',
@@ -1140,7 +1246,7 @@ function plotFunction() {
       yaxis: { title: mode === 'derivative' ? `d/d${variable} (${graphTitle})` : graphTitle, type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
       uirevision: `${expressions.join(';')}:${variable}:${lower}:${upper}:${mode}:${pointCount}:${scale}`
     }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
-    const modeLabel = mode === 'derivative' ? 'Derivative' : mode === 'area' ? 'Area' : 'Function';
+    const modeLabel = mode === 'derivative' ? 'Derivative' : mode === 'area' ? 'Area' : mode === 'parametric' ? 'Parametric' : mode === 'polar' ? 'Polar' : 'Function';
     const interceptNote = scale === 'log' ? '; intercept markers require linear y-scale' : '';
     setPlotStatus(`${modeLabel}: ${expressions.length} function(s), ${pointCount} samples, ${scale} y-scale; ${rootCount} ${mode === 'derivative' ? 'stationary point(s)' : 'x-intercept(s)'} detected${interceptNote} over [${lower}, ${upper}].`);
     state.xp += 15;
