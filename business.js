@@ -231,42 +231,67 @@ function solveGdp(args) {
   requireBusinessArgs(args, 4, 'gdp(consumption, investment, government, netExports)');
   const [consumption, investment, government, netExports] = args;
   const output = consumption + investment + government + netExports;
-  return `GDP: Y = C + I + G + NX = ${formatBusinessNumber(output)} currency units`;
+  return formatBusinessSteps('GDP', 'Y = C + I + G + NX', [
+    `Substitute values: Y = ${consumption} + ${investment} + ${government} + ${netExports}`,
+    `Add the components: ${consumption} + ${investment} + ${government} + ${netExports} = ${output}`
+  ], output);
 }
 
 function solveRealGdp(args) {
   requireBusinessArgs(args, 2, 'realGdp(nominalGdp, gdpDeflator)');
   const [nominalGdp, gdpDeflator] = args;
-  const realGdp = nominalGdp / (gdpDeflator / 100);
-  return `Real GDP: GDP_real = nominal GDP / (deflator / 100) = ${formatBusinessNumber(realGdp)} currency units`;
+  const output = nominalGdp / (gdpDeflator / 100);
+  return formatBusinessSteps('Real GDP', 'GDP_real = nominal GDP / (deflator / 100)', [
+    `Substitute values: GDP_real = ${nominalGdp} / (${gdpDeflator} / 100)`,
+    `Convert the deflator to a decimal: ${gdpDeflator} / 100 = ${gdpDeflator / 100}`,
+    `Divide: ${nominalGdp} / ${gdpDeflator / 100} = ${output}`
+  ], output);
 }
 
 function solveInflationRate(args) {
   requireBusinessArgs(args, 2, 'inflationRate(cpiCurrent, cpiPrevious)');
   const [cpiCurrent, cpiPrevious] = args;
-  const inflationRate = ((cpiCurrent - cpiPrevious) / cpiPrevious) * 100;
-  return `Inflation rate: π = ((CPI_t - CPI_{t-1}) / CPI_{t-1}) × 100 = ${formatBusinessNumber(inflationRate)}%`;
+  const change = cpiCurrent - cpiPrevious;
+  const output = ((cpiCurrent - cpiPrevious) / cpiPrevious) * 100;
+  return formatBusinessSteps('Inflation rate', 'π = ((CPI_t - CPI_{t-1}) / CPI_{t-1}) × 100', [
+    `Substitute values: π = ((${cpiCurrent} - ${cpiPrevious}) / ${cpiPrevious}) × 100`,
+    `Find the change in CPI: ${cpiCurrent} - ${cpiPrevious} = ${change}`,
+    `Divide by the previous CPI: ${change} / ${cpiPrevious} = ${change / cpiPrevious}`,
+    `Convert to a percentage: ${change / cpiPrevious} × 100 = ${output}%`
+  ], output);
 }
 
 function solveUnemploymentRate(args) {
   requireBusinessArgs(args, 2, 'unemploymentRate(unemployed, laborForce)');
   const [unemployed, laborForce] = args;
-  const unemploymentRate = (unemployed / laborForce) * 100;
-  return `Unemployment rate: U = unemployed / labor force × 100 = ${formatBusinessNumber(unemploymentRate)}%`;
+  const output = (unemployed / laborForce) * 100;
+  return formatBusinessSteps('Unemployment rate', 'U = unemployed / labor force × 100', [
+    `Substitute values: U = ${unemployed} / ${laborForce} × 100`,
+    `Divide unemployed by the labor force: ${unemployed} / ${laborForce} = ${unemployed / laborForce}`,
+    `Convert to a percentage: ${unemployed / laborForce} × 100 = ${output}%`
+  ], output);
 }
 
 function solveSpendingMultiplier(args) {
   requireBusinessArgs(args, 1, 'spendingMultiplier(mpc)');
   const [mpc] = args;
-  const multiplier = 1 / (1 - mpc);
-  return `Spending multiplier: k = 1 / (1 - MPC) = ${formatBusinessNumber(multiplier)}`;
+  const output = 1 / (1 - mpc);
+  return formatBusinessSteps('Spending multiplier', 'k = 1 / (1 - MPC)', [
+    `Substitute values: k = 1 / (1 - ${mpc})`,
+    `Evaluate the denominator: 1 - ${mpc} = ${1 - mpc}`,
+    `Divide: 1 / ${1 - mpc} = ${output}`
+  ], output);
 }
 
 function solveTaxMultiplier(args) {
   requireBusinessArgs(args, 1, 'taxMultiplier(mpc)');
   const [mpc] = args;
-  const multiplier = -mpc / (1 - mpc);
-  return `Tax multiplier: k_t = -MPC / (1 - MPC) = ${formatBusinessNumber(multiplier)}`;
+  const output = (-mpc) / (1 - mpc);
+  return formatBusinessSteps('Tax multiplier', 'k_t = -MPC / (1 - MPC)', [
+    `Substitute values: k_t = -${mpc} / (1 - ${mpc})`,
+    `Evaluate the denominator: 1 - ${mpc} = ${1 - mpc}`,
+    `Divide: -${mpc} / ${1 - mpc} = ${output}`
+  ], output);
 }
 
 function solveConversionRate(args) {
@@ -341,36 +366,51 @@ function solveBreakEvenCustomers(args) {
 function solvePriceElasticity(args) {
   requireBusinessArgs(args, 2, 'priceElasticity(percentageChangeQuantity, percentageChangePrice)');
   const [percentageChangeQuantity, percentageChangePrice] = args;
-  const elasticity = percentageChangeQuantity / percentageChangePrice;
-  return `Price elasticity: E = %ΔQ / %ΔP = ${formatBusinessNumber(elasticity)}`;
+  const output = percentageChangeQuantity / percentageChangePrice;
+  return formatBusinessSteps('Price elasticity', 'E = %ΔQ / %ΔP', [
+    `Substitute values: E = ${percentageChangeQuantity} / ${percentageChangePrice}`,
+    `Divide the percentage changes: ${percentageChangeQuantity} / ${percentageChangePrice} = ${output}`
+  ], output);
 }
 
 function solveTotalRevenue(args) {
   requireBusinessArgs(args, 2, 'totalRevenue(price, quantity)');
   const [price, quantity] = args;
-  const totalRevenue = price * quantity;
-  return `Total revenue: TR = P × Q = ${formatBusinessNumber(totalRevenue)} currency units`;
+  const output = price * quantity;
+  return formatBusinessSteps('Total revenue', 'TR = P × Q', [
+    `Substitute values: TR = ${price} × ${quantity}`,
+    `Multiply: ${price} × ${quantity} = ${output}`
+  ], output);
 }
 
 function solveMarginalCost(args) {
   requireBusinessArgs(args, 2, 'marginalCost(changeInTotalCost, changeInQuantity)');
   const [changeInTotalCost, changeInQuantity] = args;
-  const marginalCost = changeInTotalCost / changeInQuantity;
-  return `Marginal cost: MC = ΔTC / ΔQ = ${formatBusinessNumber(marginalCost)} currency units per unit`;
+  const output = changeInTotalCost / changeInQuantity;
+  return formatBusinessSteps('Marginal cost', 'MC = ΔTC / ΔQ', [
+    `Substitute values: MC = ${changeInTotalCost} / ${changeInQuantity}`,
+    `Divide the change in cost by the change in quantity: ${changeInTotalCost} / ${changeInQuantity} = ${output}`
+  ], output);
 }
 
 function solveProfit(args) {
   requireBusinessArgs(args, 2, 'profit(totalRevenue, totalCost)');
   const [totalRevenue, totalCost] = args;
-  const profit = totalRevenue - totalCost;
-  return `Profit: π = total revenue - total cost = ${formatBusinessNumber(profit)} currency units`;
+  const output = totalRevenue - totalCost;
+  return formatBusinessSteps('Profit', 'π = total revenue - total cost', [
+    `Substitute values: π = ${totalRevenue} - ${totalCost}`,
+    `Subtract: ${totalRevenue} - ${totalCost} = ${output}`
+  ], output);
 }
 
 function solveConsumerSurplus(args) {
   requireBusinessArgs(args, 2, 'consumerSurplus(valuation, price)');
   const [valuation, price] = args;
-  const consumerSurplus = valuation - price;
-  return `Consumer surplus: CS = willingness to pay - price = ${formatBusinessNumber(consumerSurplus)} currency units`;
+  const output = valuation - price;
+  return formatBusinessSteps('Consumer surplus', 'CS = willingness to pay - price', [
+    `Substitute values: CS = ${valuation} - ${price}`,
+    `Subtract: ${valuation} - ${price} = ${output}`
+  ], output);
 }
 
 function solveBusiness(input) {
