@@ -169,6 +169,25 @@ solveOdeSystem([v, -2*v - 5*x], [x, v], t, 0, [1, 0], 4, 200)
 dampedOscillator(1, 0.4, 4, 1, 0, 5)
 ```
 
+**Macroeconomics**
+```
+gdp(800, 250, 300, -50)
+realGdp(2200, 110)
+inflationRate(112, 108)
+unemploymentRate(8, 200)
+spendingMultiplier(0.8)
+taxMultiplier(0.7)
+```
+
+**Microeconomics**
+```
+priceElasticity(12, 4)
+totalRevenue(25, 140)
+marginalCost(1200, 40)
+profit(5000, 3200)
+consumerSurplus(90, 68)
+```
+
 **Algebra**
 ```
 simplify((x+1)^2 - (x^2+2x+1))
