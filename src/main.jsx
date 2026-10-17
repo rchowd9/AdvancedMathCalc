@@ -298,6 +298,8 @@ function App() {
               <option value="function">Function</option>
               <option value="derivative">Derivative</option>
               <option value="area">Area to zero</option>
+              <option value="parametric">Parametric</option>
+              <option value="polar">Polar</option>
             </select>
           </label>
           <label>
