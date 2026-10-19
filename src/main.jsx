@@ -156,6 +156,7 @@ function App() {
           <button className="challenge-chip" data-expression="stats([4, 8, 15, 16, 23, 42])" type="button">Stats check</button>
           <button className="challenge-chip" data-expression="distributionStats(exp(-x^2 / 2), x, -5, 5)" type="button">Distribution moments</button>
           <button className="challenge-chip" data-expression="normalCdf(1.96, 0, 1)" type="button">Normal CDF</button>
+          <button className="challenge-chip" data-expression="frequency(0.02)" type="button">Frequency from period</button>
           <button className="challenge-chip" data-expression="combinations(6, 3)" type="button">Combinatorics</button>
           <button className="challenge-chip" data-expression="volumeOfRevolution(x^2, x, 0, 2)" type="button">Solid of revolution</button>
           <button className="challenge-chip" data-expression="proof((x + 1)^2 = x^2 + 2*x + 1)" type="button">Proof drill</button>

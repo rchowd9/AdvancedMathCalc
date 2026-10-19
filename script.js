@@ -1136,11 +1136,7 @@ function plotFunction() {
       return;
     }
 
-    if (!expressions.length) {
-      clearPlot();
-      setPlotStatus('Enter at least one function to plot.');
-      return;
-    }
+    if (!expressions.length) expressions.push('x');
 
     if (mode === 'polar') {
       const thetaValues = [];
