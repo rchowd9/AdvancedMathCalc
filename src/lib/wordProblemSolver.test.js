@@ -66,6 +66,13 @@ describe('word problem solver', () => {
 
     expect(physics.window.PHYSICS_MODE_NAMES.has('wave')).toBe(true);
     expect(physics.solvePhysics('wave(2, 5, 0.5)')).toContain('v = f·λ');
+    expect(physics.window.PHYSICS_MODE_NAMES.has('frequency')).toBe(true);
+    expect(physics.solvePhysics('frequency(0.02)')).toContain('f = 1/T = 50 Hz');
+    expect(physics.solvePhysics('frequency(0.02)')).toContain('Output units: frequency Hz');
+    expect(physics.window.PHYSICS_MODE_NAMES.has('period')).toBe(true);
+    expect(physics.solvePhysics('period(50)')).toContain('T = 1/f = 0.02 s');
+    expect(() => physics.solvePhysics('frequency(0)')).toThrow('Period must be a finite positive number');
+    expect(() => physics.solvePhysics('period(-2)')).toThrow('Frequency must be a finite positive number');
     expect(physics.solvePhysics('kinematics(0, 9.8, 3)')).toContain('Output units: final velocity m/s; displacement m');
     expect(physics.window.PHYSICS_MODE_NAMES.has('weight')).toBe(true);
     expect(physics.solvePhysics('weight(5, 9.8)')).toContain('W = m·g');

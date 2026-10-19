@@ -24,6 +24,10 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 - Coupled first-order systems (including second-order equations rewritten as systems) — `solveOdeSystem([rhs1, rhs2], [y1, y2], x, x0, [y10, y20], xEnd, steps)`
 - Damped harmonic oscillator response across underdamped, critically damped, and overdamped regimes — `dampedOscillator(massKg, dampingNsPerM, stiffnessNM, initialDisplacementM, initialVelocityMs, timeS)`
 
+### Physics
+- Frequency from period — `frequency(periodS)`
+- Period from frequency — `period(frequencyHz)`
+
 ### Algebra
 - Symbolic simplification — `simplify(expr)`
 
@@ -91,6 +95,7 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 
 ### Graph Plotting
 - Plot any single-variable function
+- Parametric curves from two expressions, such as `cos(t); sin(t)`, or coordinate definitions such as `x(t) = cos(t); y(t) = sin(t)`
 - Adjustable domain
 - Smooth, interactive Plotly.js graphs
 

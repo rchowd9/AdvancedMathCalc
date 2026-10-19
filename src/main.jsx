@@ -278,7 +278,7 @@ function App() {
         <div className="graph-controls">
           <label>
             Functions
-            <input id="plotExpr" type="text" defaultValue="sin(x)" placeholder="e.g. x^2 - 4; cos(x)" />
+            <input id="plotExpr" type="text" defaultValue="sin(x)" placeholder="e.g. x^2 - 4; cos(x), or cos(t); sin(t)" />
           </label>
           <label>
             Variable

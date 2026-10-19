@@ -1037,7 +1037,7 @@ function newtonSolve(fnStr, variable, guess = 1) {
 
 // Plotting
 function plotFunction() {
-  const rawExpressions = plotExprInput.value.split(';').map((expression) => expression.trim()).filter(Boolean);
+  const rawExpressions = plotExprInput.value.split(';').map((expression) => expression.trim());
   const variable = plotVariableInput.value.trim();
   const lower = Number(plotMinInput.value);
   const upper = Number(plotMaxInput.value);
@@ -1045,7 +1045,7 @@ function plotFunction() {
   const pointCount = Number(plotPointsInput.value);
   const scale = plotScaleInput.value;
 
-  const expressions = rawExpressions.length ? rawExpressions : ['x'];
+  const expressions = rawExpressions.filter(Boolean);
 
   if (!/^(?:\w+|\([\w,\s]+\))$/.test(variable) && variable !== 't') {
     clearPlot();
@@ -1071,20 +1071,37 @@ function plotFunction() {
     let rootCount = 0;
 
     if (mode === 'parametric') {
-      if (expressions.length !== 2) {
+      if (rawExpressions.length !== 2 || rawExpressions.some((expression) => !expression)) {
         clearPlot();
         setPlotStatus('Parametric mode expects exactly two functions, like x(t); y(t).');
         return;
       }
 
-      const xExpr = expressions[0];
-      const yExpr = expressions[1];
+      const definitions = rawExpressions.map((expression) =>
+        expression.match(/^([xy])\s*\(\s*([A-Za-z]\w*)\s*\)\s*=\s*(.+)$/i)
+      );
+      const hasDefinitions = definitions.some(Boolean);
+      if (hasDefinitions && definitions.some((definition) => !definition)) {
+        throw new Error('Define both coordinates, like x(t) = cos(t); y(t) = sin(t), or enter two expressions like cos(t); sin(t).');
+      }
+      if (hasDefinitions && (
+        definitions[0][1].toLowerCase() !== 'x' ||
+        definitions[1][1].toLowerCase() !== 'y' ||
+        definitions[0][2] !== definitions[1][2]
+      )) {
+        throw new Error('Parametric definitions must be x(t) followed by y(t), using the same parameter.');
+      }
+
+      const xExpr = hasDefinitions ? definitions[0][3].trim() : rawExpressions[0];
+      const yExpr = hasDefinitions ? definitions[1][3].trim() : rawExpressions[1];
+      const parameterVariable = hasDefinitions ? definitions[0][2] : variable;
       const xValues = [];
       const yValues = [];
       for (let index = 0; index < pointCount; index += 1) {
-        const t = lower + index * step;
-        const x = Number(mathInstance.evaluate(xExpr, { [variable]: t }));
-        const y = Number(mathInstance.evaluate(yExpr, { [variable]: t }));
+        const parameter = lower + index * step;
+        const scope = { [parameterVariable]: parameter, t: parameter };
+        const x = Number(mathInstance.evaluate(xExpr, scope));
+        const y = Number(mathInstance.evaluate(yExpr, scope));
         if (Number.isFinite(x) && Number.isFinite(y)) {
           xValues.push(x);
           yValues.push(y);
@@ -1111,11 +1128,17 @@ function plotFunction() {
         yaxis: { title: 'y', type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
         uirevision: `${expressions.join(';')}:${variable}:${lower}:${upper}:${mode}:${pointCount}:${scale}`
       }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
-      setPlotStatus(`Parametric: ${xExpr}, ${yExpr} traced over t ∈ [${lower}, ${upper}] with ${pointCount} samples.`);
+      setPlotStatus(`Parametric: ${xExpr}, ${yExpr} traced over ${parameterVariable} ∈ [${lower}, ${upper}] with ${pointCount} samples.`);
       state.xp += 15;
       saveGameState();
       updateGameHud();
       setStatus('Graph unlocked', 'success');
+      return;
+    }
+
+    if (!expressions.length) {
+      clearPlot();
+      setPlotStatus('Enter at least one function to plot.');
       return;
     }
 

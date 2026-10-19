@@ -19,6 +19,8 @@ window.PHYSICS_MODE_NAMES = new Set([
   'continuousmass',
   'continuouscharge',
   'wave',
+  'frequency',
+  'period',
   'circularmotion',
   'resonance',
   'weight',
@@ -57,6 +59,8 @@ function solvePhysics(input) {
     case 'gravitation': return solveGravitation(args);
     case 'projectile': return solveProjectile(args);
     case 'wave': return solveWave(args);
+    case 'frequency': return solveFrequency(args);
+    case 'period': return solvePeriod(args);
     case 'circularmotion': return solveCircularMotion(args);
     case 'resonance': return solveResonance(args);
     case 'weight': return solveWeight(args);
@@ -97,6 +101,7 @@ function solvePhysics(input) {
     inductor: 'energy J', flux: 'magnetic flux Wb', faraday: 'induced emf V',
     continuousforce: 'work J', continuousmass: 'mass kg', continuouscharge: 'charge C',
     wave: 'speed m/s', circularmotion: 'force N', resonance: 'frequency Hz', weight: 'force N',
+    frequency: 'frequency Hz', period: 'period s',
     friction: 'force N', torque: 'torque N·m', rotationalke: 'energy J', thermalenergy: 'heat J',
     idealgas: 'PV and nRT J', snelllaw: 'angle degrees; refractive index dimensionless',
     bernoulli: 'pressure Pa', radioactivedecay: 'same quantity units as N₀', photonenergy: 'energy J',
@@ -433,6 +438,34 @@ function solveWave(args) {
     `f = ${frequency} Hz, ${formatGreekSymbol('lambda')} = ${wavelength} m`,
     `v = f·${formatGreekSymbol('lambda')} = ${waveSpeed} m/s`,
     'Conclusion: Wave speed computed from frequency and wavelength.'
+  ].join('\n');
+}
+
+function solveFrequency(args) {
+  if (args.length !== 1) throw new Error('Use frequency(periodS)');
+  const [period] = args.map(Number);
+  if (!Number.isFinite(period) || period <= 0) throw new Error('Period must be a finite positive number of seconds.');
+  const frequency = 1 / period;
+
+  return [
+    'Frequency and Period',
+    `T = ${period} s`,
+    `f = 1/T = ${frequency} Hz`,
+    'Conclusion: Frequency computed as the reciprocal of period.'
+  ].join('\n');
+}
+
+function solvePeriod(args) {
+  if (args.length !== 1) throw new Error('Use period(frequencyHz)');
+  const [frequency] = args.map(Number);
+  if (!Number.isFinite(frequency) || frequency <= 0) throw new Error('Frequency must be a finite positive number of hertz.');
+  const period = 1 / frequency;
+
+  return [
+    'Frequency and Period',
+    `f = ${frequency} Hz`,
+    `T = 1/f = ${period} s`,
+    'Conclusion: Period computed as the reciprocal of frequency.'
   ].join('\n');
 }
 
