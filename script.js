@@ -1071,51 +1071,54 @@ function plotFunction() {
     let rootCount = 0;
 
     if (mode === 'parametric') {
-      if (rawExpressions.length !== 2 || rawExpressions.some((expression) => !expression)) {
+      if (expressions.length < 2 || expressions.length > 6 || expressions.length % 2 !== 0) {
         clearPlot();
-        setPlotStatus('Parametric mode expects exactly two functions, like x(t); y(t).');
+        setPlotStatus('Parametric mode expects 2, 4, or 6 functions (x(t); y(t) per curve), like cos(t); sin(t); 2*cos(t); 2*sin(t).');
         return;
       }
 
-      const definitions = rawExpressions.map((expression) =>
-        expression.match(/^([xy])\s*\(\s*([A-Za-z]\w*)\s*\)\s*=\s*(.+)$/i)
-      );
-      const hasDefinitions = definitions.some(Boolean);
-      if (hasDefinitions && definitions.some((definition) => !definition)) {
-        throw new Error('Define both coordinates, like x(t) = cos(t); y(t) = sin(t), or enter two expressions like cos(t); sin(t).');
-      }
-      if (hasDefinitions && (
-        definitions[0][1].toLowerCase() !== 'x' ||
-        definitions[1][1].toLowerCase() !== 'y' ||
-        definitions[0][2] !== definitions[1][2]
-      )) {
-        throw new Error('Parametric definitions must be x(t) followed by y(t), using the same parameter.');
-      }
-
-      const xExpr = hasDefinitions ? definitions[0][3].trim() : rawExpressions[0];
-      const yExpr = hasDefinitions ? definitions[1][3].trim() : rawExpressions[1];
-      const parameterVariable = hasDefinitions ? definitions[0][2] : variable;
-      const xValues = [];
-      const yValues = [];
-      for (let index = 0; index < pointCount; index += 1) {
-        const parameter = lower + index * step;
-        const scope = { [parameterVariable]: parameter, t: parameter };
-        const x = Number(mathInstance.evaluate(xExpr, scope));
-        const y = Number(mathInstance.evaluate(yExpr, scope));
-        if (Number.isFinite(x) && Number.isFinite(y)) {
-          xValues.push(x);
-          yValues.push(y);
+      for (let curveIndex = 0; curveIndex < expressions.length; curveIndex += 2) {
+        const coordinateExpressions = expressions.slice(curveIndex, curveIndex + 2);
+        const definitions = coordinateExpressions.map((expression) =>
+          expression.match(/^([xy])\s*\(\s*([A-Za-z]\w*)\s*\)\s*=\s*(.+)$/i)
+        );
+        const hasDefinitions = definitions.some(Boolean);
+        if (hasDefinitions && definitions.some((definition) => !definition)) {
+          throw new Error('Define both coordinates for each curve, like x(t) = cos(t); y(t) = sin(t), or enter pairs like cos(t); sin(t).');
         }
+        if (hasDefinitions && (
+          definitions[0][1].toLowerCase() !== 'x' ||
+          definitions[1][1].toLowerCase() !== 'y' ||
+          definitions[0][2] !== definitions[1][2]
+        )) {
+          throw new Error('Each parametric curve must define x(parameter) followed by y(parameter), using the same parameter.');
+        }
+
+        const xExpr = hasDefinitions ? definitions[0][3].trim() : coordinateExpressions[0];
+        const yExpr = hasDefinitions ? definitions[1][3].trim() : coordinateExpressions[1];
+        const parameterVariable = hasDefinitions ? definitions[0][2] : variable;
+        const xValues = [];
+        const yValues = [];
+        for (let index = 0; index < pointCount; index += 1) {
+          const parameter = lower + index * step;
+          const scope = { [parameterVariable]: parameter, t: parameter };
+          const x = Number(mathInstance.evaluate(xExpr, scope));
+          const y = Number(mathInstance.evaluate(yExpr, scope));
+          if (Number.isFinite(x) && Number.isFinite(y)) {
+            xValues.push(x);
+            yValues.push(y);
+          }
+        }
+        if (!xValues.length) throw new Error(`No valid parametric points were found for ${xExpr} and ${yExpr} in this range.`);
+        traces.push({
+          x: xValues,
+          y: yValues,
+          type: 'scatter',
+          mode: 'lines',
+          name: `${xExpr}, ${yExpr}`,
+          line: { color: palette[(curveIndex / 2) % palette.length], width: 2 }
+        });
       }
-      if (!xValues.length) throw new Error(`No valid parametric points were found for ${xExpr} and ${yExpr} in this range.`);
-      traces.push({
-        x: xValues,
-        y: yValues,
-        type: 'scatter',
-        mode: 'lines',
-        name: `${xExpr}, ${yExpr}`,
-        line: { color: palette[0], width: 2 }
-      });
       Plotly.react(plotEl, traces, {
         margin: { top: 24, right: 24, bottom: 48, left: 56 },
         paper_bgcolor: 'transparent',
@@ -1128,7 +1131,7 @@ function plotFunction() {
         yaxis: { title: 'y', type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
         uirevision: `${expressions.join(';')}:${variable}:${lower}:${upper}:${mode}:${pointCount}:${scale}`
       }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
-      setPlotStatus(`Parametric: ${xExpr}, ${yExpr} traced over ${parameterVariable} ∈ [${lower}, ${upper}] with ${pointCount} samples.`);
+      setPlotStatus(`Parametric: ${traces.length} curve(s) traced over [${lower}, ${upper}] with ${pointCount} samples each.`);
       state.xp += 15;
       saveGameState();
       updateGameHud();
@@ -1139,26 +1142,33 @@ function plotFunction() {
     if (!expressions.length) expressions.push('x');
 
     if (mode === 'polar') {
-      const thetaValues = [];
-      const rValues = [];
-      for (let index = 0; index < pointCount; index += 1) {
-        const theta = lower + index * step;
-        const r = Number(mathInstance.evaluate(expressions[0], { [variable]: theta }));
-        if (Number.isFinite(r)) {
-          const x = r * Math.cos(theta);
-          const y = r * Math.sin(theta);
-          thetaValues.push(x);
-          rValues.push(y);
-        }
+      if (!expressions.length || expressions.length > 6) {
+        clearPlot();
+        setPlotStatus('Polar mode expects 1 to 6 semicolon-separated radius functions.');
+        return;
       }
-      if (!thetaValues.length) throw new Error(`No valid polar points were found for ${expressions[0]} in this range.`);
-      traces.push({
-        x: thetaValues,
-        y: rValues,
-        type: 'scatter',
-        mode: 'lines',
-        name: `r(${variable}) = ${expressions[0]}`,
-        line: { color: palette[0], width: 2 }
+      expressions.forEach((expression, expressionIndex) => {
+        const thetaValues = [];
+        const rValues = [];
+        for (let index = 0; index < pointCount; index += 1) {
+          const theta = lower + index * step;
+          const r = Number(mathInstance.evaluate(expression, { [variable]: theta }));
+          if (Number.isFinite(r)) {
+            const x = r * Math.cos(theta);
+            const y = r * Math.sin(theta);
+            thetaValues.push(x);
+            rValues.push(y);
+          }
+        }
+        if (!thetaValues.length) throw new Error(`No valid polar points were found for ${expression} in this range.`);
+        traces.push({
+          x: thetaValues,
+          y: rValues,
+          type: 'scatter',
+          mode: 'lines',
+          name: `r(${variable}) = ${expression}`,
+          line: { color: palette[expressionIndex], width: 2 }
+        });
       });
       Plotly.react(plotEl, traces, {
         margin: { top: 24, right: 24, bottom: 48, left: 56 },
@@ -1172,7 +1182,7 @@ function plotFunction() {
         yaxis: { title: 'y', type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
         uirevision: `${expressions.join(';')}:${variable}:${lower}:${upper}:${mode}:${pointCount}:${scale}`
       }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
-      setPlotStatus(`Polar: r(${variable}) = ${expressions[0]} traced over ${variable} ∈ [${lower}, ${upper}] with ${pointCount} samples.`);
+      setPlotStatus(`Polar: ${traces.length} curve(s) traced over ${variable} ∈ [${lower}, ${upper}] with ${pointCount} samples each.`);
       state.xp += 15;
       saveGameState();
       updateGameHud();

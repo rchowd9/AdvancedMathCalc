@@ -94,8 +94,9 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 - Unit conversion — `convert(value unit, targetUnit)`
 
 ### Graph Plotting
-- Plot any single-variable function
-- Parametric curves from two expressions, such as `cos(t); sin(t)`, or coordinate definitions such as `x(t) = cos(t); y(t) = sin(t)`
+- Plot up to six single-variable functions separated by semicolons
+- Plot up to six polar radius functions separated by semicolons
+- Plot up to three parametric curves by entering coordinate pairs, such as `cos(t); sin(t); 2*cos(t); 2*sin(t)`, or coordinate definitions such as `x(t) = cos(t); y(t) = sin(t); x(t) = 2*cos(t); y(t) = 2*sin(t)`
 - Adjustable domain
 - Smooth, interactive Plotly.js graphs
 
