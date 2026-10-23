@@ -149,8 +149,8 @@ export function solveGenetics(input) {
       return [
         'Hardy-Weinberg equilibrium:',
         'Step 1: Formula: q = 1 - p; AA = p²; Aa = 2pq; aa = q²',
-        `Step 2: Substitute p = ${formatNumber(p)}: q = 1 - ${formatNumber(p)} = ${formatNumber(q)}`,
-        `Step 3: Calculate genotype frequencies: AA = ${formatNumber(genotypes[0])}, Aa = ${formatNumber(genotypes[1])}, aa = ${formatNumber(genotypes[2])}`,
+        `Step 2: Substitute: p = ${formatNumber(p)}; q = 1 - ${formatNumber(p)} = ${formatNumber(q)}`,
+        `Step 3: Calculate: AA = ${formatNumber(genotypes[0])}, Aa = ${formatNumber(genotypes[1])}, aa = ${formatNumber(genotypes[2])}`,
         `Result: AA = ${formatNumber(genotypes[0])}, Aa = ${formatNumber(genotypes[1])}, aa = ${formatNumber(genotypes[2])} (dimensionless proportions; expected population fractions).`
       ].join('\n');
     }
@@ -271,7 +271,7 @@ export function solveGenetics(input) {
       const result = 4 * males * females / (males + females);
       return formatSteps(
         'Effective population size',
-        'Nₑ = 4NₘNբ / (Nₘ + Nբ)',
+        'Nₑ = 4NₘNf / (Nₘ + Nf)',
         `4 × ${males} × ${females} / (${males} + ${females})`,
         result,
         'individuals'
