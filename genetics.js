@@ -215,3 +215,133 @@ function solveLinkageFrequency([linked,total]) {
 function solveRecombinationFrequency([recombinants,total]) {
   return `RF = ${(recombinants/total)*100}%`;
 }
+
+// =====================================
+// MAP DISTANCE
+// =====================================
+
+function solveMapDistance([rf]) {
+  return `${rf} cM`;
+}
+
+// =====================================
+// LOD SCORE
+// =====================================
+
+function solveLOD([theta,likelihood]) {
+  return `LOD = log10(${likelihood}/${theta}) = ${Math.log10(likelihood/theta)}`;
+}
+
+// =====================================
+// GENETIC DISTANCE
+// =====================================
+
+function solveGeneticDistance([differences,total]) {
+  return `Distance = ${differences/total}`;
+}
+
+// =====================================
+// CHI SQUARE TEST
+// =====================================
+
+function solveChiSquare([observed,expected]) {
+  return `χ² = ${Math.pow(observed-expected,2)/expected}`;
+}
+
+// =====================================
+// HEREDITY
+// =====================================
+
+function solveHeredity([genetic,total]) {
+  return `Heritability = ${genetic/total}`;
+}
+
+// =====================================
+// BROAD SENSE HERITABILITY
+// H² = VG / VP
+// =====================================
+
+function solveBroadSenseHeritability([VG,VP]) {
+  return `H² = ${VG/VP}`;
+}
+
+// =====================================
+// NARROW SENSE HERITABILITY
+// h² = VA / VP
+// =====================================
+
+function solveNarrowSenseHeritability([VA,VP]) {
+  return `h² = ${VA/VP}`;
+}
+
+// =====================================
+// RESPONSE TO SELECTION
+// =====================================
+
+function solveResponseToSelection([h2,S]) {
+  return `R = ${h2*S}`;
+}
+
+// =====================================
+// BREEDERS EQUATION
+// =====================================
+
+function solveBreedersEquation([h2,S]) {
+  return `R = h²S = ${h2*S}`;
+}
+
+// =====================================
+// FOUNDER EFFECT
+// =====================================
+
+function solveFounderEffect([newFreq,oldFreq]) {
+  return `Founder Effect Change = ${newFreq-oldFreq}`;
+}
+
+// =====================================
+// BOTTLENECK EFFECT
+// =====================================
+
+function solveBottleneckEffect([before,after]) {
+  return `Loss of Diversity = ${before-after}`;
+}
+
+// =====================================
+// POPULATION GROWTH
+// =====================================
+
+function solvePopulationGrowth([N0,r,t]) {
+  return `N(t) = ${N0*Math.exp(r*t)}`;
+}
+
+// =====================================
+// GENE DIVERSITY
+// H = 1-Σpi²
+// =====================================
+
+function solveGeneDiversity(args) {
+
+  let sum=0;
+
+  for(const p of args){
+    sum += p*p;
+  }
+
+  return `Gene Diversity = ${1-sum}`;
+}
+
+// =====================================
+// NUCLEOTIDE DIVERSITY
+// =====================================
+
+function solveNucleotideDiversity([differences,sites]) {
+  return `π = ${differences/sites}`;
+}
+
+// =====================================
+// FST
+// =====================================
+
+function solveFST([HT,HS]) {
+  return `FST = ${(HT-HS)/HT}`;
+}
