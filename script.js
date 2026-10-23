@@ -103,6 +103,15 @@ evalBtn.addEventListener('click', () => {
       return;
     }
 
+    const geneticsNameMatch = expr.match(/^([a-zA-Z]\w*)\(/);
+    const geneticsFormulas = window.GENETICS_FORMULAS ?? new Set();
+    if (geneticsNameMatch && geneticsFormulas.has(geneticsNameMatch[1].toLowerCase())) {
+      solvedMessage = window.solveGenetics(expr);
+      awardProgress(40, 'Genetics formula solved!', 'genetics');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
     const businessNameMatch = expr.match(/^([a-zA-Z]+)\(/);
     const businessModeNames = window.BUSINESS_MODE_NAMES ?? new Set();
     if (businessNameMatch && businessModeNames.has(businessNameMatch[1].toLowerCase())) {

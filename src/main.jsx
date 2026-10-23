@@ -5,6 +5,7 @@ import Plotly from 'plotly.js-dist-min';
 import { solveLinearAlgebra, solveSequence } from './lib/linearAlgebraSequences.js';
 import { STATISTICS_MODE_NAMES, solveStatistics } from '../statistics.js';
 import { DIFFERENTIAL_EQUATION_MODE_NAMES, solveDifferentialEquation } from '../differentialEquations.js';
+import { GENETICS_FORMULAS, solveGenetics } from '../genetics.js';
 import '../style.css';
 import * as aerospaceEngineering from '../engineering/aerospace.js';
 import * as biomedicalEngineering from '../engineering/biomedical.js';
@@ -23,6 +24,8 @@ window.math = {
 window.Plotly = Plotly;
 window.STATISTICS_MODE_NAMES = STATISTICS_MODE_NAMES;
 window.solveStatistics = solveStatistics;
+window.GENETICS_FORMULAS = GENETICS_FORMULAS;
+window.solveGenetics = solveGenetics;
 window.DIFFERENTIAL_EQUATION_MODE_NAMES = DIFFERENTIAL_EQUATION_MODE_NAMES;
 window.solveDifferentialEquation = (expression) => solveDifferentialEquation(expression, window.math.create({ matrix: 'Array' }));
 window.LINEAR_ALGEBRA_MODE_NAMES = new Set(['transpose', 'rank', 'trace', 'matrixmultiply', 'matrixadd', 'scalarmultiply']);
@@ -156,6 +159,7 @@ function App() {
           <button className="challenge-chip" data-expression="stats([4, 8, 15, 16, 23, 42])" type="button">Stats check</button>
           <button className="challenge-chip" data-expression="distributionStats(exp(-x^2 / 2), x, -5, 5)" type="button">Distribution moments</button>
           <button className="challenge-chip" data-expression="normalCdf(1.96, 0, 1)" type="button">Normal CDF</button>
+          <button className="challenge-chip" data-expression="hardyWeinberg(0.7)" type="button">Hardy-Weinberg</button>
           <button className="challenge-chip" data-expression="frequency(0.02)" type="button">Frequency from period</button>
           <button className="challenge-chip" data-expression="combinations(6, 3)" type="button">Combinatorics</button>
           <button className="challenge-chip" data-expression="volumeOfRevolution(x^2, x, 0, 2)" type="button">Solid of revolution</button>
