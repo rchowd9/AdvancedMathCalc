@@ -123,3 +123,95 @@ function solveGenotypeFrequency([genotype,total]) {
 function solvePhenotypeFrequency([phenotype,total]) {
   return `Phenotype Frequency = ${phenotype/total}`;
 }
+
+/ =====================================
+// HETEROZYGOSITY
+// H = 2pq
+// =====================================
+
+function solveHeterozygosity([p]) {
+  const q = 1-p;
+  return `Heterozygosity (2pq) = ${2*p*q}`;
+}
+
+// =====================================
+// HOMOZYGOSITY
+// =====================================
+
+function solveHomozygosity([p]) {
+  const q = 1-p;
+  return `Homozygosity = ${p*p + q*q}`;
+}
+
+// =====================================
+// FITNESS
+// =====================================
+
+function solveFitness([survivors,total]) {
+  return `Fitness = ${survivors/total}`;
+}
+
+// =====================================
+// SELECTION COEFFICIENT
+// s = 1-W
+// =====================================
+
+function solveSelectionCoefficient([fitness]) {
+  return `Selection Coefficient = ${1-fitness}`;
+}
+
+// =====================================
+// MUTATION RATE
+// =====================================
+
+function solveMutationRate([mutations,total]) {
+  return `Mutation Rate = ${mutations/total}`;
+}
+
+// =====================================
+// MIGRATION RATE
+// =====================================
+
+function solveMigrationRate([migrants,total]) {
+  return `Migration Rate = ${migrants/total}`;
+}
+
+// =====================================
+// GENETIC DRIFT
+// =====================================
+
+function solveGeneticDrift([p,N]) {
+  return `Genetic Drift Variance = ${(p*(1-p))/(2*N)}`;
+}
+
+// =====================================
+// INBREEDING COEFFICIENT
+// =====================================
+
+function solveInbreedingCoefficient([observed, expected]) {
+  return `F = ${(expected-observed)/expected}`;
+}
+
+// =====================================
+// EFFECTIVE POPULATION SIZE
+// =====================================
+
+function solveEffectivePopulationSize([Nm,Nf]) {
+  return `Ne = ${(4*Nm*Nf)/(Nm+Nf)}`;
+}
+
+// =====================================
+// LINKAGE FREQUENCY
+// =====================================
+
+function solveLinkageFrequency([linked,total]) {
+  return `Linkage Frequency = ${linked/total}`;
+}
+
+// =====================================
+// RECOMBINATION FREQUENCY
+// =====================================
+
+function solveRecombinationFrequency([recombinants,total]) {
+  return `RF = ${(recombinants/total)*100}%`;
+}
