@@ -80,7 +80,7 @@ function solveGenetics(input) {
   }
 }
 
-/ =====================================
+// =====================================
 // HARDY WEINBERG
 // hardyWeinberg(p)
 // =====================================
@@ -124,7 +124,7 @@ function solvePhenotypeFrequency([phenotype,total]) {
   return `Phenotype Frequency = ${phenotype/total}`;
 }
 
-/ =====================================
+// =====================================
 // HETEROZYGOSITY
 // H = 2pq
 // =====================================
