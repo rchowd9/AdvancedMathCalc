@@ -79,3 +79,47 @@ function solveGenetics(input) {
       throw new Error("Unknown genetics formula.");
   }
 }
+
+/ =====================================
+// HARDY WEINBERG
+// hardyWeinberg(p)
+// =====================================
+
+function solveHardyWeinberg([p]) {
+
+  const q = 1 - p;
+
+  return [
+    "Hardy-Weinberg Equilibrium",
+    `p = ${p}`,
+    `q = ${q}`,
+    `AA = p² = ${p*p}`,
+    `Aa = 2pq = ${2*p*q}`,
+    `aa = q² = ${q*q}`
+  ].join("\n");
+}
+
+// =====================================
+// ALLELE FREQUENCY
+// alleleFrequency(copies,total)
+// =====================================
+
+function solveAlleleFrequency([copies,total]) {
+  return `Allele Frequency = ${copies/total}`;
+}
+
+// =====================================
+// GENOTYPE FREQUENCY
+// =====================================
+
+function solveGenotypeFrequency([genotype,total]) {
+  return `Genotype Frequency = ${genotype/total}`;
+}
+
+// =====================================
+// PHENOTYPE FREQUENCY
+// =====================================
+
+function solvePhenotypeFrequency([phenotype,total]) {
+  return `Phenotype Frequency = ${phenotype/total}`;
+}
