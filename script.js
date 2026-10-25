@@ -1125,6 +1125,9 @@ function plotFunction() {
         return { x, y };
       });
       if (!points.length) throw new Error('Enter at least one x, y coordinate pair.');
+      if (scale === 'log' && points.some(({ y }) => y <= 0)) {
+        throw new Error('Logarithmic y-scale requires every scatterplot y value to be positive.');
+      }
       Plotly.react(plotEl, [{
         x: points.map(({ x }) => x),
         y: points.map(({ y }) => y),
@@ -1424,7 +1427,8 @@ function plotFunction() {
     setStatus('Graph unlocked', 'success');
   } catch (error) {
     clearPlot();
-    setPlotStatus(`Unable to plot function: ${error.message}`);
+    const chartLabel = plotType === 'scatter' ? 'scatterplot' : plotType === 'bar' ? 'bar chart' : 'function';
+    setPlotStatus(`Unable to plot ${chartLabel}: ${error.message}`);
     setStatus('Plot error', 'warning');
   }
 }
