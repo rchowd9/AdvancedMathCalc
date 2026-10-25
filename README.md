@@ -95,6 +95,9 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 
 ### Graph Plotting
 - Plot up to six single-variable functions separated by semicolons
+- Create scatterplots from numeric `x, y` pairs, such as `1, 2; 3, 5; 4, 7`
+- Create categorical bar charts from `category: value` pairs, such as `Algebra: 4; Geometry: 6`
+- Plot histograms of sampled function values
 - Plot up to six polar radius functions separated by semicolons
 - Plot up to three parametric curves by entering coordinate pairs, such as `cos(t); sin(t); 2*cos(t); 2*sin(t)`, or coordinate definitions such as `x(t) = cos(t); y(t) = sin(t); x(t) = 2*cos(t); y(t) = 2*sin(t)`
 - Adjustable domain

@@ -43,6 +43,7 @@ plotClearBtn.addEventListener('click', () => {
 plotExprInput.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') plotFunction();
 });
+plotTypeInput.addEventListener('change', updatePlotInputHint);
 randomChallengeBtn.addEventListener('click', loadRandomChallenge);
 clearBtn.addEventListener('click', () => {
   exprInput.value = '';
@@ -1034,6 +1035,24 @@ function saveGameState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
+function updatePlotInputHint() {
+  const hint = document.getElementById('plotInputHint');
+  const inputHints = {
+    function: 'Separate function expressions with semicolons.',
+    scatter: 'Enter one numeric x, y coordinate pair per point, separated by semicolons (e.g. 1, 2; 3, 5).',
+    histogram: 'Enter one or more functions separated by semicolons; the sampled values become the histogram.',
+    bar: 'Enter category: value pairs separated by semicolons (e.g. Algebra: 4; Geometry: 6).'
+  };
+  const inputExamples = {
+    function: 'Use ; between functions; parametric curves use x; y pairs',
+    scatter: '1, 2; 3, 5; 4, 7',
+    histogram: 'sin(x); cos(x)',
+    bar: 'Algebra: 4; Geometry: 6; Statistics: 3'
+  };
+  hint.textContent = inputHints[plotTypeInput.value];
+  plotExprInput.placeholder = inputExamples[plotTypeInput.value];
+}
+
 // Newton’s method solver
 function newtonSolve(fnStr, variable, guess = 1) {
   const f = (x) => mathInstance.evaluate(fnStr, { [variable]: x });
@@ -1057,30 +1076,119 @@ function plotFunction() {
   const scale = plotScaleInput.value;
 
   const expressions = rawExpressions.filter(Boolean);
+  const dataChart = plotType === 'scatter' || plotType === 'bar';
 
-  if (!/^(?:\w+|\([\w,\s]+\))$/.test(variable) && variable !== 't') {
+  if (dataChart && mode !== 'function') {
+    clearPlot();
+    setPlotStatus('Scatterplots and bar charts use their own data format; select Function for math mode.');
+    return;
+  }
+
+  if (plotType === 'function' && !/^(?:\w+|\([\w,\s]+\))$/.test(variable) && variable !== 't') {
     clearPlot();
     setPlotStatus('Enter a valid variable name for the graph.');
     return;
   }
 
-  if (!Number.isFinite(lower) || !Number.isFinite(upper) || lower >= upper) {
+  if (!dataChart && (!Number.isFinite(lower) || !Number.isFinite(upper) || lower >= upper)) {
     clearPlot();
     setPlotStatus('The start of the range must be less than its end.');
     return;
   }
-  if ((mode === 'area' || mode === 'parametric' || mode === 'polar') && scale === 'log') {
+  if (!dataChart && (mode === 'area' || mode === 'parametric' || mode === 'polar') && scale === 'log') {
     clearPlot();
     setPlotStatus('Area/parametric/polar modes require a linear y-scale.');
     return;
   }
-  if (plotType !== 'function' && (mode === 'parametric' || mode === 'polar')) {
+  if (plotType === 'histogram' && (mode === 'parametric' || mode === 'polar')) {
     clearPlot();
-    setPlotStatus('Scatterplots and histograms require a Cartesian function, derivative, or area mode.');
+    setPlotStatus('Histograms require a Cartesian function, derivative, or area mode.');
+    return;
+  }
+  if (plotType === 'bar' && scale === 'log') {
+    clearPlot();
+    setPlotStatus('Bar charts require a linear y-scale so zero and negative values remain visible.');
     return;
   }
 
   try {
+    if (plotType === 'scatter') {
+      const points = expressions.map((entry, index) => {
+        const coordinates = entry.split(',').map((coordinate) => coordinate.trim());
+        if (coordinates.length !== 2) {
+          throw new Error(`Scatter point ${index + 1} must be an x, y pair, like 1, 2.`);
+        }
+        const [x, y] = coordinates.map(Number);
+        if (!Number.isFinite(x) || !Number.isFinite(y)) {
+          throw new Error(`Scatter point ${index + 1} must contain two finite numbers.`);
+        }
+        return { x, y };
+      });
+      if (!points.length) throw new Error('Enter at least one x, y coordinate pair.');
+      Plotly.react(plotEl, [{
+        x: points.map(({ x }) => x),
+        y: points.map(({ y }) => y),
+        type: 'scatter',
+        mode: 'markers',
+        name: 'Data points',
+        marker: { color: '#38bdf8', size: 10, line: { color: '#e0f2fe', width: 1 } }
+      }], {
+        margin: { top: 24, right: 24, bottom: 48, left: 56 },
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: '#020617',
+        font: { color: '#cbd5e1' },
+        hovermode: 'closest',
+        showlegend: false,
+        xaxis: { title: 'x', gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
+        yaxis: { title: 'y', type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
+        uirevision: `${plotExprInput.value}:${plotType}:${scale}`
+      }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
+      setPlotStatus(`Scatterplot: ${points.length} data point(s).`);
+      state.xp += 15;
+      saveGameState();
+      updateGameHud();
+      setStatus('Graph unlocked', 'success');
+      return;
+    }
+
+    if (plotType === 'bar') {
+      const entries = expressions.map((entry, index) => {
+        const separatorIndex = entry.lastIndexOf(':');
+        if (separatorIndex < 1) {
+          throw new Error(`Bar chart entry ${index + 1} must be a category: value pair, like Algebra: 4.`);
+        }
+        const category = entry.slice(0, separatorIndex).trim();
+        const value = Number(entry.slice(separatorIndex + 1).trim());
+        if (!category || !Number.isFinite(value)) {
+          throw new Error(`Bar chart entry ${index + 1} must have a category and a finite numeric value.`);
+        }
+        return { category, value };
+      });
+      if (!entries.length) throw new Error('Enter at least one category: value pair.');
+      Plotly.react(plotEl, [{
+        x: entries.map(({ category }) => category),
+        y: entries.map(({ value }) => value),
+        type: 'bar',
+        name: 'Values',
+        marker: { color: '#a78bfa', line: { color: '#ddd6fe', width: 1 } }
+      }], {
+        margin: { top: 24, right: 24, bottom: 64, left: 56 },
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: '#020617',
+        font: { color: '#cbd5e1' },
+        showlegend: false,
+        xaxis: { title: 'Category', type: 'category', gridcolor: '#334155', zerolinecolor: '#64748b' },
+        yaxis: { title: 'Value', gridcolor: '#334155', zerolinecolor: '#64748b' },
+        uirevision: `${plotExprInput.value}:${plotType}`
+      }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
+      setPlotStatus(`Bar chart: ${entries.length} category value(s).`);
+      state.xp += 15;
+      saveGameState();
+      updateGameHud();
+      setStatus('Graph unlocked', 'success');
+      return;
+    }
+
     const step = (upper - lower) / (pointCount - 1);
     const palette = ['#38bdf8', '#fb7185', '#a3e635', '#fbbf24', '#c084fc', '#2dd4bf'];
     const traces = [];

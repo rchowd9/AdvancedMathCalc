@@ -407,6 +407,14 @@ pre {
   font: inherit;
 }
 
+.graph-controls small {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+
 #plot {
   width: 100%;
   min-height: 380px;

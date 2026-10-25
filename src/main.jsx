@@ -284,6 +284,7 @@ function App() {
           <label>
             Functions
             <input id="plotExpr" type="text" defaultValue="sin(x)" placeholder="Use ; between functions; parametric curves use x; y pairs" />
+            <small id="plotInputHint">Separate function expressions with semicolons.</small>
           </label>
           <label>
             Variable
@@ -303,6 +304,7 @@ function App() {
               <option value="function">Function</option>
               <option value="scatter">Scatterplot</option>
               <option value="histogram">Histogram</option>
+              <option value="bar">Bar chart</option>
             </select>
           </label>
           <label>
