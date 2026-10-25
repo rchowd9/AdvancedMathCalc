@@ -25,6 +25,7 @@ const plotVariableInput = document.getElementById('plotVariable');
 const plotMinInput = document.getElementById('plotMin');
 const plotMaxInput = document.getElementById('plotMax');
 const plotModeInput = document.getElementById('plotMode');
+const plotTypeInput = document.getElementById('plotType');
 const plotPointsInput = document.getElementById('plotPoints');
 const plotScaleInput = document.getElementById('plotScale');
 const plotEl = document.getElementById('plot');
@@ -1051,6 +1052,7 @@ function plotFunction() {
   const lower = Number(plotMinInput.value);
   const upper = Number(plotMaxInput.value);
   const mode = plotModeInput.value;
+  const plotType = plotTypeInput.value;
   const pointCount = Number(plotPointsInput.value);
   const scale = plotScaleInput.value;
 
@@ -1070,6 +1072,11 @@ function plotFunction() {
   if ((mode === 'area' || mode === 'parametric' || mode === 'polar') && scale === 'log') {
     clearPlot();
     setPlotStatus('Area/parametric/polar modes require a linear y-scale.');
+    return;
+  }
+  if (plotType !== 'function' && (mode === 'parametric' || mode === 'polar')) {
+    clearPlot();
+    setPlotStatus('Scatterplots and histograms require a Cartesian function, derivative, or area mode.');
     return;
   }
 
@@ -1233,12 +1240,16 @@ function plotFunction() {
 
       const traceName = mode === 'derivative' ? `d/d${variable} (${expression})` : expression;
       traces2.push({
-        x: xValues,
-        y: yValues,
-        type: 'scatter',
-        mode: 'lines',
+        x: plotType === 'histogram' ? yValues.filter((value) => value !== null) : xValues,
+        y: plotType === 'histogram' ? undefined : yValues,
+        type: plotType === 'histogram' ? 'histogram' : 'scatter',
+        mode: plotType === 'scatter' ? 'markers' : 'lines',
         name: traceName,
-        line: { color: mode === 'area' ? '#fbbf24' : palette[expressionIndex], width: 2 },
+        ...(plotType === 'histogram'
+          ? { marker: { color: palette[expressionIndex], line: { color: '#020617', width: 1 } }, opacity: 0.8 }
+          : plotType === 'scatter'
+            ? { marker: { color: mode === 'area' ? '#fbbf24' : palette[expressionIndex], size: 6 } }
+            : { line: { color: mode === 'area' ? '#fbbf24' : palette[expressionIndex], width: 2 } }),
         ...(mode === 'area' ? { fill: 'tozeroy', fillcolor: 'rgba(251, 191, 36, 0.18)' } : {})
       });
 
@@ -1253,7 +1264,7 @@ function plotFunction() {
       }
       const uniqueRoots = roots.filter((root, index) => index === 0 || Math.abs(root - roots[index - 1]) > stepData / 2);
       rootCount += uniqueRoots.length;
-      if (uniqueRoots.length && scale === 'linear') {
+      if (plotType === 'function' && uniqueRoots.length && scale === 'linear') {
         traces2.push({
           x: uniqueRoots,
           y: uniqueRoots.map(() => 0),
@@ -1276,13 +1287,20 @@ function plotFunction() {
       hovermode: 'x unified',
       showlegend: true,
       legend: { orientation: 'h', y: 1.12, x: 0 },
-      xaxis: { title: variable, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
-      yaxis: { title: mode === 'derivative' ? `d/d${variable} (${graphTitle})` : graphTitle, type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
-      uirevision: `${expressions.join(';')}:${variable}:${lower}:${upper}:${mode}:${pointCount}:${scale}`
+      xaxis: { title: plotType === 'histogram' ? 'Function values' : variable, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
+      yaxis: { title: plotType === 'histogram' ? 'Frequency' : mode === 'derivative' ? `d/d${variable} (${graphTitle})` : graphTitle, type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
+      uirevision: `${expressions.join(';')}:${variable}:${lower}:${upper}:${mode}:${plotType}:${pointCount}:${scale}`
     }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
     const modeLabel = mode === 'derivative' ? 'Derivative' : mode === 'area' ? 'Area' : mode === 'parametric' ? 'Parametric' : mode === 'polar' ? 'Polar' : 'Function';
     const interceptNote = scale === 'log' ? '; intercept markers require linear y-scale' : '';
-    setPlotStatus(`${modeLabel}: ${expressions.length} function(s), ${pointCount} samples, ${scale} y-scale; ${rootCount} ${mode === 'derivative' ? 'stationary point(s)' : 'x-intercept(s)'} detected${interceptNote} over [${lower}, ${upper}].`);
+    const plotTypeLabel = plotType === 'scatter' ? 'Scatterplot' : plotType === 'histogram' ? 'Histogram' : modeLabel;
+    const graphSummary = plotType === 'histogram'
+      ? `${expressions.length} function(s), up to ${pointCount} observations each`
+      : `${expressions.length} function(s), ${pointCount} samples`;
+    const rootSummary = plotType === 'function'
+      ? `; ${rootCount} ${mode === 'derivative' ? 'stationary point(s)' : 'x-intercept(s)'} detected${interceptNote}`
+      : '';
+    setPlotStatus(`${plotTypeLabel}: ${graphSummary}, ${scale} y-scale${rootSummary} over [${lower}, ${upper}].`);
     state.xp += 15;
     saveGameState();
     updateGameHud();

@@ -298,7 +298,15 @@ function App() {
             <input id="plotMax" type="number" defaultValue="10" step="any" />
           </label>
           <label>
-            Mode
+            Graph type
+            <select id="plotType" defaultValue="function">
+              <option value="function">Function</option>
+              <option value="scatter">Scatterplot</option>
+              <option value="histogram">Histogram</option>
+            </select>
+          </label>
+          <label>
+            Math mode
             <select id="plotMode" defaultValue="function">
               <option value="function">Function</option>
               <option value="derivative">Derivative</option>
