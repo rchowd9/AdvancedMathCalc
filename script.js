@@ -1240,17 +1240,26 @@ function plotFunction() {
 
       const traceName = mode === 'derivative' ? `d/d${variable} (${expression})` : expression;
       traces2.push({
-        x: plotType === 'histogram' ? yValues.filter((value) => value !== null) : xValues,
-        y: plotType === 'histogram' ? undefined : yValues,
-        type: plotType === 'histogram' ? 'histogram' : 'scatter',
-        mode: plotType === 'scatter' ? 'markers' : 'lines',
         name: traceName,
         ...(plotType === 'histogram'
-          ? { marker: { color: palette[expressionIndex], line: { color: '#020617', width: 1 } }, opacity: 0.8 }
-          : plotType === 'scatter'
-            ? { marker: { color: mode === 'area' ? '#fbbf24' : palette[expressionIndex], size: 6 } }
-            : { line: { color: mode === 'area' ? '#fbbf24' : palette[expressionIndex], width: 2 } }),
-        ...(mode === 'area' ? { fill: 'tozeroy', fillcolor: 'rgba(251, 191, 36, 0.18)' } : {})
+          ? {
+            x: yValues.filter((value) => value !== null),
+            type: 'histogram',
+            marker: { color: palette[expressionIndex], line: { color: '#020617', width: 1 } },
+            opacity: 0.8
+          }
+          : {
+            x: xValues,
+            y: yValues,
+            type: 'scatter',
+            mode: plotType === 'scatter' ? 'markers' : 'lines',
+            ...(plotType === 'scatter'
+              ? { marker: { color: mode === 'area' ? '#fbbf24' : palette[expressionIndex], size: 6 } }
+              : { line: { color: mode === 'area' ? '#fbbf24' : palette[expressionIndex], width: 2 } }),
+            ...(mode === 'area' && plotType === 'function'
+              ? { fill: 'tozeroy', fillcolor: 'rgba(251, 191, 36, 0.18)' }
+              : {})
+          })
       });
 
       const roots = [];
