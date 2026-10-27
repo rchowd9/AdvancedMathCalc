@@ -18,3 +18,5 @@ function decimal_to_binary(decimal) {
     }
     return binary;
 }
+
+function hexadecimal_to_octal(hexadecimal_str) {
