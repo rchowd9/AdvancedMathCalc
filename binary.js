@@ -68,5 +68,9 @@ function twos_complement(binary_str)
     return decimal_to_binary(complement);
 }
 
-function negate_two's_complement(binary_str) {
-    
+function negate_two's_complement(binary_str) 
+{
+    let decimal = binary_to_decimal(binary_str);
+    let negated = -decimal;
+    return decimal_to_binary(negated);
+}
