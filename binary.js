@@ -59,3 +59,6 @@ function binary_addition(binary1, binary2) {
     let sum = decimal1 + decimal2;
     return decimal_to_binary(sum);
 }
+
+
+function two's_complement(binary_str) {
