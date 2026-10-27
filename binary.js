@@ -74,3 +74,5 @@ function negate_twos_complement(binary_str)
     let negated = -decimal;
     return decimal_to_binary(negated);
 }
+
+function hamming_distance(binary1, binary2) {
