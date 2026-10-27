@@ -89,4 +89,9 @@ function hamming_distance(binary1, binary2)
     return distance;
 }
 
-function sign_magnitude(binary_str) 
+function sign_magnitude(binary_str)
+    let sign = binary_str[0] === '1' ? -1 : 1;
+    let magnitude = binary_str.slice(1);
+    return sign * binary_to_decimal(magnitude);
+    
+
