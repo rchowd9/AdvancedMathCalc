@@ -166,3 +166,9 @@ function binary_multiplication(binary1, binary2) {
     let decimal2 = binary_to_decimal(binary2);
     return decimal_to_binary(decimal1 * decimal2);
 }
+
+function binary_division(binary1, binary2) {
+    let decimal1 = binary_to_decimal(binary1);
+    let decimal2 = binary_to_decimal(binary2);
+    return decimal_to_binary(decimal1 / decimal2);
+}
