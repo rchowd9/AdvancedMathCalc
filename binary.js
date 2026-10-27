@@ -52,3 +52,10 @@ function decimal_to_hexadecimal(decimal)
     }
     return hexadecimal;
 }
+
+function binary_addition(binary1, binary2) {
+    let decimal1 = binary_to_decimal(binary1);
+    let decimal2 = binary_to_decimal(binary2);
+    let sum = decimal1 + decimal2;
+    return decimal_to_binary(sum);
+}
