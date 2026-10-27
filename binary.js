@@ -41,3 +41,5 @@ function decimal_to_octal(decimal)
     }
     return octal;
 }
+
+function decimal_to_hexadecimal(decimal) 
