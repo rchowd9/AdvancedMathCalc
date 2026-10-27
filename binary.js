@@ -102,3 +102,31 @@ function sign_extension(binary_str, new_length) {
 }
 
 function decimal_to_floating_point(decimal, precision = 23, exponent_bits = 8) {
+    // This is a simplified implementation and may not handle all edge cases
+    if (decimal === 0) return '0'.repeat(precision + exponent_bits + 1);
+
+    let sign = decimal < 0 ? 1 : 0;
+    decimal = Math.abs(decimal);
+
+    // Convert to binary
+    let mantissa = '';
+    while (mantissa.length < precision) {
+        decimal *= 2;
+        if (decimal >= 1) {
+            mantissa += '1';
+            decimal -= 1;
+        } else {
+            mantissa += '0';
+        }
+    }
+
+    // Calculate exponent
+    let exponent = Math.floor(Math.log2(decimal));
+    let biased_exponent = exponent + (Math.pow(2, exponent_bits - 1) - 1);
+
+    // Convert exponent to binary
+    let exponent_binary = biased_exponent.toString(2).padStart(exponent_bits, '0');
+
+    // Combine sign, exponent, and mantissa
+    return (sign ? '1' : '0') + exponent_binary + mantissa.slice(0, precision);
+}
