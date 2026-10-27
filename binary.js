@@ -8,3 +8,13 @@ function binary_to_decimal(binary_str)
     }
     return decimal;
 }
+
+function decimal_to_binary(decimal) {
+    if (decimal === 0) return '0';
+    let binary = '';
+    while (decimal > 0) {
+        binary = (decimal % 2) + binary;
+        decimal = Math.floor(decimal / 2);
+    }
+    return binary;
+}
