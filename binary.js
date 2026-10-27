@@ -24,3 +24,9 @@ function hexadecimal_to_octal(hexadecimal_str)
     let decimal = parseInt(hexadecimal_str, 16);
     return decimal_to_binary(decimal);
 }
+
+function hexadecimal_to_binary(hexadecimal_str) 
+{
+    let decimal = parseInt(hexadecimal_str, 16);
+    return decimal_to_binary(decimal);
+}
