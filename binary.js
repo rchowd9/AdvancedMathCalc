@@ -75,4 +75,16 @@ function negate_twos_complement(binary_str)
     return decimal_to_binary(negated);
 }
 
-function hamming_distance(binary1, binary2) {
+function hamming_distance(binary1, binary2) 
+{
+    if (binary1.length !== binary2.length) {
+        throw new Error("Binary strings must be of the same length");
+    }
+    let distance = 0;
+    for (let i = 0; i < binary1.length; i++) {
+        if (binary1[i] !== binary2[i]) {
+            distance++;
+        }
+    }
+    return distance;
+}
