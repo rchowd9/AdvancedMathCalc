@@ -31,4 +31,13 @@ function hexadecimal_to_binary(hexadecimal_str)
     return decimal_to_binary(decimal);
 }
 
-function decimal_to_octal(decimal) {
+function decimal_to_octal(decimal) 
+{
+    if (decimal === 0) return '0';
+    let octal = '';
+    while (decimal > 0) {
+        octal = (decimal % 8) + octal;
+        decimal = Math.floor(decimal / 8);
+    }
+    return octal;
+}
