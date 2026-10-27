@@ -94,3 +94,9 @@ function sign_magnitude(binary_str) {
     let magnitude = binary_str.slice(1);
     return sign * binary_to_decimal(magnitude);
 }
+
+function sign_extension(binary_str, new_length) {
+    let sign = binary_str[0] === '1' ? '1' : '0';
+    let extended = sign.repeat(new_length - binary_str.length) + binary_str;
+    return extended;
+}
