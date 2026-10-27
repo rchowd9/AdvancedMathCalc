@@ -61,4 +61,9 @@ function binary_addition(binary1, binary2) {
 }
 
 
-function two's_complement(binary_str) {
+function twos_complement(binary_str) 
+{
+    let decimal = binary_to_decimal(binary_str);
+    let complement = ~decimal + 1; // Two's complement formula
+    return decimal_to_binary(complement);
+}
