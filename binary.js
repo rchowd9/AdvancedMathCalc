@@ -67,3 +67,6 @@ function twos_complement(binary_str)
     let complement = ~decimal + 1; // Two's complement formula
     return decimal_to_binary(complement);
 }
+
+function negate_two's_complement(binary_str) {
+    
