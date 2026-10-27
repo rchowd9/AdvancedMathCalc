@@ -130,3 +130,33 @@ function decimal_to_floating_point(decimal, precision = 23, exponent_bits = 8) {
     // Combine sign, exponent, and mantissa
     return (sign ? '1' : '0') + exponent_binary + mantissa.slice(0, precision);
 }
+
+function fraction_to_floating_point(fraction, precision = 23, exponent_bits = 8) {
+    // This is a simplified implementation and may not handle all edge cases
+    if (fraction === 0) return '0'.repeat(precision + exponent_bits + 1);
+
+    let sign = 0;
+    fraction = Math.abs(fraction);
+
+    // Convert to binary
+    let mantissa = '';
+    while (mantissa.length < precision) {
+        fraction *= 2;
+        if (fraction >= 1) {
+            mantissa += '1';
+            fraction -= 1;
+        } else {
+            mantissa += '0';
+        }
+    }
+
+    // Calculate exponent
+    let exponent = Math.floor(Math.log2(fraction));
+    let biased_exponent = exponent + (Math.pow(2, exponent_bits - 1) - 1);
+
+    // Convert exponent to binary
+    let exponent_binary = biased_exponent.toString(2).padStart(exponent_bits, '0');
+
+    // Combine sign, exponent, and mantissa
+    return (sign ? '1' : '0') + exponent_binary + mantissa.slice(0, precision);
+}
