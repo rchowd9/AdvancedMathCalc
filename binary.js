@@ -100,3 +100,5 @@ function sign_extension(binary_str, new_length) {
     let extended = sign.repeat(new_length - binary_str.length) + binary_str;
     return extended;
 }
+
+function decimal_to_floating_point(decimal, precision = 23, exponent_bits = 8) {
