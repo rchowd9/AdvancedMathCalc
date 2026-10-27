@@ -43,3 +43,12 @@ function decimal_to_octal(decimal)
 }
 
 function decimal_to_hexadecimal(decimal) 
+{
+    if (decimal === 0) return '0';
+    let hexadecimal = '';
+    while (decimal > 0) {
+        hexadecimal = (decimal % 16).toString(16).toUpperCase() + hexadecimal;
+        decimal = Math.floor(decimal / 16);
+    }
+    return hexadecimal;
+}
