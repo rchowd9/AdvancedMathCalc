@@ -88,3 +88,5 @@ function hamming_distance(binary1, binary2)
     }
     return distance;
 }
+
+function sign_magnitude(binary_str) 
