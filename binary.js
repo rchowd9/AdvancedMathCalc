@@ -160,3 +160,9 @@ function fraction_to_floating_point(fraction, precision = 23, exponent_bits = 8)
     // Combine sign, exponent, and mantissa
     return (sign ? '1' : '0') + exponent_binary + mantissa.slice(0, precision);
 }
+
+function binary_multiplication(binary1, binary2) {
+    let decimal1 = binary_to_decimal(binary1);
+    let decimal2 = binary_to_decimal(binary2);
+    return decimal_to_binary(decimal1 * decimal2);
+}
