@@ -13,4 +13,5 @@ function master_theorem(a, b, f) {
 function linear_probing(size) 
 {
     const table = new Array(size).fill(null);
-    
+    return table;
+}
