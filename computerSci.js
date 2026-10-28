@@ -10,8 +10,7 @@ function master_theorem(a, b, f) {
         `T(n) = Θ(${f}).`;
 }
 
-function linear_probing(size) 
+function linear_probing(hash, size, attempt = 0) 
 {
-    const table = new Array(size).fill(null);
-    return table;
+    return (hash % size + attempt) % size;
 }
