@@ -66,3 +66,24 @@ function stochasticGradientDescent(gradientFunc, initialPoint, learningRate, ite
     }
     return point;
 }
+
+function lineardiscriminantAnalysis(data, labels)
+{
+    const uniqueLabels = [...new Set(labels)];
+    const means = uniqueLabels.map(label => {
+        const classData = data.filter((_, index) => labels[index] === label);
+        return classData.reduce((acc, point) => acc.map((val, i) => val + point[i]), new Array(data[0].length).fill(0)).map(val => val / classData.length);
+    });
+    const overallMean = data.reduce((acc, point) => acc.map((val, i) => val + point[i]), new Array(data[0].length).fill(0)).map(val => val / data.length);
+    const betweenClassScatter = means.reduce((acc, mean, i) => {
+        const meanDiff = mean.map((val, j) => val - overallMean[j]);
+        return acc.map((val, j) => val + meanDiff[j] * meanDiff[j] * labels.filter(label => label === uniqueLabels[i]).length);
+    }, new Array(data[0].length).fill(0));
+    const withinClassScatter = data.reduce((acc, point, i) => {
+        const mean = means[uniqueLabels.indexOf(labels[i])];
+        const meanDiff = point.map((val, j) => val - mean[j]);
+        return acc.map((val, j) => val + meanDiff[j] * meanDiff[j]);
+    }, new Array(data[0].length).fill(0));
+    const scatterMatrix = betweenClassScatter.map((val, i) => val / withinClassScatter[i]);
+    return scatterMatrix;
+}
