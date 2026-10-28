@@ -10,3 +10,15 @@ function euclideanDistance(point1, point2)
     }
     return Math.sqrt(sumOfSquares);
 }
+
+function manhattanDistance(point1, point2)
+{
+    if (point1.length !== point2.length) {
+        throw new Error('Points must have the same dimension.');
+    }
+    let sumOfAbsoluteDifferences = 0;
+    for (let i = 0; i < point1.length; i++) {
+        sumOfAbsoluteDifferences += Math.abs(point1[i] - point2[i]);
+    }
+    return sumOfAbsoluteDifferences;
+}
