@@ -14,3 +14,8 @@ function linear_probing(hash, size, attempt = 0)
 {
     return (hash % size + attempt) % size;
 }
+
+function quadratic_probing(hash, size, attempt = 0)
+{
+    return (hash % size + attempt ** 2) % size;
+}
