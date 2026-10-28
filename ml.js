@@ -1,0 +1,1 @@
+function euclideanDistance(point1, point2) {
