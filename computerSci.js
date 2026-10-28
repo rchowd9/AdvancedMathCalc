@@ -21,3 +21,6 @@ function quadratic_probing(hash, size, attempt = 0)
 }
 
 function double_hashing(hash, size, attempt = 0, hash2)
+{
+    return (hash % size + attempt * hash2) % size;
+}
