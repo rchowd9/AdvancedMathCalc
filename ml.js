@@ -37,3 +37,15 @@ function minkowskiDistance(point1, point2, p)
     }
     return Math.pow(sumOfPowers, 1 / p);
 }
+
+function gradientDescent(gradientFunc, initialPoint, learningRate, iterations)
+{
+    let point = initialPoint.slice();
+    for (let i = 0; i < iterations; i++) {
+        const gradient = gradientFunc(point);
+        for (let j = 0; j < point.length; j++) {
+            point[j] -= learningRate * gradient[j];
+        }
+    }
+    return point;
+}
