@@ -9,3 +9,8 @@ function master_theorem(a, b, f) {
         `3. If ${f} = Ω(n^(p + ε)) and ${a}${f}(n/${b}) ≤ c${f}(n) for some c < 1, ` +
         `T(n) = Θ(${f}).`;
 }
+
+function linear_probing(size) 
+{
+    const table = new Array(size).fill(null);
+    
