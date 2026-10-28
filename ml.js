@@ -49,3 +49,20 @@ function gradientDescent(gradientFunc, initialPoint, learningRate, iterations)
     }
     return point;
 }
+
+function stochasticGradientDescent(gradientFunc, initialPoint, learningRate, iterations, batchSize)
+{
+    let point = initialPoint.slice();
+    for (let i = 0; i < iterations; i++) {
+        const batch = [];
+        for (let j = 0; j < batchSize; j++) {
+            const randomIndex = Math.floor(Math.random() * point.length);
+            batch.push(point[randomIndex]);
+        }
+        const gradient = gradientFunc(batch);
+        for (let j = 0; j < point.length; j++) {
+            point[j] -= learningRate * gradient[j];
+        }
+    }
+    return point;
+}
