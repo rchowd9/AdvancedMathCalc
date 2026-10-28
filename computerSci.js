@@ -24,3 +24,5 @@ function double_hashing(hash, size, attempt = 0, hash2)
 {
     return (hash % size + attempt * hash2) % size;
 }
+
+function load_factor(num_elements, table_size) {
