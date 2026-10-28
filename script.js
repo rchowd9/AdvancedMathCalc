@@ -185,6 +185,55 @@ evalBtn.addEventListener('click', () => {
       return;
     }
 
+    const computerScienceMatch = expr.match(/^([a-zA-Z]\w*)\(([\s\S]*)\)$/);
+    if (computerScienceMatch) {
+      const functionName = computerScienceMatch[1].toLowerCase();
+      const functionGroups = [
+        { functions: window.COMPUTER_SCIENCE_FUNCTIONS, category: 'computerscience' },
+        { functions: window.BINARY_FUNCTIONS, category: 'binary' },
+      ];
+      const functionGroup = functionGroups.find(({ functions }) =>
+        functions && Object.keys(functions).some((name) => name.toLowerCase() === functionName)
+      );
+
+      if (functionGroup) {
+        const canonicalName = Object.keys(functionGroup.functions)
+          .find((name) => name.toLowerCase() === functionName);
+        const binaryStringArguments = {
+          binary_to_decimal: [0],
+          hexadecimal_to_octal: [0],
+          hexadecimal_to_binary: [0],
+          binary_addition: [0, 1],
+          twos_complement: [0],
+          negate_twos_complement: [0],
+          hamming_distance: [0, 1],
+          sign_magnitude: [0],
+          sign_extension: [0],
+          binary_multiplication: [0, 1],
+          binary_division: [0, 1],
+        };
+        const stringPositions = new Set(binaryStringArguments[functionName] ?? []);
+        const args = splitNamedFormulaArguments(computerScienceMatch[2]).map((value, index) => {
+          const trimmed = value.trim();
+          if ((trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+              (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
+            return trimmed.startsWith('"')
+              ? JSON.parse(trimmed)
+              : trimmed.slice(1, -1);
+          }
+          if (stringPositions.has(index)) return trimmed;
+
+          const number = Number(trimmed);
+          return trimmed !== '' && Number.isFinite(number) ? number : trimmed;
+        });
+
+        solvedMessage = functionGroup.functions[canonicalName](...args);
+        awardProgress(35, 'Computer science formula solved!', functionGroup.category);
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
     if (expr.startsWith("derivative(")) {
       const parts = expr.match(/derivative\((.*),\s*(\w+)\)/);
       if (parts) {
@@ -831,6 +880,44 @@ if (expr.startsWith("integrationByParts(")) {
 function splitFormulaArguments(statement) {
   if (!statement.trim()) return [];
   return statement.split(',').map((value) => Number(value.trim()));
+}
+
+function splitNamedFormulaArguments(statement) {
+  if (!statement.trim()) return [];
+
+  const argumentsList = [];
+  let start = 0;
+  let depth = 0;
+  let quote = null;
+  let escaped = false;
+
+  for (let index = 0; index < statement.length; index++) {
+    const character = statement[index];
+    if (quote) {
+      if (escaped) {
+        escaped = false;
+      } else if (character === '\\') {
+        escaped = true;
+      } else if (character === quote) {
+        quote = null;
+      }
+      continue;
+    }
+
+    if (character === '"' || character === "'") {
+      quote = character;
+    } else if (character === '(' || character === '[') {
+      depth++;
+    } else if (character === ')' || character === ']') {
+      depth--;
+    } else if (character === ',' && depth === 0) {
+      argumentsList.push(statement.slice(start, index));
+      start = index + 1;
+    }
+  }
+
+  argumentsList.push(statement.slice(start));
+  return argumentsList;
 }
 
 function buildDisciplineStepExplanation(functionName, values, result) {

@@ -1,4 +1,4 @@
-function binary_to_decimal(binary_str) 
+export function binary_to_decimal(binary_str) 
 {
     let decimal = 0;
     for (let i = 0; i < binary_str.length; i++) {
@@ -9,7 +9,7 @@ function binary_to_decimal(binary_str)
     return decimal;
 }
 
-function decimal_to_binary(decimal) {
+export function decimal_to_binary(decimal) {
     if (decimal === 0) return '0';
     let binary = '';
     while (decimal > 0) {
@@ -19,19 +19,19 @@ function decimal_to_binary(decimal) {
     return binary;
 }
 
-function hexadecimal_to_octal(hexadecimal_str) 
+export function hexadecimal_to_octal(hexadecimal_str) 
+{
+    let decimal = parseInt(hexadecimal_str, 16);
+    return decimal_to_octal(decimal);
+}
+
+export function hexadecimal_to_binary(hexadecimal_str) 
 {
     let decimal = parseInt(hexadecimal_str, 16);
     return decimal_to_binary(decimal);
 }
 
-function hexadecimal_to_binary(hexadecimal_str) 
-{
-    let decimal = parseInt(hexadecimal_str, 16);
-    return decimal_to_binary(decimal);
-}
-
-function decimal_to_octal(decimal) 
+export function decimal_to_octal(decimal) 
 {
     if (decimal === 0) return '0';
     let octal = '';
@@ -42,7 +42,7 @@ function decimal_to_octal(decimal)
     return octal;
 }
 
-function decimal_to_hexadecimal(decimal) 
+export function decimal_to_hexadecimal(decimal) 
 {
     if (decimal === 0) return '0';
     let hexadecimal = '';
@@ -53,7 +53,7 @@ function decimal_to_hexadecimal(decimal)
     return hexadecimal;
 }
 
-function binary_addition(binary1, binary2) {
+export function binary_addition(binary1, binary2) {
     let decimal1 = binary_to_decimal(binary1);
     let decimal2 = binary_to_decimal(binary2);
     let sum = decimal1 + decimal2;
@@ -61,21 +61,21 @@ function binary_addition(binary1, binary2) {
 }
 
 
-function twos_complement(binary_str) 
+export function twos_complement(binary_str) 
 {
     let decimal = binary_to_decimal(binary_str);
     let complement = ~decimal + 1; // Two's complement formula
     return decimal_to_binary(complement);
 }
 
-function negate_twos_complement(binary_str) 
+export function negate_twos_complement(binary_str) 
 {
     let decimal = binary_to_decimal(binary_str);
     let negated = -decimal;
     return decimal_to_binary(negated);
 }
 
-function hamming_distance(binary1, binary2) 
+export function hamming_distance(binary1, binary2) 
 {
     if (binary1.length !== binary2.length) {
         throw new Error("Binary strings must be of the same length");
@@ -89,19 +89,19 @@ function hamming_distance(binary1, binary2)
     return distance;
 }
 
-function sign_magnitude(binary_str) {
+export function sign_magnitude(binary_str) {
     let sign = binary_str[0] === '1' ? -1 : 1;
     let magnitude = binary_str.slice(1);
     return sign * binary_to_decimal(magnitude);
 }
 
-function sign_extension(binary_str, new_length) {
+export function sign_extension(binary_str, new_length) {
     let sign = binary_str[0] === '1' ? '1' : '0';
     let extended = sign.repeat(new_length - binary_str.length) + binary_str;
     return extended;
 }
 
-function decimal_to_floating_point(decimal, precision = 23, exponent_bits = 8) {
+export function decimal_to_floating_point(decimal, precision = 23, exponent_bits = 8) {
     // This is a simplified implementation and may not handle all edge cases
     if (decimal === 0) return '0'.repeat(precision + exponent_bits + 1);
 
@@ -131,7 +131,7 @@ function decimal_to_floating_point(decimal, precision = 23, exponent_bits = 8) {
     return (sign ? '1' : '0') + exponent_binary + mantissa.slice(0, precision);
 }
 
-function fraction_to_floating_point(fraction, precision = 23, exponent_bits = 8) {
+export function fraction_to_floating_point(fraction, precision = 23, exponent_bits = 8) {
     // This is a simplified implementation and may not handle all edge cases
     if (fraction === 0) return '0'.repeat(precision + exponent_bits + 1);
 
@@ -161,13 +161,13 @@ function fraction_to_floating_point(fraction, precision = 23, exponent_bits = 8)
     return (sign ? '1' : '0') + exponent_binary + mantissa.slice(0, precision);
 }
 
-function binary_multiplication(binary1, binary2) {
+export function binary_multiplication(binary1, binary2) {
     let decimal1 = binary_to_decimal(binary1);
     let decimal2 = binary_to_decimal(binary2);
     return decimal_to_binary(decimal1 * decimal2);
 }
 
-function binary_division(binary1, binary2) {
+export function binary_division(binary1, binary2) {
     let decimal1 = binary_to_decimal(binary1);
     let decimal2 = binary_to_decimal(binary2);
     return decimal_to_binary(decimal1 / decimal2);

@@ -6,6 +6,8 @@ import { solveLinearAlgebra, solveSequence } from './lib/linearAlgebraSequences.
 import { STATISTICS_MODE_NAMES, solveStatistics } from '../statistics.js';
 import { DIFFERENTIAL_EQUATION_MODE_NAMES, solveDifferentialEquation } from '../differentialEquations.js';
 import { GENETICS_FORMULAS, solveGenetics } from '../genetics.js';
+import * as computerScienceFunctions from '../computerSci.js';
+import * as binaryFunctions from '../binary.js';
 import '../style.css';
 import * as aerospaceEngineering from '../engineering/aerospace.js';
 import * as biomedicalEngineering from '../engineering/biomedical.js';
@@ -26,6 +28,8 @@ window.STATISTICS_MODE_NAMES = STATISTICS_MODE_NAMES;
 window.solveStatistics = solveStatistics;
 window.GENETICS_FORMULAS = GENETICS_FORMULAS;
 window.solveGenetics = solveGenetics;
+window.COMPUTER_SCIENCE_FUNCTIONS = computerScienceFunctions;
+window.BINARY_FUNCTIONS = binaryFunctions;
 window.DIFFERENTIAL_EQUATION_MODE_NAMES = DIFFERENTIAL_EQUATION_MODE_NAMES;
 window.solveDifferentialEquation = (expression) => solveDifferentialEquation(expression, window.math.create({ matrix: 'Array' }));
 window.LINEAR_ALGEBRA_MODE_NAMES = new Set(['transpose', 'rank', 'trace', 'matrixmultiply', 'matrixadd', 'scalarmultiply']);
@@ -162,6 +166,8 @@ function App() {
           <button className="challenge-chip" data-expression="hardyWeinberg(0.7)" type="button">Hardy-Weinberg</button>
           <button className="challenge-chip" data-expression="frequency(0.02)" type="button">Frequency from period</button>
           <button className="challenge-chip" data-expression="combinations(6, 3)" type="button">Combinatorics</button>
+          <button className="challenge-chip" data-expression="master_theorem(2, 2, n^2)" type="button">Master theorem</button>
+          <button className="challenge-chip" data-expression="binary_to_decimal(1011)" type="button">Binary conversion</button>
           <button className="challenge-chip" data-expression="volumeOfRevolution(x^2, x, 0, 2)" type="button">Solid of revolution</button>
           <button className="challenge-chip" data-expression="proof((x + 1)^2 = x^2 + 2*x + 1)" type="button">Proof drill</button>
           <button className="challenge-chip" data-expression="pigeonhole(100, 50)" type="button">Pigeonhole principle</button>
@@ -515,6 +521,25 @@ function App() {
               <li>environmentalDetentionTime(500, 25)</li>
               <li>industrialEconomicOrderQuantity(12000, 50, 2)</li>
               <li>materialsThermalExpansion(0.000012, 2, 50)</li>
+            </ul>
+          </div>
+          <div className="examples-group">
+            <h3>Computer Science &amp; Binary</h3>
+            <ul>
+              <li>master_theorem(2, 2, n^2)</li>
+              <li>linear_probing(11, 7, 2)</li>
+              <li>quadratic_probing(11, 7, 2)</li>
+              <li>double_hashing(11, 7, 2, 3)</li>
+              <li>load_factor(5, 10)</li>
+              <li>modulo_division_hash(23, 7)</li>
+              <li>multiplicative_hash(23, 7)</li>
+              <li>binary_to_decimal(1011)</li>
+              <li>decimal_to_binary(13)</li>
+              <li>hexadecimal_to_octal("FF")</li>
+              <li>hexadecimal_to_binary("FF")</li>
+              <li>binary_addition(101, 11)</li>
+              <li>hamming_distance(10101, 11100)</li>
+              <li>binary_multiplication(101, 11)</li>
             </ul>
           </div>
           <div className="examples-group">

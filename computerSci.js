@@ -1,4 +1,4 @@
-function master_theorem(a, b, f) {
+export function master_theorem(a, b, f) {
     const exponent = Math.log(a) / Math.log(b);
     const base = `n^(${exponent})`;
 
@@ -10,30 +10,30 @@ function master_theorem(a, b, f) {
         `T(n) = Θ(${f}).`;
 }
 
-function linear_probing(hash, size, attempt = 0) 
+export function linear_probing(hash, size, attempt = 0) 
 {
     return (hash % size + attempt) % size;
 }
 
-function quadratic_probing(hash, size, attempt = 0)
+export function quadratic_probing(hash, size, attempt = 0)
 {
     return (hash % size + attempt ** 2) % size;
 }
 
-function double_hashing(hash, size, attempt = 0, hash2)
+export function double_hashing(hash, size, attempt = 0, hash2)
 {
     return (hash % size + attempt * hash2) % size;
 }
 
-function load_factor(num_elements, table_size) {
+export function load_factor(num_elements, table_size) {
     return num_elements / table_size;
 }
 
-function modulo_division_hash(key, table_size) {
+export function modulo_division_hash(key, table_size) {
     return key % table_size;
 }
 
-function multiplicative_hash(key, table_size) {
+export function multiplicative_hash(key, table_size) {
     const A = (Math.sqrt(5) - 1) / 2; // Knuth's suggestion
     const fractional_part = (key * A) % 1;
     return Math.floor(table_size * fractional_part);
