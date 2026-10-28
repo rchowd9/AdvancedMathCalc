@@ -31,3 +31,10 @@ function load_factor(num_elements, table_size) {
 
 function modulo_division_hash(key, table_size) {
     return key % table_size;
+}
+
+function multiplicative_hash(key, table_size) {
+    const A = (Math.sqrt(5) - 1) / 2; // Knuth's suggestion
+    const fractional_part = (key * A) % 1;
+    return Math.floor(table_size * fractional_part);
+}
