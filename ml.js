@@ -88,3 +88,9 @@ function discriminantWeighted(X, y, weights)
     const meanYWeighted = y.reduce((acc, val, idx) => acc + weights[idx] * val, 0) / totalWeight;
     return { meanX, meanYWeighted };
 }
+
+function linearRegression(X, y)
+{
+    if (X.length !== y.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
