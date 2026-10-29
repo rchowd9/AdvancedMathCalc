@@ -253,3 +253,18 @@ function f1Score(yTrue, yPred)
     return 2 * (p * r) / (p + r);
 }
 
+function accuracyExpected(yTrue, yPred, weights)
+{
+    if (yTrue.length !== yPred.length || yTrue.length !== weights.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    let weightedCorrectCount = 0;
+    let totalWeight = 0;
+    for (let i = 0; i < yTrue.length; i++) {
+        totalWeight += weights[i];
+        if (yTrue[i] === yPred[i]) {
+            weightedCorrectCount += weights[i];
+        }
+    }
+    return weightedCorrectCount / totalWeight;
+}
