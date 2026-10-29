@@ -208,3 +208,21 @@ function accuracy(yTrue, yPred)
     return correctCount / yTrue.length;
 }
 
+function precision(yTrue, yPred)
+{
+    if (yTrue.length !== yPred.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    let truePositive = 0;
+    let falsePositive = 0;
+    for (let i = 0; i < yTrue.length; i++) {
+        if (yPred[i] === 1) {
+            if (yTrue[i] === 1) {
+                truePositive++;
+            } else {
+                falsePositive++;
+            }
+        }
+    }
+    return truePositive / (truePositive + falsePositive);
+}
