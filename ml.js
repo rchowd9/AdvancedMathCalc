@@ -349,3 +349,24 @@ function rSquared(yTrue, yPred)
     }
     return 1 - (residualVariance / totalVariance);
 }
+
+function huberLoss(X, y, coefficients, delta)
+{
+    if (X.length !== y.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    let totalLoss = 0;
+    for (let i = 0; i < X.length; i++) {
+        let predicted = 0;
+        for (let j = 0; j < X[i].length; j++) {
+            predicted += X[i][j] * coefficients[j];
+        }
+        const error = y[i] - predicted;
+        if (Math.abs(error) <= delta) {
+            totalLoss += 0.5 * error * error;
+        } else {
+            totalLoss += delta * (Math.abs(error) - 0.5 * delta);
+        }
+    }
+    return totalLoss;
+}
