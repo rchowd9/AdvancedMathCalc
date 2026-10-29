@@ -268,3 +268,39 @@ function accuracyExpected(yTrue, yPred, weights)
     }
     return weightedCorrectCount / totalWeight;
 }
+
+function cohenKappa(yTrue, yPred)
+{
+    if (yTrue.length !== yPred.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    const n = yTrue.length;
+    const labelSet = new Set([...yTrue, ...yPred]);
+    const labelArray = Array.from(labelSet);
+    const labelCount = labelArray.length;
+    const confusionMatrix = Array.from({ length: labelCount }, () => Array(labelCount).fill(0));
+    const labelIndexMap = new Map(labelArray.map((label, index) => [label, index]));
+    for (let i = 0; i < n; i++) {
+        const trueIndex = labelIndexMap.get(yTrue[i]);
+        const predIndex = labelIndexMap.get(yPred[i]);
+        confusionMatrix[trueIndex][predIndex]++;
+    }
+    let observedAgreement = 0;
+    for (let i = 0; i < labelCount; i++) {
+        observedAgreement += confusionMatrix[i][i];
+    }
+    observedAgreement /= n;
+    const trueLabelCounts = Array(labelCount).fill(0);
+    const predLabelCounts = Array(labelCount).fill(0);
+    for (let i = 0; i < labelCount; i++) {
+        for (let j = 0; j < labelCount; j++) {
+            trueLabelCounts[i] += confusionMatrix[i][j];
+            predLabelCounts[j] += confusionMatrix[i][j];
+        }
+    }
+    let expectedAgreement = 0;
+    for (let i = 0; i < labelCount; i++) {
+        expectedAgreement += (trueLabelCounts[i] / n) * (predLabelCounts[i] / n);
+    }
+    return (observedAgreement - expectedAgreement) / (1 - expectedAgreement);
+}
