@@ -106,3 +106,9 @@ function linearRegression(X, y)
         meanX[j] /= n;
     }
 }
+
+function residualSumOfSquares(X, y, coefficients)
+{
+    if (X.length !== y.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
