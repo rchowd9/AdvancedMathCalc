@@ -94,3 +94,15 @@ function linearRegression(X, y)
     if (X.length !== y.length) {
         throw new Error('Input arrays must have the same length.');
     }
+    const n = X.length;
+    const meanX = Array(X[0].length).fill(0);
+    const meanY = y.reduce((acc, val) => acc + val, 0) / n;
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < X[i].length; j++) {
+            meanX[j] += X[i][j];
+        }
+    }
+    for (let j = 0; j < meanX.length; j++) {
+        meanX[j] /= n;
+    }
+}
