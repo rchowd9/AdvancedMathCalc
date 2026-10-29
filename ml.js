@@ -330,3 +330,7 @@ function meanSquaredError(yTrue, yPred)
     return totalError / yTrue.length;
 }
 
+function rootMeanSquaredError(yTrue, yPred)
+{
+    return Math.sqrt(meanSquaredError(yTrue, yPred));
+}
