@@ -201,12 +201,17 @@ evalBtn.addEventListener('click', () => {
         },
       ];
       const functionGroup = functionGroups.find(({ functions }) =>
-        functions && Object.keys(functions).some((name) => name.toLowerCase() === functionName)
+        functions && Object.keys(functions).some((name) =>
+          typeof functions[name] === 'function' && name.toLowerCase() === functionName
+        )
       );
 
       if (functionGroup) {
         const canonicalName = Object.keys(functionGroup.functions)
-          .find((name) => name.toLowerCase() === functionName);
+          .find((name) =>
+            typeof functionGroup.functions[name] === 'function' &&
+            name.toLowerCase() === functionName
+          );
         const binaryStringArguments = {
           binary_to_decimal: [0],
           hexadecimal_to_octal: [0],
