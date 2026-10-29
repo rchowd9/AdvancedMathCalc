@@ -140,3 +140,21 @@ function absoluteLoss(X, y, coefficients)
     }
     return totalLoss;
 }
+
+function logLoss(X, y, coefficients)
+{
+    if (X.length !== y.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    let totalLoss = 0;
+    for (let i = 0; i < X.length; i++) {
+        let predicted = 0;
+        for (let j = 0; j < X[i].length; j++) {
+            predicted += X[i][j] * coefficients[j];
+        }
+        const probability = 1 / (1 + Math.exp(-predicted));
+        const loss = -y[i] * Math.log(probability) - (1 - y[i]) * Math.log(1 - probability);
+        totalLoss += loss;
+    }
+    return totalLoss;
+}
