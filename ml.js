@@ -136,3 +136,7 @@ function absoluteLoss(X, y, coefficients)
             predicted += X[i][j] * coefficients[j];
         }
         const loss = Math.abs(y[i] - predicted);
+        totalLoss += loss;
+    }
+    return totalLoss;
+}
