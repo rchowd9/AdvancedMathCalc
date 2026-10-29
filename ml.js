@@ -226,3 +226,23 @@ function precision(yTrue, yPred)
     }
     return truePositive / (truePositive + falsePositive);
 }
+
+function recall(yTrue, yPred)
+{
+    if (yTrue.length !== yPred.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    let truePositive = 0;
+    let falseNegative = 0;
+    for (let i = 0; i < yTrue.length; i++) {
+        if (yTrue[i] === 1) {
+            if (yPred[i] === 1) {
+                truePositive++;
+            } else {
+                falseNegative++;
+            }
+        }
+    }
+    return truePositive / (truePositive + falseNegative);
+}
+
