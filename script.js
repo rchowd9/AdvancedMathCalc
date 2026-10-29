@@ -189,8 +189,16 @@ evalBtn.addEventListener('click', () => {
     if (computerScienceMatch) {
       const functionName = computerScienceMatch[1].toLowerCase();
       const functionGroups = [
-        { functions: window.COMPUTER_SCIENCE_FUNCTIONS, category: 'computerscience' },
-        { functions: window.BINARY_FUNCTIONS, category: 'binary' },
+        {
+          functions: window.COMPUTER_SCIENCE_FUNCTIONS,
+          explanations: window.COMPUTER_SCIENCE_EXPLANATIONS,
+          category: 'computerscience',
+        },
+        {
+          functions: window.BINARY_FUNCTIONS,
+          explanations: window.BINARY_EXPLANATIONS,
+          category: 'binary',
+        },
       ];
       const functionGroup = functionGroups.find(({ functions }) =>
         functions && Object.keys(functions).some((name) => name.toLowerCase() === functionName)
@@ -227,7 +235,10 @@ evalBtn.addEventListener('click', () => {
           return trimmed !== '' && Number.isFinite(number) ? number : trimmed;
         });
 
-        solvedMessage = functionGroup.functions[canonicalName](...args);
+        const explanationFunction = functionGroup.explanations?.[canonicalName];
+        solvedMessage = explanationFunction
+          ? explanationFunction(...args)
+          : functionGroup.functions[canonicalName](...args);
         awardProgress(35, 'Computer science formula solved!', functionGroup.category);
         resultEl.textContent = solvedMessage;
         return;

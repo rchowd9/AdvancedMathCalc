@@ -67,7 +67,7 @@ export const COMPUTER_SCIENCE_EXPLANATIONS = {
             steps.push(`Step 4: Apply the matching case shown below.`);
         }
 
-        return describeResult([...steps, result], '');
+        return `${steps.join('\n')}\n${result}`;
     },
     linear_probing(hash, size, attempt = 0) {
         const result = linear_probing(hash, size, attempt);

@@ -30,6 +30,8 @@ window.GENETICS_FORMULAS = GENETICS_FORMULAS;
 window.solveGenetics = solveGenetics;
 window.COMPUTER_SCIENCE_FUNCTIONS = computerScienceFunctions;
 window.BINARY_FUNCTIONS = binaryFunctions;
+window.COMPUTER_SCIENCE_EXPLANATIONS = computerScienceFunctions.COMPUTER_SCIENCE_EXPLANATIONS;
+window.BINARY_EXPLANATIONS = binaryFunctions.BINARY_EXPLANATIONS;
 window.DIFFERENTIAL_EQUATION_MODE_NAMES = DIFFERENTIAL_EQUATION_MODE_NAMES;
 window.solveDifferentialEquation = (expression) => solveDifferentialEquation(expression, window.math.create({ matrix: 'Array' }));
 window.LINEAR_ALGEBRA_MODE_NAMES = new Set(['transpose', 'rank', 'trace', 'matrixmultiply', 'matrixadd', 'scalarmultiply']);
