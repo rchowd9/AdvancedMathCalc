@@ -246,3 +246,10 @@ function recall(yTrue, yPred)
     return truePositive / (truePositive + falseNegative);
 }
 
+function f1Score(yTrue, yPred)
+{
+    const p = precision(yTrue, yPred);
+    const r = recall(yTrue, yPred);
+    return 2 * (p * r) / (p + r);
+}
+
