@@ -14,11 +14,11 @@ describe('binary formula explanations', () => {
   it('shows place-value conversion steps', () => {
     const result = BINARY_EXPLANATIONS.binary_to_decimal('1011');
 
-    expect(result).toContain('1 × 2^3 = 8');
+    expect(result).toContain('1 * 2^3 = 8');
     expect(result).toContain(`Answer: ${binary_to_decimal('1011')}`);
   });
 
-  it('computes two’s complement at the input bit width', () => {
+  it('computes two\'s complement at the input bit width', () => {
     expect(twos_complement('0101')).toBe('1011');
     expect(negate_twos_complement('1111')).toBe('0001');
     expect(BINARY_EXPLANATIONS.twos_complement('0101')).toContain('Answer: 1011');

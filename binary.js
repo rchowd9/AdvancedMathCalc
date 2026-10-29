@@ -170,7 +170,7 @@ function divisionTrace(value, base) {
     while (remaining > 0) {
         const quotient = Math.floor(remaining / base);
         const remainder = remaining % base;
-        steps.push(`${remaining} ÷ ${base} = ${quotient} remainder ${remainder}`);
+        steps.push(`${remaining} / ${base} = ${quotient} remainder ${remainder}`);
         remaining = quotient;
     }
     return steps;
@@ -179,7 +179,7 @@ function divisionTrace(value, base) {
 function binaryPlaceValueSteps(binary) {
     return [...binary].map((bit, index) => {
         const power = binary.length - index - 1;
-        return `${bit} × 2^${power} = ${Number(bit) * (2 ** power)}`;
+        return `${bit} * 2^${power} = ${Number(bit) * (2 ** power)}`;
     });
 }
 
@@ -214,12 +214,12 @@ export const BINARY_EXPLANATIONS = {
     },
     hexadecimal_to_binary(hexadecimal) {
         const digits = [...hexadecimal.toUpperCase()].map(digit =>
-            `${digit}₁₆ = ${parseInt(digit, 16).toString(2).padStart(4, '0')}`
+            `${digit} (base 16) = ${parseInt(digit, 16).toString(2).padStart(4, '0')} (base 2)`
         );
         const result = hexadecimal_to_binary(hexadecimal);
         return explanation([
             `Convert each hexadecimal digit to 4 bits: ${digits.join(', ')}.`,
-            `Join the bit groups: ${result}.`,
+            `Join the bit groups and remove leading zeros: ${result}.`,
         ], result);
     },
     decimal_to_octal(decimal) {
@@ -235,7 +235,7 @@ export const BINARY_EXPLANATIONS = {
         const result = decimal_to_hexadecimal(decimal);
         return explanation([
             ...divisions.map(step => `Repeatedly divide by 16: ${step}.`),
-            `Convert remainders 10–15 to A–F, then read upward: ${result}.`,
+            `Convert remainders 10-15 to A-F, then read upward: ${result}.`,
         ], result);
     },
     binary_addition(binary1, binary2) {
@@ -243,7 +243,7 @@ export const BINARY_EXPLANATIONS = {
         const value2 = binary_to_decimal(binary2);
         const result = binary_addition(binary1, binary2);
         return explanation([
-            `${binary1}_2 = ${value1}_10 and ${binary2}_2 = ${value2}_10.`,
+            `${binary1} (base 2) = ${value1} (base 10) and ${binary2} (base 2) = ${value2} (base 10).`,
             `Add in decimal: ${value1} + ${value2} = ${value1 + value2}.`,
             `Convert ${value1 + value2} back to binary: ${result}.`,
         ], result);
@@ -252,7 +252,7 @@ export const BINARY_EXPLANATIONS = {
         const inverted = binary.replace(/[01]/g, bit => bit === '1' ? '0' : '1');
         const result = twos_complement(binary);
         return explanation([
-            `Invert each bit: ${binary} → ${inverted}.`,
+            `Invert each bit: ${binary} becomes ${inverted}.`,
             `Add 1 to the inverted bits, keeping the original ${binary.length}-bit width.`,
         ], result);
     },
@@ -268,7 +268,7 @@ export const BINARY_EXPLANATIONS = {
     },
     hamming_distance(binary1, binary2) {
         const differences = [...binary1].flatMap((bit, index) =>
-            bit === binary2[index] ? [] : [`position ${index + 1}: ${bit} ≠ ${binary2[index]}`]
+            bit === binary2[index] ? [] : [`position ${index + 1}: ${bit} != ${binary2[index]}`]
         );
         const result = hamming_distance(binary1, binary2);
         return explanation([
@@ -301,8 +301,8 @@ export const BINARY_EXPLANATIONS = {
         const value2 = binary_to_decimal(binary2);
         const result = binary_multiplication(binary1, binary2);
         return explanation([
-            `${binary1}_2 = ${value1}_10 and ${binary2}_2 = ${value2}_10.`,
-            `Multiply in decimal: ${value1} × ${value2} = ${value1 * value2}.`,
+            `${binary1} (base 2) = ${value1} (base 10) and ${binary2} (base 2) = ${value2} (base 10).`,
+            `Multiply in decimal: ${value1} * ${value2} = ${value1 * value2}.`,
             `Convert ${value1 * value2} to binary: ${result}.`,
         ], result);
     },
@@ -311,8 +311,8 @@ export const BINARY_EXPLANATIONS = {
         const value2 = binary_to_decimal(binary2);
         const result = binary_division(binary1, binary2);
         return explanation([
-            `${binary1}_2 = ${value1}_10 and ${binary2}_2 = ${value2}_10.`,
-            `Divide in decimal: ${value1} ÷ ${value2} = ${value1 / value2}; take the integer quotient ${Math.floor(value1 / value2)}.`,
+            `${binary1} (base 2) = ${value1} (base 10) and ${binary2} (base 2) = ${value2} (base 10).`,
+            `Divide in decimal: ${value1} / ${value2} = ${value1 / value2}; take the integer quotient ${Math.floor(value1 / value2)}.`,
             `Convert the quotient to binary: ${result}.`,
         ], result);
     },
@@ -332,8 +332,8 @@ function explainFloatingPoint(value, precision, exponentBits, convert) {
     const mantissa = result.slice(1 + exponentBits);
     return explanation([
         `Set the sign bit: ${sign}.`,
-        `Normalize the magnitude: ${Math.abs(value)} = ${normalized} × 2^${exponent}.`,
-        `Add the exponent bias ${bias}: ${exponent} + ${bias} = ${biasedExponent} = ${exponentBinary}_2.`,
+        `Normalize the magnitude: ${Math.abs(value)} = ${normalized} * 2^${exponent}.`,
+        `Add the exponent bias ${bias}: ${exponent} + ${bias} = ${biasedExponent} = ${exponentBinary} (base 2).`,
         `Write the ${precision}-bit fractional mantissa: ${mantissa}.`,
         'Concatenate the sign, biased exponent, and mantissa.',
     ], result);

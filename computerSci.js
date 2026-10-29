@@ -56,11 +56,11 @@ export const COMPUTER_SCIENCE_EXPLANATIONS = {
         if (fExponent !== null) {
             steps.push(`Step 3: Since f(n) = n^${fExponent}, compare its exponent with p = ${exponent}.`);
             if (fExponent < exponent) {
-                steps.push(`Step 4: f(n) has the smaller exponent, so Master theorem case 1 gives T(n) = Θ(n^${exponent}).`);
+                steps.push(`Step 4: f(n) has the smaller exponent, so Master theorem case 1 gives T(n) = Theta(n^${exponent}).`);
             } else if (fExponent === exponent) {
-                steps.push(`Step 4: f(n) matches n^p, so case 2 gives T(n) = Θ(n^${exponent} log n).`);
+                steps.push(`Step 4: f(n) matches n^p, so case 2 gives T(n) = Theta(n^${exponent} log n).`);
             } else {
-                steps.push(`Step 4: f(n) has the larger exponent. If the regularity condition holds, case 3 gives T(n) = Θ(${f}).`);
+                steps.push(`Step 4: f(n) has the larger exponent. If the regularity condition holds, case 3 gives T(n) = Theta(${f}).`);
             }
         } else {
             steps.push(`Step 3: Compare f(n) = ${f} with n^${exponent} and check the regularity condition to select a case.`);
@@ -79,28 +79,28 @@ export const COMPUTER_SCIENCE_EXPLANATIONS = {
     quadratic_probing(hash, size, attempt = 0) {
         const result = quadratic_probing(hash, size, attempt);
         return describeResult([
-            `Step 1: Use the quadratic probing formula (hash + attempt²) mod table size.`,
-            `Step 2: Substitute (${hash} + ${attempt}²) mod ${size}.`,
+            'Step 1: Use the quadratic probing formula (hash + attempt^2) mod table size.',
+            `Step 2: Substitute (${hash} + ${attempt}^2) mod ${size}.`,
         ], result);
     },
     double_hashing(hash, size, attempt = 0, hash2) {
         const result = double_hashing(hash, size, attempt, hash2);
         return describeResult([
-            `Step 1: Use the double hashing formula (hash + attempt × second hash) mod table size.`,
-            `Step 2: Substitute (${hash} + ${attempt} × ${hash2}) mod ${size}.`,
+            'Step 1: Use the double hashing formula (hash + attempt * second hash) mod table size.',
+            `Step 2: Substitute (${hash} + ${attempt} * ${hash2}) mod ${size}.`,
         ], result);
     },
     load_factor(num_elements, table_size) {
         const result = load_factor(num_elements, table_size);
         return describeResult([
-            'Step 1: Use load factor = number of elements ÷ table size.',
-            `Step 2: Substitute ${num_elements} ÷ ${table_size}.`,
+            'Step 1: Use load factor = number of elements / table size.',
+            `Step 2: Substitute ${num_elements} / ${table_size}.`,
         ], result);
     },
     modulo_division_hash(key, table_size) {
         const result = modulo_division_hash(key, table_size);
         return describeResult([
-            'Step 1: Use the division hash formula key mod table size.',
+            'Step 1: Use the division hash formula key % table size.',
             `Step 2: Divide ${key} by ${table_size} and take the remainder.`,
         ], result);
     },
@@ -110,8 +110,8 @@ export const COMPUTER_SCIENCE_EXPLANATIONS = {
         const fractionalPart = product % 1;
         const result = multiplicative_hash(key, table_size);
         return describeResult([
-            `Step 1: Set A = (√5 - 1) / 2 ≈ ${A}.`,
-            `Step 2: Multiply the key by A: ${key} × ${A} = ${product}.`,
+            `Step 1: Set A = (sqrt(5) - 1) / 2 ~= ${A}.`,
+            `Step 2: Multiply the key by A: ${key} * ${A} = ${product}.`,
             `Step 3: Keep the fractional part, ${fractionalPart}, and multiply by table size ${table_size}.`,
             `Step 4: Take the floor of ${table_size * fractionalPart}.`,
         ], result);
