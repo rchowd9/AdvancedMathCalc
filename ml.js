@@ -193,3 +193,18 @@ function hingeLoss(X, y, coefficients)
     }
     return totalLoss;
 }
+
+function accuracy(yTrue, yPred)
+{
+    if (yTrue.length !== yPred.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    let correctCount = 0;
+    for (let i = 0; i < yTrue.length; i++) {
+        if (yTrue[i] === yPred[i]) {
+            correctCount++;
+        }
+    }
+    return correctCount / yTrue.length;
+}
+
