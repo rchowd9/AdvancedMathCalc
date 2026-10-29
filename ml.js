@@ -316,3 +316,16 @@ function meanAbsoluteError(yTrue, yPred)
     }
     return totalError / yTrue.length;
 }
+
+function meanSquaredError(yTrue, yPred)
+{
+    if (yTrue.length !== yPred.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    let totalError = 0;
+    for (let i = 0; i < yTrue.length; i++) {
+        const error = yTrue[i] - yPred[i];
+        totalError += error * error;
+    }
+    return totalError / yTrue.length;
+}
