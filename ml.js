@@ -123,3 +123,16 @@ function residualSumOfSquares(X, y, coefficients)
     }
     return rss;
 }
+
+function absoluteLoss(X, y, coefficients)
+{
+    if (X.length !== y.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    let totalLoss = 0;
+    for (let i = 0; i < X.length; i++) {
+        let predicted = 0;
+        for (let j = 0; j < X[i].length; j++) {
+            predicted += X[i][j] * coefficients[j];
+        }
+        const loss = Math.abs(y[i] - predicted);
