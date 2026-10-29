@@ -334,3 +334,18 @@ function rootMeanSquaredError(yTrue, yPred)
 {
     return Math.sqrt(meanSquaredError(yTrue, yPred));
 }
+
+function rSquared(yTrue, yPred)
+{
+    if (yTrue.length !== yPred.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    const meanY = yTrue.reduce((acc, val) => acc + val, 0) / yTrue.length;
+    let totalVariance = 0;
+    let residualVariance = 0;
+    for (let i = 0; i < yTrue.length; i++) {
+        totalVariance += (yTrue[i] - meanY) * (yTrue[i] - meanY);
+        residualVariance += (yTrue[i] - yPred[i]) * (yTrue[i] - yPred[i]);
+    }
+    return 1 - (residualVariance / totalVariance);
+}
