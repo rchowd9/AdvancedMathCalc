@@ -304,3 +304,15 @@ function cohenKappa(yTrue, yPred)
     }
     return (observedAgreement - expectedAgreement) / (1 - expectedAgreement);
 }
+
+function meanAbsoluteError(yTrue, yPred)
+{
+    if (yTrue.length !== yPred.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    let totalError = 0;
+    for (let i = 0; i < yTrue.length; i++) {
+        totalError += Math.abs(yTrue[i] - yPred[i]);
+    }
+    return totalError / yTrue.length;
+}
