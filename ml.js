@@ -424,3 +424,12 @@ function entropy(values)
 {
     const n = values.length;
     if (n === 0) {
+        return 0;
+    }
+    const valueCounts = {};
+    for (const value of values) {
+        if (valueCounts[value] === undefined) {
+            valueCounts[value] = 0;
+        }
+        valueCounts[value]++;
+    }
