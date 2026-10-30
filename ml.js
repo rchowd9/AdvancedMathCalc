@@ -408,4 +408,7 @@ function giniCoefficient(values)
     }
     const sortedValues = values.slice().sort((a, b) => a - b);
     let cumulativeSum = 0;
-    let totalSum = sortedValues.reduce((acc, val) => acc + val, 0); 
+    let totalSum = sortedValues.reduce((acc, val) => acc + val, 0);
+    for (let i = 0; i < n; i++) {
+        cumulativeSum += sortedValues[i];
+    } 
