@@ -370,3 +370,32 @@ function huberLoss(X, y, coefficients, delta)
     }
     return totalLoss;
 }
+
+function minmaxscaling(X)
+{
+    const n = X.length;
+    const m = X[0].length;
+    const minValues = Array(m).fill(Infinity);
+    const maxValues = Array(m).fill(-Infinity);
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < m; j++) {
+            if (X[i][j] < minValues[j]) {
+                minValues[j] = X[i][j];
+            }
+            if (X[i][j] > maxValues[j]) {
+                maxValues[j] = X[i][j];
+            }
+        }
+    }
+    const scaledX = Array.from({ length: n }, () => Array(m).fill(0));
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < m; j++) {
+            if (maxValues[j] - minValues[j] === 0) {
+                scaledX[i][j] = 0; // Avoid division by zero
+            } else {
+                scaledX[i][j] = (X[i][j] - minValues[j]) / (maxValues[j] - minValues[j]);
+            }
+        }
+    }
+    return scaledX;
+} 
