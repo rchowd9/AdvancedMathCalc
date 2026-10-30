@@ -433,3 +433,8 @@ function entropy(values)
         }
         valueCounts[value]++;
     }
+    let entropyValue = 0;
+    for (const count of Object.values(valueCounts)) {
+        const probability = count / n;
+        entropyValue -= probability * Math.log2(probability);
+    }
