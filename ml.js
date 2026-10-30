@@ -438,3 +438,5 @@ function entropy(values)
         const probability = count / n;
         entropyValue -= probability * Math.log2(probability);
     }
+    return entropyValue;
+}
