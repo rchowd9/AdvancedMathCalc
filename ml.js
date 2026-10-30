@@ -53,18 +53,24 @@ function gradientDescent(gradientFunc, initialPoint, learningRate, iterations)
 function stochasticGradientDescent(gradientFunc, initialPoint, learningRate, iterations, batchSize)
 {
     let point = initialPoint.slice();
+    const history = [];
     for (let i = 0; i < iterations; i++) {
-        const batch = [];
+        const gradient = Array(point.length).fill(0);
         for (let j = 0; j < batchSize; j++) {
-            const randomIndex = Math.floor(Math.random() * point.length);
-            batch.push(point[randomIndex]);
+            const sampleGradient = gradientFunc();
+            if (sampleGradient.length !== point.length) {
+                throw new Error('Gradient dimensions must match the initial point.');
+            }
+            for (let k = 0; k < point.length; k++) {
+                gradient[k] += sampleGradient[k] / batchSize;
+            }
         }
-        const gradient = gradientFunc(batch);
         for (let j = 0; j < point.length; j++) {
             point[j] -= learningRate * gradient[j];
         }
+        history.push({ iteration: i + 1, point: point.slice(), gradient });
     }
-    return point;
+    return { point, history };
 }
 
 function discriminantWeighted(X, y, weights)
@@ -72,15 +78,23 @@ function discriminantWeighted(X, y, weights)
     if (X.length !== y.length || X.length !== weights.length) {
         throw new Error('Input arrays must have the same length.');
     }
+    if (X.length === 0 || !X.every(row => Array.isArray(row) && row.length === X[0].length)) {
+        throw new Error('Features must be a non-empty rectangular matrix.');
+    }
     const n = X.length;
     const meanX = Array(X[0].length).fill(0);
-    const meanY = 0;
     let totalWeight = 0;
     for (let i = 0; i < n; i++) {
+        if (!Number.isFinite(weights[i]) || weights[i] < 0) {
+            throw new Error('Weights must be finite and non-negative.');
+        }
         totalWeight += weights[i];
         for (let j = 0; j < X[i].length; j++) {
             meanX[j] += weights[i] * X[i][j];
         }
+    }
+    if (totalWeight === 0) {
+        throw new Error('The sum of weights must be greater than zero.');
     }
     for (let j = 0; j < meanX.length; j++) {
         meanX[j] /= totalWeight;
@@ -94,17 +108,49 @@ function linearRegression(X, y)
     if (X.length !== y.length) {
         throw new Error('Input arrays must have the same length.');
     }
-    const n = X.length;
-    const meanX = Array(X[0].length).fill(0);
-    const meanY = y.reduce((acc, val) => acc + val, 0) / n;
-    for (let i = 0; i < n; i++) {
-        for (let j = 0; j < X[i].length; j++) {
-            meanX[j] += X[i][j];
+    if (X.length === 0 || !X.every(row => Array.isArray(row) && row.length === X[0].length)) {
+        throw new Error('Features must be a non-empty rectangular matrix.');
+    }
+    if (!y.every(Number.isFinite) || !X.every(row => row.every(Number.isFinite))) {
+        throw new Error('Features and targets must contain finite numbers.');
+    }
+    const featureCount = X[0].length + 1;
+    const normalMatrix = Array.from({ length: featureCount }, () => Array(featureCount).fill(0));
+    const rightHandSide = Array(featureCount).fill(0);
+
+    for (let rowIndex = 0; rowIndex < X.length; rowIndex++) {
+        const row = [1, ...X[rowIndex]];
+        for (let i = 0; i < featureCount; i++) {
+            rightHandSide[i] += row[i] * y[rowIndex];
+            for (let j = 0; j < featureCount; j++) {
+                normalMatrix[i][j] += row[i] * row[j];
+            }
         }
     }
-    for (let j = 0; j < meanX.length; j++) {
-        meanX[j] /= n;
+
+    const augmented = normalMatrix.map((row, index) => [...row, rightHandSide[index]]);
+    for (let pivot = 0; pivot < featureCount; pivot++) {
+        let bestRow = pivot;
+        for (let row = pivot + 1; row < featureCount; row++) {
+            if (Math.abs(augmented[row][pivot]) > Math.abs(augmented[bestRow][pivot])) bestRow = row;
+        }
+        if (Math.abs(augmented[bestRow][pivot]) < 1e-12) {
+            throw new Error('Linear regression requires independent features and at least one more observation than feature.');
+        }
+        [augmented[pivot], augmented[bestRow]] = [augmented[bestRow], augmented[pivot]];
+        const divisor = augmented[pivot][pivot];
+        for (let column = pivot; column <= featureCount; column++) {
+            augmented[pivot][column] /= divisor;
+        }
+        for (let row = 0; row < featureCount; row++) {
+            if (row === pivot) continue;
+            const factor = augmented[row][pivot];
+            for (let column = pivot; column <= featureCount; column++) {
+                augmented[row][column] -= factor * augmented[pivot][column];
+            }
+        }
     }
+    return augmented.map(row => row[featureCount]);
 }
 
 function residualSumOfSquares(X, y, coefficients)
@@ -224,7 +270,8 @@ function precision(yTrue, yPred)
             }
         }
     }
-    return truePositive / (truePositive + falsePositive);
+    const predictedPositive = truePositive + falsePositive;
+    return predictedPositive === 0 ? 0 : truePositive / predictedPositive;
 }
 
 function recall(yTrue, yPred)
@@ -243,14 +290,15 @@ function recall(yTrue, yPred)
             }
         }
     }
-    return truePositive / (truePositive + falseNegative);
+    const actualPositive = truePositive + falseNegative;
+    return actualPositive === 0 ? 0 : truePositive / actualPositive;
 }
 
 function f1Score(yTrue, yPred)
 {
     const p = precision(yTrue, yPred);
     const r = recall(yTrue, yPred);
-    return 2 * (p * r) / (p + r);
+    return p + r === 0 ? 0 : 2 * (p * r) / (p + r);
 }
 
 function accuracyExpected(yTrue, yPred, weights)
@@ -407,11 +455,11 @@ function giniCoefficient(values)
         return 0;
     }
     const sortedValues = values.slice().sort((a, b) => a - b);
-    let cumulativeSum = 0;
-    let totalSum = sortedValues.reduce((acc, val) => acc + val, 0);
-    for (let i = 0; i < n; i++) {
-        cumulativeSum += sortedValues[i];
+    if (sortedValues.some(value => value < 0)) {
+        throw new Error('Gini coefficient values must be non-negative.');
     }
+    const totalSum = sortedValues.reduce((acc, val) => acc + val, 0);
+    if (totalSum === 0) return 0;
     let gini = 0;
     for (let i = 0; i < n; i++) {
         gini += (i + 1) * sortedValues[i];
@@ -457,36 +505,41 @@ function classificationError(yTrue, yPred)
 
 function gainRatio(X, y)
 {
+    if (X.length !== y.length || X.length === 0 || !X.every(row => Array.isArray(row) && row.length === X[0].length)) {
+        throw new Error('Features must be a non-empty rectangular matrix matching the labels.');
+    }
     const totalEntropy = entropy(y);
     const n = X.length;
     const m = X[0].length;
-    let weightedEntropy = 0;
+    const ratios = [];
     for (let j = 0; j < m; j++) {
         const featureValues = X.map(row => row[j]);
         const valueCounts = {};
-        for (const value of featureValues) {
-            if (valueCounts[value] === undefined) {
-                valueCounts[value] = 0;
-            }
-            valueCounts[value]++;
+        const labelGroups = new Map();
+        for (let i = 0; i < n; i++) {
+            const key = featureValues[i];
+            valueCounts[key] = (valueCounts[key] || 0) + 1;
+            if (!labelGroups.has(key)) labelGroups.set(key, []);
+            labelGroups.get(key).push(y[i]);
         }
-        let featureEntropy = 0;
-        for (const count of Object.values(valueCounts)) {
-            const probability = count / n;
-            featureEntropy -= probability * Math.log2(probability);
+        let weightedEntropy = 0;
+        let splitInfo = 0;
+        for (const [value, labels] of labelGroups) {
+            const probability = labels.length / n;
+            weightedEntropy += probability * entropy(labels);
+            splitInfo -= probability * Math.log2(probability);
         }
-        weightedEntropy += (featureValues.length / n) * featureEntropy;
+        const informationGain = totalEntropy - weightedEntropy;
+        ratios.push(splitInfo === 0 ? 0 : informationGain / splitInfo);
     }
-    const informationGain = totalEntropy - weightedEntropy;
-    const splitInfo = -Object.values(valueCounts).reduce((acc, count) => {
-        const probability = count / n;
-        return acc + probability * Math.log2(probability);
-    }, 0);
-    return informationGain / splitInfo;
+    return ratios.length === 1 ? ratios[0] : ratios;
 }
 
 function splitInformation(X)
 {
+    if (X.length === 0 || !X.every(row => Array.isArray(row) && row.length === X[0].length)) {
+        throw new Error('Features must be a non-empty rectangular matrix.');
+    }
     const n = X.length;
     const m = X[0].length;
     const splitInfo = Array(m).fill(0);
