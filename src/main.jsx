@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { all, create } from 'mathjs';
 import Plotly from 'plotly.js-dist-min';
 import { solveLinearAlgebra, solveSequence } from './lib/linearAlgebraSequences.js';
+import { MACHINE_LEARNING_MODE_NAMES, solveMachineLearning } from '../ml.js';
 import { STATISTICS_MODE_NAMES, solveStatistics } from '../statistics.js';
 import { DIFFERENTIAL_EQUATION_MODE_NAMES, solveDifferentialEquation } from '../differentialEquations.js';
 import { GENETICS_FORMULAS, solveGenetics } from '../genetics.js';
@@ -26,6 +27,8 @@ window.math = {
 window.Plotly = Plotly;
 window.STATISTICS_MODE_NAMES = STATISTICS_MODE_NAMES;
 window.solveStatistics = solveStatistics;
+window.MACHINE_LEARNING_MODE_NAMES = MACHINE_LEARNING_MODE_NAMES;
+window.solveMachineLearning = solveMachineLearning;
 window.GENETICS_FORMULAS = GENETICS_FORMULAS;
 window.solveGenetics = solveGenetics;
 window.COMPUTER_SCIENCE_FUNCTIONS = computerScienceFunctions;
@@ -474,6 +477,18 @@ function App() {
               <li>linearRegression([1, 2, 3], [2, 4, 5])</li>
               <li>chiSquareIndependence([[20, 30], [30, 20]])</li>
               <li>oneWayAnova([[1, 2, 3], [4, 5, 6]])</li>
+            </ul>
+          </div>
+          <div className="examples-group">
+            <h3>Machine Learning</h3>
+            <ul>
+              <li>euclideanDistance([1, 2], [4, 6])</li>
+              <li>linearRegression([[1], [2], [3]], [2, 4, 5])</li>
+              <li>meanSquaredError([2, 4, 5], [2, 4, 6])</li>
+              <li>accuracy([1, 0, 1], [1, 1, 1])</li>
+              <li>minmaxscaling([[1, 10], [2, 20], [3, 30]])</li>
+              <li>entropy([0, 0, 1, 1])</li>
+              <li>gradientDescent(["2*x"], [3], 0.1, 5)</li>
             </ul>
           </div>
           <div className="examples-group">

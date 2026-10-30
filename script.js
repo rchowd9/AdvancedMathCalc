@@ -739,6 +739,21 @@ if (expr.startsWith("integrationByParts(")) {
       }
     }
 
+    const machineLearningMatch = expr.match(/^([a-zA-Z]\w*)\(/);
+    if (machineLearningMatch && window.MACHINE_LEARNING_MODE_NAMES?.has(machineLearningMatch[1].toLowerCase())) {
+      const call = mathInstance.parse(expr);
+      if (call.type !== 'FunctionNode') throw new Error('Enter a valid machine-learning formula call.');
+      const values = call.args.map((argument) => argument.compile().evaluate());
+      const isMatrixRegression = machineLearningMatch[1].toLowerCase() === 'linearregression' &&
+        Array.isArray(values[0]) && values[0].length > 0 && Array.isArray(values[0][0]);
+      if (machineLearningMatch[1].toLowerCase() !== 'linearregression' || isMatrixRegression) {
+        solvedMessage = window.solveMachineLearning(machineLearningMatch[1], values, mathInstance);
+        awardProgress(40, 'Machine-learning formula solved!', 'machinelearning');
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
     const statisticsMatch = expr.match(/^([a-zA-Z]\w*)\(/);
     if (statisticsMatch && window.STATISTICS_MODE_NAMES?.has(statisticsMatch[1].toLowerCase())) {
       const call = mathInstance.parse(expr);
