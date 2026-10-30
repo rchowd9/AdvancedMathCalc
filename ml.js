@@ -484,3 +484,25 @@ function gainRatio(X, y)
     }, 0);
     return informationGain / splitInfo;
 }
+
+function splitInformation(X)
+{
+    const n = X.length;
+    const m = X[0].length;
+    const splitInfo = Array(m).fill(0);
+    for (let j = 0; j < m; j++) {
+        const featureValues = X.map(row => row[j]);
+        const valueCounts = {};
+        for (const value of featureValues) {
+            if (valueCounts[value] === undefined) {
+                valueCounts[value] = 0;
+            }
+            valueCounts[value]++;
+        }
+        for (const count of Object.values(valueCounts)) {
+            const probability = count / n;
+            splitInfo[j] -= probability * Math.log2(probability);
+        }
+    }
+    return splitInfo;
+}
