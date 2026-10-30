@@ -440,3 +440,7 @@ function entropy(values)
     }
     return entropyValue;
 }
+
+function classificationError(yTrue, yPred)
+{
+    if (yTrue.length !== yPred.length) {
