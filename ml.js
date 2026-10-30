@@ -419,3 +419,8 @@ function giniCoefficient(values)
     gini = (2 * gini) / (n * totalSum) - (n + 1) / n;
     return gini;
 } 
+
+function entropy(values)
+{
+    const n = values.length;
+    if (n === 0) {
