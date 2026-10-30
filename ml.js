@@ -403,4 +403,9 @@ function minmaxscaling(X)
 function giniCoefficient(values)
 {
     const n = values.length;
-    if (n === 0) 
+    if (n === 0) {
+        return 0;
+    }
+    const sortedValues = values.slice().sort((a, b) => a - b);
+    let cumulativeSum = 0;
+    let totalSum = sortedValues.reduce((acc, val) => acc + val, 0); 
