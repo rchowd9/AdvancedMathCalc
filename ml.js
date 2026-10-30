@@ -28,7 +28,7 @@ function minkowskiDistance(point1, point2, p)
     if (point1.length !== point2.length) {
         throw new Error('Points must have the same dimension.');
     }
-    if (p <= 0) {
+    if (!Number.isFinite(p) || p <= 0) {
         throw new Error('p must be a positive number.');
     }
     let sumOfPowers = 0;
@@ -76,8 +76,11 @@ function discriminantWeighted(X, y, weights)
     if (X.length !== y.length || X.length !== weights.length) {
         throw new Error('Input arrays must have the same length.');
     }
-    if (X.length === 0 || !X.every(row => Array.isArray(row) && row.length === X[0].length)) {
+    if (X.length === 0 || !X.every(row => Array.isArray(row) && row.length === X[0].length && row.every(Number.isFinite))) {
         throw new Error('Features must be a non-empty rectangular matrix.');
+    }
+    if (!y.every(Number.isFinite)) {
+        throw new Error('Labels must contain finite numbers.');
     }
     const n = X.length;
     const meanX = Array(X[0].length).fill(0);
@@ -196,8 +199,7 @@ function logLoss(X, y, coefficients)
         for (let j = 0; j < X[i].length; j++) {
             predicted += X[i][j] * coefficients[j];
         }
-        const probability = 1 / (1 + Math.exp(-predicted));
-        const loss = -y[i] * Math.log(probability) - (1 - y[i]) * Math.log(1 - probability);
+        const loss = Math.max(predicted, 0) - y[i] * predicted + Math.log1p(Math.exp(-Math.abs(predicted)));
         totalLoss += loss;
     }
     return totalLoss;
@@ -214,8 +216,7 @@ function crossEntropyLoss(X, y, coefficients)
         for (let j = 0; j < X[i].length; j++) {
             predicted += X[i][j] * coefficients[j];
         }
-        const probability = 1 / (1 + Math.exp(-predicted));
-        const loss = -y[i] * Math.log(probability) - (1 - y[i]) * Math.log(1 - probability);
+        const loss = Math.max(predicted, 0) - y[i] * predicted + Math.log1p(Math.exp(-Math.abs(predicted)));
         totalLoss += loss;
     }
     return totalLoss;
@@ -348,6 +349,7 @@ function cohenKappa(yTrue, yPred)
     for (let i = 0; i < labelCount; i++) {
         expectedAgreement += (trueLabelCounts[i] / n) * (predLabelCounts[i] / n);
     }
+    if (expectedAgreement === 1) return 1;
     return (observedAgreement - expectedAgreement) / (1 - expectedAgreement);
 }
 
@@ -392,6 +394,10 @@ function rSquared(yTrue, yPred)
     for (let i = 0; i < yTrue.length; i++) {
         totalVariance += (yTrue[i] - meanY) * (yTrue[i] - meanY);
         residualVariance += (yTrue[i] - yPred[i]) * (yTrue[i] - yPred[i]);
+    }
+    if (totalVariance === 0) {
+        if (residualVariance === 0) return 1;
+        throw new Error('R-squared is undefined when actual values have zero variance.');
     }
     return 1 - (residualVariance / totalVariance);
 }
@@ -472,15 +478,12 @@ function entropy(values)
     if (n === 0) {
         return 0;
     }
-    const valueCounts = {};
+    const valueCounts = new Map();
     for (const value of values) {
-        if (valueCounts[value] === undefined) {
-            valueCounts[value] = 0;
-        }
-        valueCounts[value]++;
+        valueCounts.set(value, (valueCounts.get(value) || 0) + 1);
     }
     let entropyValue = 0;
-    for (const count of Object.values(valueCounts)) {
+    for (const count of valueCounts.values()) {
         const probability = count / n;
         entropyValue -= probability * Math.log2(probability);
     }
@@ -506,17 +509,18 @@ function gainRatio(X, y)
     if (X.length !== y.length || X.length === 0 || !X.every(row => Array.isArray(row) && row.length === X[0].length)) {
         throw new Error('Features must be a non-empty rectangular matrix matching the labels.');
     }
+    if (!Array.isArray(y) || y.length !== X.length) {
+        throw new Error('Feature rows and labels must have the same length.');
+    }
     const totalEntropy = entropy(y);
     const n = X.length;
     const m = X[0].length;
     const ratios = [];
     for (let j = 0; j < m; j++) {
         const featureValues = X.map(row => row[j]);
-        const valueCounts = {};
         const labelGroups = new Map();
         for (let i = 0; i < n; i++) {
             const key = featureValues[i];
-            valueCounts[key] = (valueCounts[key] || 0) + 1;
             if (!labelGroups.has(key)) labelGroups.set(key, []);
             labelGroups.get(key).push(y[i]);
         }
@@ -543,14 +547,11 @@ function splitInformation(X)
     const splitInfo = Array(m).fill(0);
     for (let j = 0; j < m; j++) {
         const featureValues = X.map(row => row[j]);
-        const valueCounts = {};
+        const valueCounts = new Map();
         for (const value of featureValues) {
-            if (valueCounts[value] === undefined) {
-                valueCounts[value] = 0;
-            }
-            valueCounts[value]++;
+            valueCounts.set(value, (valueCounts.get(value) || 0) + 1);
         }
-        for (const count of Object.values(valueCounts)) {
+        for (const count of valueCounts.values()) {
             const probability = count / n;
             splitInfo[j] -= probability * Math.log2(probability);
         }
@@ -603,7 +604,6 @@ const formatMLValue = (value) => {
 };
 
 const formatMLInput = (values) => values.map(formatMLValue).join(', ');
-const formatMLName = (name) => name[0].toLowerCase() + name.slice(1);
 export const MACHINE_LEARNING_MODE_NAMES = new Set(
     Object.keys(machineLearningFunctions).map(name => name.toLowerCase())
 );
@@ -734,6 +734,7 @@ export function solveMachineLearning(mode, values, mathInstance) {
     let result;
     let formula;
     let interpretation;
+    let calculationDetails;
     const requireArgs = count => {
         if (values.length !== count) throw new Error(`Use ${canonicalName} with ${count} argument(s).`);
     };
@@ -741,6 +742,11 @@ export function solveMachineLearning(mode, values, mathInstance) {
         assertFiniteArray(left, leftName);
         assertFiniteArray(right, rightName);
         if (left.length !== right.length) throw new Error(`${leftName} and ${rightName} must have the same length.`);
+    };
+    const requireEqualLabelArrays = (left, right) => {
+        if (!Array.isArray(left) || left.length === 0 || !Array.isArray(right) || right.length !== left.length) {
+            throw new Error('Actual and predicted labels must be non-empty arrays of the same length.');
+        }
     };
 
     if (modeName === 'euclideandistance' || modeName === 'manhattandistance' || modeName === 'minkowskidistance') {
@@ -755,7 +761,15 @@ export function solveMachineLearning(mode, values, mathInstance) {
             : modeName === 'manhattandistance'
                 ? 'd₁ = Σ|aᵢ − bᵢ|'
                 : 'dₚ = (Σ|aᵢ − bᵢ|ᵖ)^(1/p)';
-        interpretation = `Coordinate differences: ${formatMLValue(left.map((value, index) => value - right[index]))}.`;
+        const differences = left.map((value, index) => Math.abs(value - right[index]));
+        const terms = differences.map(value => modeName === 'euclideandistance'
+            ? value ** 2
+            : modeName === 'manhattandistance'
+                ? value
+                : value ** p);
+        const sum = terms.reduce((total, term) => total + term, 0);
+        interpretation = `Coordinate differences: ${formatMLValue(differences)}.`;
+        calculationDetails = `Contributions: ${formatMLValue(terms)}; sum = ${formatMLValue(sum)}${modeName === 'euclideandistance' ? `; square root = ${formatMLValue(result)}` : modeName === 'minkowskidistance' ? `; 1/p power = ${formatMLValue(result)}` : ''}.`;
     } else if (modeName === 'linearregression') {
         requireArgs(2);
         const [features, targets] = values;
@@ -785,7 +799,23 @@ export function solveMachineLearning(mode, values, mathInstance) {
         }
         result = machineLearningFunctions[canonicalName](...values);
         const prediction = features.map(row => row.reduce((sum, item, index) => sum + item * coefficients[index], 0));
-        interpretation = `Predictions: ${formatMLValue(prediction)}; residuals: ${formatMLValue(targets.map((target, index) => target - prediction[index]))}.`;
+        const residuals = targets.map((target, index) => target - prediction[index]);
+        const contributions = residuals.map((error, index) => {
+            if (modeName === 'absoluteloss') return Math.abs(error);
+            if (modeName === 'hingeloss') return Math.max(0, 1 - targets[index] * prediction[index]);
+            if (modeName === 'huberloss') {
+                return Math.abs(error) <= delta
+                    ? 0.5 * error * error
+                    : delta * (Math.abs(error) - 0.5 * delta);
+            }
+            if (modeName === 'logloss' || modeName === 'crossentropyloss') {
+                const logit = prediction[index];
+                return Math.max(logit, 0) - targets[index] * logit + Math.log1p(Math.exp(-Math.abs(logit)));
+            }
+            return error * error;
+        });
+        interpretation = `Predictions: ${formatMLValue(prediction)}; residuals: ${formatMLValue(residuals)}.`;
+        calculationDetails = `Per-row loss contributions: ${formatMLValue(contributions)}; sum = ${formatMLValue(contributions.reduce((sum, value) => sum + value, 0))}${modeName === 'meansquarederror' ? `; divide by n = ${formatMLValue(result)}` : ''}.`;
         formula = {
             residualsumsquares: 'RSS = Σ(yᵢ − ŷᵢ)²',
             absoluteloss: 'L₁ loss = Σ|yᵢ − ŷᵢ|',
@@ -798,7 +828,11 @@ export function solveMachineLearning(mode, values, mathInstance) {
         const expectedArgs = modeName === 'accuracyexpected' ? 3 : 2;
         requireArgs(expectedArgs);
         const [actual, predicted, weights] = values;
-        requireEqualArrays(actual, predicted, 'Actual labels', 'Predicted labels');
+        requireEqualLabelArrays(actual, predicted);
+        if (['precision', 'recall', 'f1score'].includes(modeName) &&
+            [...actual, ...predicted].some(label => label !== 0 && label !== 1)) {
+            throw new Error('Precision, recall, and F1 require binary labels encoded as 0 or 1.');
+        }
         if (modeName === 'accuracyexpected') {
             assertFiniteArray(weights, 'Weights');
             if (weights.length !== actual.length || weights.some(weight => weight < 0) || weights.reduce((sum, weight) => sum + weight, 0) === 0) {
@@ -816,6 +850,10 @@ export function solveMachineLearning(mode, values, mathInstance) {
             classificationerror: 'Classification error = incorrect predictions / all predictions'
         }[modeName];
         interpretation = `Correct predictions: ${actual.filter((label, index) => label === predicted[index]).length} of ${actual.length}.`;
+        const truePositive = actual.filter((label, index) => label === 1 && predicted[index] === 1).length;
+        const falsePositive = actual.filter((label, index) => label !== 1 && predicted[index] === 1).length;
+        const falseNegative = actual.filter((label, index) => label === 1 && predicted[index] !== 1).length;
+        calculationDetails = `Confusion counts: TP = ${truePositive}, FP = ${falsePositive}, FN = ${falseNegative}.`;
     } else if (['meanabsoluteerror', 'meansquarederror', 'rootmeansquarederror', 'rsquared'].includes(modeName)) {
         requireArgs(2);
         const [actual, predicted] = values;
@@ -828,6 +866,10 @@ export function solveMachineLearning(mode, values, mathInstance) {
             rsquared: 'R² = 1 − Σ(yᵢ − ŷᵢ)² / Σ(yᵢ − ȳ)²'
         }[modeName];
         interpretation = `Actual values: ${formatMLValue(actual)}; predictions: ${formatMLValue(predicted)}.`;
+        const errors = actual.map((value, index) => value - predicted[index]);
+        calculationDetails = `Residuals: ${formatMLValue(errors)}; ${modeName === 'meanabsoluteerror'
+            ? `absolute errors = ${formatMLValue(errors.map(Math.abs))}`
+            : `squared errors = ${formatMLValue(errors.map(error => error ** 2))}`}.`;
     } else if (modeName === 'discriminantweighted') {
         requireArgs(3);
         const [features, labels, weights] = values;
@@ -837,6 +879,7 @@ export function solveMachineLearning(mode, values, mathInstance) {
         result = discriminantWeighted(features, labels, weights);
         formula = 'Weighted mean = Σ(weightᵢ · valueᵢ) / Σweightᵢ';
         interpretation = `Weighted feature mean: ${formatMLValue(result.meanX)}; weighted label mean: ${formatMLValue(result.meanYWeighted)}.`;
+        calculationDetails = `Total weight = ${formatMLValue(weights.reduce((sum, weight) => sum + weight, 0))}.`;
     } else if (modeName === 'minmaxscaling') {
         requireArgs(1);
         const features = values[0];
@@ -846,6 +889,7 @@ export function solveMachineLearning(mode, values, mathInstance) {
         result = minmaxscaling(features);
         formula = 'x′ = (x − min) / (max − min), computed independently for each feature';
         interpretation = `Scaled data: ${formatMLValue(result)}. Constant-valued columns map to 0.`;
+        calculationDetails = `Column minima: ${formatMLValue(features[0].map((_, column) => Math.min(...features.map(row => row[column]))))}; maxima: ${formatMLValue(features[0].map((_, column) => Math.max(...features.map(row => row[column]))))}.`;
     } else if (modeName === 'gainratio' || modeName === 'splitinformation') {
         requireArgs(modeName === 'gainratio' ? 2 : 1);
         const [features, labels] = values;
@@ -860,6 +904,11 @@ export function solveMachineLearning(mode, values, mathInstance) {
         interpretation = Array.isArray(result)
             ? `Scores by feature: ${formatMLValue(result)}.`
             : `Score: ${formatMLValue(result)}.`;
+        if (modeName === 'gainratio') {
+            calculationDetails = `Class-label entropy = ${formatMLValue(entropy(labels))}; split information by feature = ${formatMLValue(splitInformation(features))}.`;
+        } else {
+            calculationDetails = `Feature split information values: ${formatMLValue(result)}.`;
+        }
     } else if (['ginicoefficient', 'entropy'].includes(modeName)) {
         requireArgs(1);
         const data = values[0];
@@ -869,6 +918,13 @@ export function solveMachineLearning(mode, values, mathInstance) {
             ? 'Entropy = −Σpᵢlog₂(pᵢ)'
             : 'Gini coefficient = (2Σi·xᵢ)/(nΣxᵢ) − (n+1)/n for sorted non-negative values';
         interpretation = `Input values: ${formatMLValue(data)}.`;
+        if (modeName === 'entropy') {
+            const counts = new Map();
+            data.forEach(value => counts.set(value, (counts.get(value) || 0) + 1));
+            calculationDetails = `Class probabilities: ${formatMLValue([...counts].map(([label, count]) => ({ label, probability: count / data.length })))}.`;
+        } else {
+            calculationDetails = `Sorted values: ${formatMLValue([...data].sort((left, right) => left - right))}; total = ${formatMLValue(data.reduce((sum, value) => sum + value, 0))}.`;
+        }
     } else {
         throw new Error(`${canonicalName} is not available in the calculator yet.`);
     }
@@ -878,6 +934,7 @@ export function solveMachineLearning(mode, values, mathInstance) {
         `Step 1: Identify the inputs: ${formatMLInput(values)}.`,
         `Step 2: Apply the formula: ${formula}.`,
         `Step 3: ${interpretation}`,
+        ...(calculationDetails ? [`Step 4: ${calculationDetails}`] : []),
         `Result: ${formatMLValue(result)}`
     ].join('\n');
 }

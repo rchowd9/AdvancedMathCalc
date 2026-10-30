@@ -42,6 +42,21 @@ describe('machine-learning calculator formulas', () => {
     expect(explanation).toContain('Result: parameters = [1.92] after 2 iteration(s).');
   });
 
+  it('supports minibatch stochastic gradient descent', () => {
+    const explanation = solveMachineLearning(
+      'stochasticGradientDescent',
+      [[['2*x']], [3], 0.1, 2, 2],
+      math
+    );
+    expect(explanation).toContain('Sample 2 gradients per update');
+    expect(explanation).toContain('Result: parameters = [1.92] after 2 iteration(s).');
+  });
+
+  it('uses stable logistic loss for large logits', () => {
+    const explanation = solveMachineLearning('logLoss', [[[1]], [0], [1000]]);
+    expect(explanation).toContain('Result: 1000');
+  });
+
   it('rejects invalid formula dimensions instead of returning a result', () => {
     expect(() => solveMachineLearning('euclideanDistance', [[1, 2], [1]])).toThrow('same dimension');
     expect(() => solveMachineLearning('meanSquaredError', [[1, 2], [1]])).toThrow('same length');
