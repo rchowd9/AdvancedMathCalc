@@ -399,3 +399,8 @@ function minmaxscaling(X)
     }
     return scaledX;
 } 
+
+function giniCoefficient(values)
+{
+    const n = values.length;
+    if (n === 0) 
