@@ -452,3 +452,5 @@ function classificationError(yTrue, yPred)
             errorCount++;
         }
     }
+    return errorCount / yTrue.length;
+}
