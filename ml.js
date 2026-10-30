@@ -860,7 +860,7 @@ export function solveMachineLearning(mode, values, mathInstance) {
         interpretation = Array.isArray(result)
             ? `Scores by feature: ${formatMLValue(result)}.`
             : `Score: ${formatMLValue(result)}.`;
-    } else if (['giniCoefficient', 'entropy', 'giniCoefficient'.toLowerCase()].includes(canonicalName)) {
+    } else if (['ginicoefficient', 'entropy'].includes(modeName)) {
         requireArgs(1);
         const data = values[0];
         if (!Array.isArray(data) || data.length === 0) throw new Error('Values must be a non-empty array.');

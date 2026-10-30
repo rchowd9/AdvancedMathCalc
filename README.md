@@ -58,6 +58,13 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 ### Statistics
 - Descriptive statistics (mean, median, variance, standard deviation, range, mode) — `stats([data])`
 
+### Machine Learning
+- Distance metrics — `euclideanDistance(pointA, pointB)`, `manhattanDistance(pointA, pointB)`, `minkowskiDistance(pointA, pointB, p)`
+- Linear regression with an intercept — `linearRegression(featureRows, targets)`
+- Regression and classification metrics/losses — `meanSquaredError(actual, predicted)`, `accuracy(actual, predicted)`, `hingeLoss(features, labels, coefficients)`, and more
+- Feature scaling and information measures — `minmaxscaling(features)`, `entropy(labels)`, `gainRatio(features, labels)`
+- Gradient descent — `gradientDescent(["2*x"], [3], 0.1, 5)`; quote gradient expressions and use `x`, `y`, `z`, and `t` for parameters
+
 ### Real Analysis
 - Concept references for limits, sequences, series, continuity, differentiability, integration, bounds, and classic theorems
 - Examples: `epsilonDelta()`, `sequenceLimit()`, `uniformContinuity()`, `bolzanoWeierstrass()`, `heineBorel()`
