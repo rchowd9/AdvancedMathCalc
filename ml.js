@@ -454,3 +454,33 @@ function classificationError(yTrue, yPred)
     }
     return errorCount / yTrue.length;
 }
+
+function gainRatio(X, y)
+{
+    const totalEntropy = entropy(y);
+    const n = X.length;
+    const m = X[0].length;
+    let weightedEntropy = 0;
+    for (let j = 0; j < m; j++) {
+        const featureValues = X.map(row => row[j]);
+        const valueCounts = {};
+        for (const value of featureValues) {
+            if (valueCounts[value] === undefined) {
+                valueCounts[value] = 0;
+            }
+            valueCounts[value]++;
+        }
+        let featureEntropy = 0;
+        for (const count of Object.values(valueCounts)) {
+            const probability = count / n;
+            featureEntropy -= probability * Math.log2(probability);
+        }
+        weightedEntropy += (featureValues.length / n) * featureEntropy;
+    }
+    const informationGain = totalEntropy - weightedEntropy;
+    const splitInfo = -Object.values(valueCounts).reduce((acc, count) => {
+        const probability = count / n;
+        return acc + probability * Math.log2(probability);
+    }, 0);
+    return informationGain / splitInfo;
+}
