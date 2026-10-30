@@ -53,11 +53,10 @@ function gradientDescent(gradientFunc, initialPoint, learningRate, iterations)
 function stochasticGradientDescent(gradientFunc, initialPoint, learningRate, iterations, batchSize)
 {
     let point = initialPoint.slice();
-    const history = [];
     for (let i = 0; i < iterations; i++) {
         const gradient = Array(point.length).fill(0);
         for (let j = 0; j < batchSize; j++) {
-            const sampleGradient = gradientFunc();
+            const sampleGradient = gradientFunc(point);
             if (sampleGradient.length !== point.length) {
                 throw new Error('Gradient dimensions must match the initial point.');
             }
@@ -68,9 +67,8 @@ function stochasticGradientDescent(gradientFunc, initialPoint, learningRate, ite
         for (let j = 0; j < point.length; j++) {
             point[j] -= learningRate * gradient[j];
         }
-        history.push({ iteration: i + 1, point: point.slice(), gradient });
     }
-    return { point, history };
+    return point;
 }
 
 function discriminantWeighted(X, y, weights)
@@ -682,20 +680,21 @@ function solveDescent(modeName, values, mathInstance) {
         throw new Error('Batch size must be an integer from 1 to 500.');
     }
 
-    const sampleGradient = () => {
+    const sampleGradient = (point) => {
         const selected = stochastic
             ? expressions[Math.floor(Math.random() * expressions.length)]
             : expressions[0];
-        return evaluateGradient(selected, currentPoint, mathInstance);
+        return evaluateGradient(selected, point, mathInstance);
     };
 
     let currentPoint = initialPoint.slice();
     const history = [];
     for (let iteration = 0; iteration < iterations; iteration++) {
         if (stochastic) {
-            const result = stochasticGradientDescent(sampleGradient, currentPoint, learningRate, 1, batchSize);
-            currentPoint = result.point;
-            history.push(result.history[0]);
+            const previousPoint = currentPoint;
+            currentPoint = stochasticGradientDescent(sampleGradient, currentPoint, learningRate, 1, batchSize);
+            const gradient = previousPoint.map((value, index) => (value - currentPoint[index]) / learningRate);
+            history.push({ iteration: iteration + 1, point: currentPoint.slice(), gradient });
         } else {
             const gradient = evaluateGradient(expressions[0], currentPoint, mathInstance);
             currentPoint = gradientDescent(() => gradient, currentPoint, learningRate, 1);
