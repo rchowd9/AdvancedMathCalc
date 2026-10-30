@@ -411,4 +411,11 @@ function giniCoefficient(values)
     let totalSum = sortedValues.reduce((acc, val) => acc + val, 0);
     for (let i = 0; i < n; i++) {
         cumulativeSum += sortedValues[i];
-    } 
+    }
+    let gini = 0;
+    for (let i = 0; i < n; i++) {
+        gini += (i + 1) * sortedValues[i];
+    }
+    gini = (2 * gini) / (n * totalSum) - (n + 1) / n;
+    return gini;
+} 
