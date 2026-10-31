@@ -597,6 +597,7 @@ function specificity(yTrue, yPred)
     }
     const actualNegative = trueNegative + falsePositive;
     return actualNegative === 0 ? 0 : trueNegative / actualNegative;
+}
 
 
 
