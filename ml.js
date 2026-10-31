@@ -566,6 +566,20 @@ function specificity(yTrue, yPred)
     }
     let trueNegative = 0;
     let falsePositive = 0;
+    for (let i = 0; i < yTrue.length; i++) {
+        if (yTrue[i] === 0) {
+            if (yPred[i] === 0) {
+                trueNegative++;
+            } else {
+                falsePositive++;
+            }
+        }
+    }
+    const actualNegative = trueNegative + falsePositive;
+    return actualNegative === 0 ? 0 : trueNegative / actualNegative;
+
+
+    
 
 const machineLearningFunctions = {
     euclideanDistance,
