@@ -563,7 +563,26 @@ function falsePositiveRate(yTrue, yPred)
 
     const actualNegative = trueNegative + falsePositive;
     return actualNegative === 0 ? 0 : falsePositive / actualNegative;
-    
+
+
+    function falseNegativeRate(yTrue, yPred)
+    {
+        if (yTrue.length !== yPred.length) {
+            throw new Error('Input arrays must have the same length.');
+        }
+
+        let falseNegative = 0;
+        let truePositive = 0;
+        for (let i = 0; i < yTrue.length; i++) {
+            if (yTrue[i] === 1) {
+                if (yPred[i] === 0) {
+                    falseNegative++;
+                } else {
+                    truePositive++;
+                }
+            }
+        }
+        
 
 function gainRatio(X, y)
 {
