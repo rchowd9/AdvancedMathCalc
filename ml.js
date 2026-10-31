@@ -334,28 +334,27 @@ function truePositiveRate(yTrue, yPred)
     }
     const actualPositive = truePositive + falseNegative;
     return actualPositive === 0 ? 0 : truePositive / actualPositive;
+}
 
-
-    function trueNegativeRate(yTrue, yPred)
-    {
-        if (yTrue.length !== yPred.length) {
-            throw new Error('Input arrays must have the same length.');
-        }
-        let trueNegative = 0;
-        let falsePositive = 0;
-        for (let i = 0; i < yTrue.length; i++) {
-            if (yTrue[i] === 0) {
-                if (yPred[i] === 0) {
-                    trueNegative++;
-                } else {
-                    falsePositive++;
-                }
+function trueNegativeRate(yTrue, yPred)
+{
+    if (yTrue.length !== yPred.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    let trueNegative = 0;
+    let falsePositive = 0;
+    for (let i = 0; i < yTrue.length; i++) {
+        if (yTrue[i] === 0) {
+            if (yPred[i] === 0) {
+                trueNegative++;
+            } else {
+                falsePositive++;
             }
         }
-        const actualNegative = trueNegative + falsePositive;
-        return actualNegative === 0 ? 0 : trueNegative / actualNegative;
     }
-    
+    const actualNegative = trueNegative + falsePositive;
+    return actualNegative === 0 ? 0 : trueNegative / actualNegative;
+}
 
 function cohenKappa(yTrue, yPred)
 {
