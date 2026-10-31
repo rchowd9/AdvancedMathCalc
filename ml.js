@@ -330,6 +330,11 @@ function truePositiveRate(yTrue, yPred)
             } else {
                 falseNegative++;
             }
+        }
+    }
+    const actualPositive = truePositive + falseNegative;
+    return actualPositive === 0 ? 0 : truePositive / actualPositive;
+    
 
 function cohenKappa(yTrue, yPred)
 {
