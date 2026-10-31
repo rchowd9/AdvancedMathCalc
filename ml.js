@@ -559,6 +559,8 @@ function splitInformation(X)
     return splitInfo;
 }
 
+function specificity(yTrue, yPred)
+
 const machineLearningFunctions = {
     euclideanDistance,
     manhattanDistance,
