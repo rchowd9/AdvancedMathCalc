@@ -579,7 +579,6 @@ function specificity(yTrue, yPred)
     return actualNegative === 0 ? 0 : trueNegative / actualNegative;
 
 
-    
 
 const machineLearningFunctions = {
     euclideanDistance,
@@ -610,7 +609,8 @@ const machineLearningFunctions = {
     entropy,
     classificationError,
     gainRatio,
-    splitInformation
+    splitInformation,
+    specificity
 };
 
 const formatMLValue = (value) => {
