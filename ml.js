@@ -1011,5 +1011,6 @@ export {
     entropy,
     classificationError,
     gainRatio,
-    splitInformation
+    splitInformation,
+    specificity 
 };
