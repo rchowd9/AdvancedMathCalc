@@ -560,6 +560,12 @@ function splitInformation(X)
 }
 
 function specificity(yTrue, yPred)
+{
+    if (yTrue.length !== yPred.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    let trueNegative = 0;
+    let falsePositive = 0;
 
 const machineLearningFunctions = {
     euclideanDistance,
