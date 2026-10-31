@@ -544,6 +544,27 @@ function classificationError(yTrue, yPred)
     return errorCount / yTrue.length;
 }
 
+function falsePositiveRate(yTrue, yPred)
+{
+    if (yTrue.length !== yPred.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    let falsePositive = 0;
+    let trueNegative = 0;
+    for (let i = 0; i < yTrue.length; i++) {
+        if (yTrue[i] === 0) {
+            if (yPred[i] === 1) {
+                falsePositive++;
+            } else {
+                trueNegative++;
+            }
+        }
+    }
+
+    const actualNegative = trueNegative + falsePositive;
+    return actualNegative === 0 ? 0 : falsePositive / actualNegative;
+    
+
 function gainRatio(X, y)
 {
     if (X.length !== y.length || X.length === 0 || !X.every(row => Array.isArray(row) && row.length === X[0].length)) {
