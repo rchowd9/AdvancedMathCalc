@@ -1495,8 +1495,9 @@ function plotFunction() {
         hovermode: 'closest',
         showlegend: true,
         legend: { orientation: 'h', y: 1.12, x: 0 },
-        xaxis: { title: 'x', gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
-        yaxis: { title: 'y', type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
+        shapes: referenceShapes,
+        xaxis: { title: 'x', gridcolor: '#334155', zerolinecolor: '#64748b', showgrid: showAxes, zeroline: showAxes, showline: showAxes, showspikes: true, spikemode: 'across' },
+        yaxis: { title: 'y', type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showgrid: showAxes, zeroline: showAxes, showline: showAxes, showspikes: true, spikemode: 'across' },
         uirevision: `${expressions.join(';')}:${variable}:${lower}:${upper}:${mode}:${pointCount}:${scale}`
       }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
       setPlotStatus(`Parametric: ${traces.length} curve(s) traced over [${lower}, ${upper}] with ${pointCount} samples each.`);
@@ -1546,8 +1547,9 @@ function plotFunction() {
         hovermode: 'closest',
         showlegend: true,
         legend: { orientation: 'h', y: 1.12, x: 0 },
-        xaxis: { title: 'x', gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
-        yaxis: { title: 'y', type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
+        shapes: referenceShapes,
+        xaxis: { title: 'x', gridcolor: '#334155', zerolinecolor: '#64748b', showgrid: showAxes, zeroline: showAxes, showline: showAxes, showspikes: true, spikemode: 'across' },
+        yaxis: { title: 'y', type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showgrid: showAxes, zeroline: showAxes, showline: showAxes, showspikes: true, spikemode: 'across' },
         uirevision: `${expressions.join(';')}:${variable}:${lower}:${upper}:${mode}:${pointCount}:${scale}`
       }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
       setPlotStatus(`Polar: ${traces.length} curve(s) traced over ${variable} ∈ [${lower}, ${upper}] with ${pointCount} samples each.`);
@@ -1648,8 +1650,9 @@ function plotFunction() {
       hovermode: 'x unified',
       showlegend: true,
       legend: { orientation: 'h', y: 1.12, x: 0 },
-      xaxis: { title: plotType === 'histogram' ? 'Function values' : variable, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
-      yaxis: { title: plotType === 'histogram' ? 'Frequency' : mode === 'derivative' ? `d/d${variable} (${graphTitle})` : graphTitle, type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
+      shapes: referenceShapes,
+      xaxis: { title: plotType === 'histogram' ? 'Function values' : variable, gridcolor: '#334155', zerolinecolor: '#64748b', showgrid: showAxes, zeroline: showAxes, showline: showAxes, showspikes: true, spikemode: 'across' },
+      yaxis: { title: plotType === 'histogram' ? 'Frequency' : mode === 'derivative' ? `d/d${variable} (${graphTitle})` : graphTitle, type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showgrid: showAxes, zeroline: showAxes, showline: showAxes, showspikes: true, spikemode: 'across' },
       uirevision: `${expressions.join(';')}:${variable}:${lower}:${upper}:${mode}:${plotType}:${pointCount}:${scale}`
     }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
     const modeLabel = mode === 'derivative' ? 'Derivative' : mode === 'area' ? 'Area' : mode === 'parametric' ? 'Parametric' : mode === 'polar' ? 'Polar' : 'Function';
