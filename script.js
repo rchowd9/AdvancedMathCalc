@@ -1314,6 +1314,8 @@ function plotFunction() {
 
   const expressions = rawExpressions.filter(Boolean);
   const dataChart = plotType === 'scatter' || plotType === 'bar';
+  const showAxes = plotGridToggleInput ? plotGridToggleInput.checked : true;
+  const referenceShapes = buildReferenceShapes(plotReferenceLinesInput ? plotReferenceLinesInput.value : '');
 
   if (dataChart && mode !== 'function') {
     clearPlot();
@@ -1379,8 +1381,9 @@ function plotFunction() {
         font: { color: '#cbd5e1' },
         hovermode: 'closest',
         showlegend: false,
-        xaxis: { title: 'x', gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
-        yaxis: { title: 'y', type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showspikes: true, spikemode: 'across' },
+        shapes: referenceShapes,
+        xaxis: { title: 'x', gridcolor: '#334155', zerolinecolor: '#64748b', showgrid: showAxes, zeroline: showAxes, showline: showAxes, showspikes: true, spikemode: 'across' },
+        yaxis: { title: 'y', type: scale, gridcolor: '#334155', zerolinecolor: '#64748b', showgrid: showAxes, zeroline: showAxes, showline: showAxes, showspikes: true, spikemode: 'across' },
         uirevision: `${plotExprInput.value}:${plotType}:${scale}`
       }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
       setPlotStatus(`Scatterplot: ${points.length} data point(s).`);
