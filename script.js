@@ -1180,6 +1180,116 @@ function updatePlotInputHint() {
   plotExprInput.placeholder = inputExamples[plotTypeInput.value];
 }
 
+function buildReferenceShapes(referenceLineText) {
+  const shapes = [];
+  const tokens = (referenceLineText || '').split(';').map((item) => item.trim()).filter(Boolean);
+
+  tokens.forEach((token) => {
+    const axisMatch = token.match(/^([xy])\s*=\s*([-+]?\d*\.?\d+(?:e[-+]?\d+)?)$/i);
+    if (axisMatch) {
+      const axis = axisMatch[1].toLowerCase();
+      const value = Number(axisMatch[2]);
+      if (!Number.isFinite(value)) return;
+      if (axis === 'x') {
+        shapes.push({
+          type: 'line',
+          xref: 'paper',
+          x0: 0,
+          x1: 1,
+          yref: 'y',
+          y0: value,
+          y1: value,
+          line: { color: '#fbbf24', width: 1.25, dash: 'dash' }
+        });
+      } else {
+        shapes.push({
+          type: 'line',
+          xref: 'x',
+          x0: value,
+          x1: value,
+          yref: 'paper',
+          y0: 0,
+          y1: 1,
+          line: { color: '#fbbf24', width: 1.25, dash: 'dash' }
+        });
+      }
+      return;
+    }
+
+    const numericValue = Number(token);
+    if (Number.isFinite(numericValue)) {
+      shapes.push({
+        type: 'line',
+        xref: 'x',
+        x0: numericValue,
+        x1: numericValue,
+        yref: 'paper',
+        y0: 0,
+        y1: 1,
+        line: { color: '#fbbf24', width: 1.25, dash: 'dash' }
+      });
+    }
+  });
+
+  return shapes;
+}
+
+function fitCurrentPlotToData() {
+  const chart = plotEl;
+  if (!chart || !chart.data || !chart.data.length) {
+    setPlotStatus('Plot a function first, then fit the view to the data.');
+    return;
+  }
+
+  const allNumericX = [];
+  const allNumericY = [];
+  chart.data.forEach((trace) => {
+    const xValues = Array.isArray(trace.x) ? trace.x : [];
+    const yValues = Array.isArray(trace.y) ? trace.y : [];
+    xValues.forEach((value) => {
+      if (Number.isFinite(value)) allNumericX.push(value);
+    });
+    yValues.forEach((value) => {
+      if (Number.isFinite(value)) allNumericY.push(value);
+    });
+  });
+
+  if (!allNumericX.length && !allNumericY.length) {
+    setPlotStatus('No numeric points were found to fit the current chart.');
+    return;
+  }
+
+  const xMin = Math.min(...allNumericX);
+  const xMax = Math.max(...allNumericX);
+  const yMin = Math.min(...allNumericY);
+  const yMax = Math.max(...allNumericY);
+
+  const xPadding = (xMax - xMin) * 0.1 || 1;
+  const yPadding = (yMax - yMin) * 0.1 || 1;
+
+  Plotly.relayout(plotEl, {
+    'xaxis.range': [xMin - xPadding, xMax + xPadding],
+    'yaxis.range': [Math.min(yMin - yPadding, 0), Math.max(yMax + yPadding, 0)]
+  });
+
+  setPlotStatus(`View fit to data: x ∈ [${(xMin - xPadding).toFixed(3)}, ${(xMax + xPadding).toFixed(3)}], y ∈ [${(Math.min(yMin - yPadding, 0)).toFixed(3)}, ${(Math.max(yMax + yPadding, 0)).toFixed(3)}].`);
+}
+
+function downloadCurrentPlot() {
+  if (!plotEl || !plotEl.data || !plotEl.data.length) {
+    setPlotStatus('Plot a graph before downloading it.');
+    return;
+  }
+
+  Plotly.downloadImage(plotEl, {
+    format: 'png',
+    filename: 'brain-boost-graph',
+    width: 1200,
+    height: 720,
+    scale: 2
+  });
+}
+
 // Newton’s method solver
 function newtonSolve(fnStr, variable, guess = 1) {
   const f = (x) => mathInstance.evaluate(fnStr, { [variable]: x });
