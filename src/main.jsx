@@ -287,6 +287,8 @@ function App() {
           </div>
           <div className="graph-actions">
             <button id="plotBtn" type="button">Plot it!</button>
+            <button id="plotFitBtn" className="ghost-btn" type="button">Fit view</button>
+            <button id="plotDownloadBtn" className="ghost-btn" type="button">Download PNG</button>
             <button id="plotClearBtn" className="ghost-btn" type="button">Clear</button>
           </div>
         </div>
@@ -342,6 +344,15 @@ function App() {
               <option value="linear">Linear</option>
               <option value="log">Logarithmic</option>
             </select>
+          </label>
+          <label className="inline-field">
+            <input id="plotGridToggle" type="checkbox" defaultChecked />
+            Show axes and guides
+          </label>
+          <label>
+            Reference lines
+            <input id="plotReferenceLines" type="text" defaultValue="x=0; y=0" placeholder="x=0; y=0; x=2" />
+            <small>Use entries like x=0 or y=5 separated by semicolons.</small>
           </label>
         </div>
 
