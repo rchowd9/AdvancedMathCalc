@@ -28,6 +28,10 @@ const plotModeInput = document.getElementById('plotMode');
 const plotTypeInput = document.getElementById('plotType');
 const plotPointsInput = document.getElementById('plotPoints');
 const plotScaleInput = document.getElementById('plotScale');
+const plotReferenceLinesInput = document.getElementById('plotReferenceLines');
+const plotGridToggleInput = document.getElementById('plotGridToggle');
+const plotFitBtn = document.getElementById('plotFitBtn');
+const plotDownloadBtn = document.getElementById('plotDownloadBtn');
 const plotEl = document.getElementById('plot');
 const plotStatusEl = document.getElementById('plotStatus');
 const achievementItems = [...document.querySelectorAll('.achievement')];
@@ -40,7 +44,12 @@ plotClearBtn.addEventListener('click', () => {
   clearPlot();
   setPlotStatus('Graph cleared.');
 });
+plotFitBtn.addEventListener('click', fitCurrentPlotToData);
+plotDownloadBtn.addEventListener('click', downloadCurrentPlot);
 plotExprInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') plotFunction();
+});
+plotReferenceLinesInput.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') plotFunction();
 });
 plotTypeInput.addEventListener('change', updatePlotInputHint);
