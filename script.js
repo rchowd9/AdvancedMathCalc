@@ -1420,8 +1420,9 @@ function plotFunction() {
         plot_bgcolor: '#020617',
         font: { color: '#cbd5e1' },
         showlegend: false,
-        xaxis: { title: 'Category', type: 'category', gridcolor: '#334155', zerolinecolor: '#64748b' },
-        yaxis: { title: 'Value', gridcolor: '#334155', zerolinecolor: '#64748b' },
+        shapes: referenceShapes,
+        xaxis: { title: 'Category', type: 'category', gridcolor: '#334155', zerolinecolor: '#64748b', showgrid: showAxes, zeroline: showAxes, showline: showAxes },
+        yaxis: { title: 'Value', gridcolor: '#334155', zerolinecolor: '#64748b', showgrid: showAxes, zeroline: showAxes, showline: showAxes },
         uirevision: `${plotExprInput.value}:${plotType}`
       }, { responsive: true, displaylogo: false, scrollZoom: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'] });
       setPlotStatus(`Bar chart: ${entries.length} category value(s).`);
