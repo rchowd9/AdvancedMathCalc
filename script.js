@@ -1193,23 +1193,23 @@ function buildReferenceShapes(referenceLineText) {
       if (axis === 'x') {
         shapes.push({
           type: 'line',
-          xref: 'paper',
-          x0: 0,
-          x1: 1,
-          yref: 'y',
-          y0: value,
-          y1: value,
-          line: { color: '#fbbf24', width: 1.25, dash: 'dash' }
-        });
-      } else {
-        shapes.push({
-          type: 'line',
           xref: 'x',
           x0: value,
           x1: value,
           yref: 'paper',
           y0: 0,
           y1: 1,
+          line: { color: '#fbbf24', width: 1.25, dash: 'dash' }
+        });
+      } else {
+        shapes.push({
+          type: 'line',
+          xref: 'paper',
+          x0: 0,
+          x1: 1,
+          yref: 'y',
+          y0: value,
+          y1: value,
           line: { color: '#fbbf24', width: 1.25, dash: 'dash' }
         });
       }
