@@ -680,7 +680,22 @@ function tTest(sample1, sample2)
 
 function pearsonCorrelation(x,y)
 {
-    
+    if (x.length !== y.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    const n = x.length;
+    const meanX = x.reduce((sum, value) => sum + value, 0) / n;
+    const meanY = y.reduce((sum, value) => sum + value, 0) / n;
+    let numerator = 0;
+    let sumSqX = 0;
+    let sumSqY = 0;
+    for (let i = 0; i < n; i++) {
+        const diffX = x[i] - meanX;
+        const diffY = y[i] - meanY;
+        numerator += diffX * diffY;
+        sumSqX += diffX * diffX;
+        sumSqY += diffY * diffY;
+    }
 }
 
 
