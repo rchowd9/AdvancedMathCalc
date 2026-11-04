@@ -678,6 +678,11 @@ function tTest(sample1, sample2)
     return (mean1 - mean2) / standardError;
 }
 
+function pearsonCorrelation(x,y)
+{
+    
+}
+
 
 const machineLearningFunctions = {
     euclideanDistance,
