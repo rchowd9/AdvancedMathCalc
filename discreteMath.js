@@ -4,7 +4,16 @@ function modusPonens(premise1, premise2) {
   } else {
     throw new Error('Invalid premises for modus ponens.');
   }
-  
+
+  function modusTollens(premise1, premise2) {
+    if (premise1 === 'If P then Q' && premise2 === 'Not Q') {
+      return 'Not P';
+    } else {
+      throw new Error('Invalid premises for modus tollens.');
+    }
+    }
+    }
+
 
 function solveDiscreteFormula(mode, values) {
   const requireArgs = (count, syntax) => {
