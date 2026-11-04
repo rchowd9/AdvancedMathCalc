@@ -96,6 +96,16 @@ evalBtn.addEventListener('click', () => {
       return;
     }
 
+    const discreteLogicMatch = expr.match(/^([a-zA-Z]\w*)\(([\s\S]*)\)$/);
+    const discreteLogicModes = window.DISCRETE_LOGIC_MODE_NAMES ?? new Set();
+    if (discreteLogicMatch && discreteLogicModes.has(discreteLogicMatch[1].toLowerCase())) {
+      const argumentsList = splitNamedFormulaArguments(discreteLogicMatch[2]);
+      solvedMessage = solveDiscreteLogic(discreteLogicMatch[1].toLowerCase(), argumentsList);
+      awardProgress(30, 'Discrete logic rule applied!', 'logic');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
     const geometryNameMatch = expr.match(/^([a-zA-Z]+)\(/);
     const geometryModeNames = window.GEOMETRY_PROOF_MODE_NAMES ?? new Set();
     if (geometryNameMatch && geometryModeNames.has(geometryNameMatch[1].toLowerCase())) {

@@ -12,6 +12,7 @@ window.PROOF_MODE_NAMES = new Set([
   'proofbyexhaustion', 'exhaustion',
   'disprove',
   'proofbydivisibility', 'divisibility',
+  'deductiontheorem',
   'pigeonholeprinciple', 'pigeonhole',
   'combinatorialproof', 'combinatorial',
   'recurrence',
@@ -27,7 +28,7 @@ function solveProof(input) {
 function solveProofMode(input) {
   const match = input.match(/^([a-zA-Z]+)\(\s*([\s\S]*)\s*\)$/);
   if (!match) {
-    throw new Error('Use directProof, proofByInduction, contrapositive, proofByContradiction, proveInequality, proofByBiconditional, proofByCases, proofByExhaustion, disprove, or proofByDivisibility.');
+    throw new Error('Use directProof, proofByInduction, contrapositive, proofByContradiction, proveInequality, proofByBiconditional, proofByCases, proofByExhaustion, disprove, proofByDivisibility, deductionTheorem, pigeonholePrinciple, combinatorialProof, recurrence, or structuralInduction.');
   }
 
   const mode = match[1].toLowerCase();
@@ -62,6 +63,9 @@ function solveProofMode(input) {
   }
   if (mode === 'proofbydivisibility' || mode === 'divisibility') {
     return solveDivisibilityProof(argumentsList);
+  }
+  if (mode === 'deductiontheorem') {
+    return solveDeductionTheoremProof(argumentsList);
   }
   if (mode === 'pigeonholeprinciple' || mode === 'pigeonhole') {
     return solvePigeonholeProof(argumentsList);
@@ -198,6 +202,38 @@ function DeductionTheorem(premise1, premise2) {
   }
 
   throw new Error('Invalid premises for Deduction Theorem.');
+}
+
+function solveDeductionTheoremProof(argumentsList) {
+  if (argumentsList.length !== 2) {
+    throw new Error('Use deductionTheorem("P -> Q", "P").');
+  }
+  const cleanArgument = (value) => {
+    const trimmed = value.trim();
+    return trimmed.length >= 2 && (
+      (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+      (trimmed.startsWith("'") && trimmed.endsWith("'"))
+    ) ? trimmed.slice(1, -1) : trimmed;
+  };
+  const premise1 = cleanArgument(argumentsList[0]);
+  const premise2 = cleanArgument(argumentsList[1]);
+  const implication = premise1.trim().match(/^(?:if\s+(.+?)\s+then\s+(.+)|(.+?)\s*(?:->|=>|→)\s*(.+))$/i);
+  if (!implication) {
+    throw new Error('The first premise must be an implication, such as P -> Q.');
+  }
+  const antecedent = (implication[1] || implication[3]).trim();
+  const consequent = (implication[2] || implication[4]).trim();
+  const result = DeductionTheorem(premise1, premise2);
+
+  return [
+    'Method: Deduction theorem (modus ponens)',
+    `Premise 1: ${premise1}`,
+    `Premise 2: ${premise2}`,
+    `Step 1: Identify the antecedent and consequent: ${antecedent} -> ${consequent}.`,
+    `Step 2: Verify that premise 2 matches the antecedent: ${premise2} = ${antecedent}.`,
+    `Step 3: Apply the implication to infer ${result}.`,
+    `Conclusion: ${result}.`
+  ].join('\n');
 }
 
 function solveInequalityProof(statement) {
