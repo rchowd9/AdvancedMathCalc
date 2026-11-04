@@ -20,7 +20,7 @@ function modusPonens(premise1, premise2) {
 
   function andIntroduction
 
-  function or
+  function orIntroduction 
 
 
 function solveDiscreteFormula(mode, values) {
