@@ -128,12 +128,28 @@ describe('word problem solver', () => {
     const discreteMath = loadCalculatorScript('discreteMath.js');
 
     expect(discreteMath.solveDiscreteFormula('isprime', [97])).toContain('97 is prime');
+    expect(discreteMath.solveDiscreteFormula('isprime', [97])).toContain('Step 1:');
     expect(discreteMath.solveDiscreteFormula('modularpower', [7, 128, 13])).toContain('= 3');
+    expect(discreteMath.solveDiscreteFormula('modularpower', [7, 128, 13])).toContain('Step 2:');
     expect(discreteMath.solveDiscreteFormula('eulerphi', [36])).toContain('φ(36) = 12');
     expect(discreteMath.solveDiscreteFormula('eulerphi', [36])).toContain('Units: coprime-integer count');
     expect(discreteMath.solveDiscreteFormula('divisorcount', [360])).toContain('τ(360) = 24');
     expect(discreteMath.solveDiscreteFormula('starsandbars', [10, 4])).toContain('C(13, 3) = 286');
     expect(discreteMath.solveDiscreteFormula('derangements', [6])).toContain('!6 = 265');
+    expect(discreteMath.window.DISCRETE_LOGIC_MODE_NAMES.has('modusponens')).toBe(true);
+    expect(discreteMath.solveDiscreteLogic('modusponens', ['"P -> Q"', '"P"'])).toContain('Conclusion: Q.');
+    expect(discreteMath.solveDiscreteLogic('modustollens', ['P -> Q', 'not Q'])).toContain('Conclusion: Not P.');
+    expect(discreteMath.solveDiscreteLogic('unitresolution', ['P or Q', 'not P or R'])).toContain('Conclusion: Q or R.');
+    expect(discreteMath.solveDiscreteLogic('andelimination', ['P and Q', 'right'])).toContain('Conclusion: Q.');
+    expect(discreteMath.solveDiscreteLogic('andintroduction', ['P', 'Q'])).toContain('Conclusion: P and Q.');
+    expect(discreteMath.solveDiscreteLogic('orintroduction', ['P', 'Q'])).toContain('Conclusion: P or Q.');
+  });
+
+  it('wires the deduction theorem into proof mode with a worked explanation', () => {
+    const proof = loadCalculatorScript('proof.js');
+
+    expect(proof.window.PROOF_MODE_NAMES.has('deductiontheorem')).toBe(true);
+    expect(proof.solveProofMode('deductionTheorem("P -> Q", "P")')).toContain('Step 3: Apply the implication to infer Q.');
   });
 });
 

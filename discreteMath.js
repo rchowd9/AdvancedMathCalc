@@ -121,7 +121,14 @@ window.DISCRETE_LOGIC_MODE_NAMES = new Set([
 ]);
 
 function solveDiscreteLogic(mode, argumentsList) {
-  const [first, second, third] = argumentsList.map(normalizeLogicalText);
+  const cleanArgument = (value) => {
+    const text = normalizeLogicalText(value);
+    return text.length >= 2 && (
+      (text.startsWith('"') && text.endsWith('"')) ||
+      (text.startsWith("'") && text.endsWith("'"))
+    ) ? text.slice(1, -1) : text;
+  };
+  const [first, second] = argumentsList.map(cleanArgument);
 
   if (mode === 'modusponens') {
     if (argumentsList.length !== 2) throw new Error('Use modusPonens("P -> Q", "P").');
