@@ -660,7 +660,7 @@ function specificity(yTrue, yPred)
     return actualNegative === 0 ? 0 : trueNegative / actualNegative;
 }
 
-function ttest
+function tTest 
 
 
 
