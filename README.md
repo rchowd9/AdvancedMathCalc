@@ -80,6 +80,14 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 - Prime factorization — `primeFactors(n)`
 - Greatest common divisor — `gcd(a, b)`
 - Least common multiple — `lcm(a, b)`
+- Primality, modular powers, Euler's totient, and divisor counts — `isPrime(n)`, `modularPower(base, exponent, modulus)`, `eulerPhi(n)`, `divisorCount(n)`
+- Multiset combinations, stars and bars, circular permutations, and derangements — `multisetCombinations(n, r)`, `starsAndBars(total, parts)`, `circularPermutations(n)`, `derangements(n)`
+
+### Discrete Logic
+- Modus ponens and modus tollens — `modusPonens("P -> Q", "P")`, `modusTollens("P -> Q", "not Q")`
+- Unit resolution — `unitResolution("P or Q", "not P or R")`
+- Conjunction and disjunction rules — `andElimination("P and Q", "right")`, `andIntroduction("P", "Q")`, `orIntroduction("P", "Q")`
+- Each inference gives a step-by-step explanation of the premises and conclusion.
 
 ### Proof Methods
 - Direct proof — `directProof(statement)`
@@ -89,9 +97,11 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 - Proof by cases — `proofByCases(claim, variable, cases...)`
 - Proof by exhaustion — `proofByExhaustion(claim, variable, domain)`
 - Proof by divisibility — `proofByDivisibility(expr, divisor, variable, baseValue)`
+- Deduction theorem — `deductionTheorem("P -> Q", "P")`
 - Disproof by counterexample — `disprove(statement)`
 - Pigeonhole principle — `pigeonholeprinciple(numItems, numContainers)`
 - Combinatorial proofs — `combinatorialproof(identity)` with support for Pascal's identity, binomial sum, symmetry proofs, and hockey-stick identity
+- Recurrence checks and structural induction — `recurrence(relation, variable, baseValue)`, `structuralInduction(claim, structure)`
 - Law of cosines verification proof — `lawOfCosines(a, b, includedAngleDeg, c)`
 
 ### Vectors & Units
