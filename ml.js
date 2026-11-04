@@ -662,7 +662,20 @@ function specificity(yTrue, yPred)
 
 function tTest(sample1, sample2) 
 {
-    
+    assertFiniteArray(sample1, 'First sample');
+    assertFiniteArray(sample2, 'Second sample');
+    if (sample1.length < 2 || sample2.length < 2) {
+        throw new Error('Both samples must contain at least two values.');
+    }
+
+    const mean1 = sample1.reduce((sum, value) => sum + value, 0) / sample1.length;
+    const mean2 = sample2.reduce((sum, value) => sum + value, 0) / sample2.length;
+    const variance1 = sample1.reduce((sum, value) => sum + (value - mean1) ** 2, 0) / (sample1.length - 1);
+    const variance2 = sample2.reduce((sum, value) => sum + (value - mean2) ** 2, 0) / (sample2.length - 1);
+    const standardError = Math.sqrt(variance1 / sample1.length + variance2 / sample2.length);
+
+    if (standardError === 0) return mean1 === mean2 ? 0 : (mean1 > mean2 ? Infinity : -Infinity);
+    return (mean1 - mean2) / standardError;
 
 
 
@@ -697,7 +710,8 @@ const machineLearningFunctions = {
     classificationError,
     gainRatio,
     splitInformation,
-    specificity
+    specificity,
+    tTest
 };
 
 const formatMLValue = (value) => {
@@ -979,6 +993,20 @@ export function solveMachineLearning(mode, values, mathInstance) {
         calculationDetails = `Residuals: ${formatMLValue(errors)}; ${modeName === 'meanabsoluteerror'
             ? `absolute errors = ${formatMLValue(errors.map(Math.abs))}`
             : `squared errors = ${formatMLValue(errors.map(error => error ** 2))}`}.`;
+    } else if (modeName === 'ttest') {
+        requireArgs(2);
+        const [sample1, sample2] = values;
+        assertFiniteArray(sample1, 'First sample');
+        assertFiniteArray(sample2, 'Second sample');
+        if (sample1.length < 2 || sample2.length < 2) {
+            throw new Error('Both samples must contain at least two values.');
+        }
+        result = tTest(sample1, sample2);
+        const mean1 = sample1.reduce((sum, value) => sum + value, 0) / sample1.length;
+        const mean2 = sample2.reduce((sum, value) => sum + value, 0) / sample2.length;
+        formula = 't = (x̄₁ − x̄₂) / √(s₁²/n₁ + s₂²/n₂), using Welch’s two-sample test';
+        interpretation = `Sample means: ${formatMLValue(mean1)} and ${formatMLValue(mean2)}.`;
+        calculationDetails = `Welch t-statistic = ${formatMLValue(result)}.`;
     } else if (modeName === 'discriminantweighted') {
         requireArgs(3);
         const [features, labels, weights] = values;
@@ -1078,5 +1106,6 @@ export {
     classificationError,
     gainRatio,
     splitInformation,
-    specificity 
+    specificity,
+    tTest
 };
