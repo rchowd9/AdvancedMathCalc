@@ -1,3 +1,11 @@
+function modusPonens(premise1, premise2) {
+  if (premise1 === 'If P then Q' && premise2 === 'P') {
+    return 'Q';
+  } else {
+    throw new Error('Invalid premises for modus ponens.');
+  }
+  
+
 function solveDiscreteFormula(mode, values) {
   const requireArgs = (count, syntax) => {
     if (values.length !== count) throw new Error(`Use ${syntax}.`);
