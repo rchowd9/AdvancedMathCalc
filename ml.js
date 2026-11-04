@@ -676,8 +676,7 @@ function tTest(sample1, sample2)
 
     if (standardError === 0) return mean1 === mean2 ? 0 : (mean1 > mean2 ? Infinity : -Infinity);
     return (mean1 - mean2) / standardError;
-
-
+}
 
 
 const machineLearningFunctions = {
