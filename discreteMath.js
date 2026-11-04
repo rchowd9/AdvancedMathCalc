@@ -14,6 +14,14 @@ function modusPonens(premise1, premise2) {
     }
     }
 
+  function unitResolution
+
+  function andElimination
+
+  function andIntroduction
+
+  function or
+
 
 function solveDiscreteFormula(mode, values) {
   const requireArgs = (count, syntax) => {
