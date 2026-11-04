@@ -185,6 +185,13 @@ function solveContradictionProof(statement) {
 
 // ---------- New proof types ----------
 
+function DeductionTheorem(premise1, premise2) {
+  if (premise1 === 'If P then Q' && premise2 === 'P') {
+    return 'Q';
+  } else {
+    throw new Error('Invalid premises for Deduction Theorem.');
+  
+
 function solveInequalityProof(statement) {
   const comparison = parseComparison(statement);
   if (!comparison || comparison.operator === '=') {
