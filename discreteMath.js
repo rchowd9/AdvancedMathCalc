@@ -1,27 +1,115 @@
+function normalizeLogicalText(value) {
+  if (value === null || value === undefined) return '';
+  return String(value).trim().replace(/\s+/g, ' ');
+}
+
+function parseImplication(premise) {
+  const text = normalizeLogicalText(premise);
+  const match = text.match(/^if\s+(.+?)\s+then\s+(.+)$/i) || text.match(/^(.+?)\s*->\s*(.+)$/i);
+  if (!match) return null;
+  return [normalizeLogicalText(match[1]), normalizeLogicalText(match[2])];
+}
+
+function normalizeLiteral(literal) {
+  let text = normalizeLogicalText(literal);
+  text = text.replace(/^not\s+/i, '').replace(/^¬|~/, '').trim();
+  return text;
+}
+
+function isNegationOf(literal, target) {
+  const left = normalizeLogicalText(literal);
+  const right = normalizeLogicalText(target);
+  if (left === right) return false;
+  const patterns = [
+    /^not\s+/i,
+    /^¬/,
+    /^~/
+  ];
+  for (const pattern of patterns) {
+    if (pattern.test(left) && normalizeLiteral(left) === right) return true;
+    if (pattern.test(right) && normalizeLiteral(right) === left) return true;
+  }
+  return false;
+}
+
+function parseConjunction(premise) {
+  const text = normalizeLogicalText(premise);
+  const match = text.match(/^(.*?)(?:\s+(?:and|∧|&|&&)\s+)(.*)$/i);
+  if (!match) return null;
+  return [normalizeLogicalText(match[1]), normalizeLogicalText(match[2])];
+}
+
+function parseDisjunction(clause) {
+  const text = normalizeLogicalText(clause);
+  const pieces = text.split(/\s+(?:or|∨|\|)\s+/i).map(part => normalizeLogicalText(part));
+  return pieces.length > 1 ? pieces : [text];
+}
+
 function modusPonens(premise1, premise2) {
-  if (premise1 === 'If P then Q' && premise2 === 'P') {
-    return 'Q';
-  } else {
+  const implication = parseImplication(premise1);
+  if (!implication) {
     throw new Error('Invalid premises for modus ponens.');
   }
+  const [antecedent, consequent] = implication;
+  if (normalizeLiteral(premise2) === normalizeLiteral(antecedent)) {
+    return consequent;
+  }
+  throw new Error('Invalid premises for modus ponens.');
+}
 
-  function modusTollens(premise1, premise2) {
-    if (premise1 === 'If P then Q' && premise2 === 'Not Q') {
-      return 'Not P';
-    } else {
-      throw new Error('Invalid premises for modus tollens.');
+function modusTollens(premise1, premise2) {
+  const implication = parseImplication(premise1);
+  if (!implication) {
+    throw new Error('Invalid premises for modus tollens.');
+  }
+  const [antecedent, consequent] = implication;
+  const negatedConsequent = normalizeLogicalText(premise2);
+  const hasNegatedConsequent = negatedConsequent === `Not ${consequent}` || negatedConsequent === `¬${consequent}` || negatedConsequent === `~${consequent}` || isNegationOf(negatedConsequent, consequent);
+  if (hasNegatedConsequent) {
+    return `Not ${antecedent}`;
+  }
+  throw new Error('Invalid premises for modus tollens.');
+}
+
+function unitResolution(clause1, clause2) {
+  const left = parseDisjunction(clause1);
+  const right = parseDisjunction(clause2);
+  const resolved = [...left, ...right];
+
+  for (let i = 0; i < resolved.length; i += 1) {
+    for (let j = i + 1; j < resolved.length; j += 1) {
+      const first = normalizeLogicalText(resolved[i]);
+      const second = normalizeLogicalText(resolved[j]);
+      if (isNegationOf(first, second)) {
+        const remaining = resolved.filter((_, index) => index !== i && index !== j);
+        if (remaining.length === 0) return 'Contradiction';
+        return remaining.join(' or ');
+      }
     }
-    }
-    }
+  }
 
-  function unitResolution
+  throw new Error('No unit resolution possible from the provided clauses.');
+}
 
-  function andElimination
+function andElimination(premise, side = 'left') {
+  const conjunction = parseConjunction(premise);
+  if (!conjunction) {
+    throw new Error('Invalid premise for and elimination.');
+  }
+  const [left, right] = conjunction;
+  const normalizedSide = normalizeLogicalText(side).toLowerCase();
+  if (normalizedSide === 'left' || normalizedSide === '1' || normalizedSide === 'first') return left;
+  if (normalizedSide === 'right' || normalizedSide === '2' || normalizedSide === 'second') return right;
+  throw new Error('Side must be "left" or "right".');
+}
 
-  function andIntroduction
+function andIntroduction(premise1, premise2) {
+  return `${normalizeLogicalText(premise1)} and ${normalizeLogicalText(premise2)}`;
+}
 
-  function orIntroduction 
-
+function orIntroduction(premise, additionalPremise) {
+  return `${normalizeLogicalText(premise)} or ${normalizeLogicalText(additionalPremise)}`;
+}
 
 function solveDiscreteFormula(mode, values) {
   const requireArgs = (count, syntax) => {
