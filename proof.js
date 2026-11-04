@@ -190,7 +190,8 @@ function DeductionTheorem(premise1, premise2) {
     return 'Q';
   } else {
     throw new Error('Invalid premises for Deduction Theorem.');
-  
+  }
+}
 
 function solveInequalityProof(statement) {
   const comparison = parseComparison(statement);
