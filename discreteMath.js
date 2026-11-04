@@ -111,6 +111,112 @@ function orIntroduction(premise, additionalPremise) {
   return `${normalizeLogicalText(premise)} or ${normalizeLogicalText(additionalPremise)}`;
 }
 
+window.DISCRETE_LOGIC_MODE_NAMES = new Set([
+  'modusponens',
+  'modustollens',
+  'unitresolution',
+  'andelimination',
+  'andintroduction',
+  'orintroduction'
+]);
+
+function solveDiscreteLogic(mode, argumentsList) {
+  const [first, second, third] = argumentsList.map(normalizeLogicalText);
+
+  if (mode === 'modusponens') {
+    if (argumentsList.length !== 2) throw new Error('Use modusPonens("P -> Q", "P").');
+    const implication = parseImplication(first);
+    if (!implication) throw new Error('The first premise must be an implication, such as P -> Q.');
+    const [antecedent, consequent] = implication;
+    const conclusion = modusPonens(first, second);
+    return [
+      'Method: Modus ponens',
+      `Premises: ${first}; ${second}`,
+      `Step 1: Identify the implication's antecedent and consequent: ${antecedent} -> ${consequent}.`,
+      `Step 2: Match the second premise to the antecedent: ${second} = ${antecedent}.`,
+      `Step 3: Infer the consequent: ${conclusion}.`,
+      `Conclusion: ${conclusion}.`
+    ].join('\n');
+  }
+
+  if (mode === 'modustollens') {
+    if (argumentsList.length !== 2) throw new Error('Use modusTollens("P -> Q", "not Q").');
+    const implication = parseImplication(first);
+    if (!implication) throw new Error('The first premise must be an implication, such as P -> Q.');
+    const [antecedent, consequent] = implication;
+    const conclusion = modusTollens(first, second);
+    return [
+      'Method: Modus tollens',
+      `Premises: ${first}; ${second}`,
+      `Step 1: Identify the implication: if ${antecedent}, then ${consequent}.`,
+      `Step 2: The second premise denies the consequent: ${second}.`,
+      `Step 3: Infer the negation of the antecedent: ${conclusion}.`,
+      `Conclusion: ${conclusion}.`
+    ].join('\n');
+  }
+
+  if (mode === 'unitresolution') {
+    if (argumentsList.length !== 2) throw new Error('Use unitResolution("P or Q", "not P or R").');
+    const left = parseDisjunction(first);
+    const right = parseDisjunction(second);
+    const complementary = left.flatMap((literal) =>
+      right.filter((other) => isNegationOf(literal, other)).map((other) => [literal, other])
+    )[0];
+    if (!complementary) throw new Error('No unit resolution possible from the provided clauses.');
+    const conclusion = unitResolution(first, second);
+    return [
+      'Method: Unit resolution',
+      `Clauses: (${left.join(' or ')}) and (${right.join(' or ')})`,
+      `Step 1: Find complementary literals: ${complementary[0]} and ${complementary[1]}.`,
+      'Step 2: Remove the complementary pair from the combined clauses.',
+      `Step 3: Join the remaining literals: ${conclusion}.`,
+      `Conclusion: ${conclusion}.`
+    ].join('\n');
+  }
+
+  if (mode === 'andelimination') {
+    if (argumentsList.length < 1 || argumentsList.length > 2) throw new Error('Use andElimination("P and Q", "left").');
+    const conjunction = parseConjunction(first);
+    if (!conjunction) throw new Error('Invalid premise for and elimination.');
+    const side = second || 'left';
+    const conclusion = andElimination(first, side);
+    return [
+      'Method: Conjunction elimination',
+      `Premise: ${first}`,
+      `Step 1: Split the conjunction into its parts: ${conjunction[0]} and ${conjunction[1]}.`,
+      `Step 2: Select the ${side} part.`,
+      `Conclusion: ${conclusion}.`
+    ].join('\n');
+  }
+
+  if (mode === 'andintroduction') {
+    if (argumentsList.length !== 2) throw new Error('Use andIntroduction("P", "Q").');
+    const conclusion = andIntroduction(first, second);
+    return [
+      'Method: Conjunction introduction',
+      `Premise 1: ${first}`,
+      `Premise 2: ${second}`,
+      'Step 1: Both propositions are given as premises.',
+      'Step 2: Join them with "and".',
+      `Conclusion: ${conclusion}.`
+    ].join('\n');
+  }
+
+  if (mode === 'orintroduction') {
+    if (argumentsList.length !== 2) throw new Error('Use orIntroduction("P", "Q").');
+    const conclusion = orIntroduction(first, second);
+    return [
+      'Method: Disjunction introduction',
+      `Premise: ${first}`,
+      `Step 1: Retain the given proposition ${first}.`,
+      `Step 2: Add the allowed alternative ${second} using "or".`,
+      `Conclusion: ${conclusion}.`
+    ].join('\n');
+  }
+
+  throw new Error('Unknown discrete logic rule.');
+}
+
 function solveDiscreteFormula(mode, values) {
   const requireArgs = (count, syntax) => {
     if (values.length !== count) throw new Error(`Use ${syntax}.`);
@@ -134,9 +240,13 @@ function solveDiscreteFormula(mode, values) {
   if (mode === 'isprime') {
     requireArgs(1, 'isPrime(n)');
     const [n] = values;
-    if (n < 2) return `${n} is not prime. Units: integer classification (dimensionless).`;
-    for (let divisor = 2; divisor * divisor <= n; divisor += 1) if (n % divisor === 0) return `${n} is composite; ${divisor} is a divisor. Units: integer classification (dimensionless).`;
-    return `${n} is prime. Units: integer classification (dimensionless).`;
+    if (n < 2) return `Step 1: A prime must be an integer greater than 1.\nConclusion: ${n} is not prime. Units: integer classification (dimensionless).`;
+    for (let divisor = 2; divisor * divisor <= n; divisor += 1) {
+      if (n % divisor === 0) {
+        return `Step 1: Test possible divisors up to √${n} ≈ ${Math.floor(Math.sqrt(n))}.\nStep 2: ${n} ÷ ${divisor} = ${n / divisor}, so ${divisor} is a divisor.\nConclusion: ${n} is composite; ${divisor} is a divisor. Units: integer classification (dimensionless).`;
+      }
+    }
+    return `Step 1: Test possible divisors up to √${n} ≈ ${Math.floor(Math.sqrt(n))}.\nStep 2: No integer divisor from 2 through ${Math.floor(Math.sqrt(n))} divides ${n}.\nConclusion: ${n} is prime. Units: integer classification (dimensionless).`;
   }
   if (mode === 'modularpower') {
     requireArgs(3, 'modularPower(base, exponent, modulus)');
@@ -147,12 +257,16 @@ function solveDiscreteFormula(mode, values) {
     let factor = BigInt(((base % modulus) + modulus) % modulus);
     let power = BigInt(exponent);
     const mod = BigInt(modulus);
+    const squaringSteps = [];
     while (power > 0n) {
-      if (power % 2n === 1n) result = (result * factor) % mod;
+      if (power % 2n === 1n) {
+        result = (result * factor) % mod;
+        squaringSteps.push(`multiply by ${factor} → ${result}`);
+      }
       factor = (factor * factor) % mod;
       power /= 2n;
     }
-    return `Repeated squaring gives ${base}^${exponent} mod ${modulus} = ${result}. Units: dimensionless residue.`;
+    return `Step 1: Reduce the base modulo ${modulus}: ${base} ≡ ${((base % modulus) + modulus) % modulus}.\nStep 2: Apply repeated squaring${squaringSteps.length ? ` (${squaringSteps.join('; ')})` : ''}.\nConclusion: Repeated squaring gives ${base}^${exponent} mod ${modulus} = ${result}. Units: dimensionless residue.`;
   }
   if (mode === 'eulerphi') {
     requireArgs(1, 'eulerPhi(n)');
@@ -160,13 +274,19 @@ function solveDiscreteFormula(mode, values) {
     if (n < 1) throw new Error('n must be a positive integer.');
     let remaining = n;
     let result = n;
+    const primeDivisors = [];
     for (let prime = 2; prime * prime <= remaining; prime += 1) {
       if (remaining % prime !== 0) continue;
       while (remaining % prime === 0) remaining /= prime;
+      primeDivisors.push(prime);
       result -= result / prime;
     }
-    if (remaining > 1) result -= result / remaining;
-    return `Euler's totient: φ(${n}) = ${result}, using φ(n) = n ∏(1 - 1/p) over prime divisors p of n. Units: coprime-integer count.`;
+    if (remaining > 1) {
+      primeDivisors.push(remaining);
+      result -= result / remaining;
+    }
+    const factors = primeDivisors.length ? primeDivisors.join(', ') : 'none';
+    return `Step 1: Find the distinct prime divisors of ${n}: ${factors}.\nStep 2: Apply φ(n) = n ∏(1 - 1/p) over those prime divisors.\nConclusion: Euler's totient: φ(${n}) = ${result}. Units: coprime-integer count.`;
   }
   if (mode === 'divisorcount') {
     requireArgs(1, 'divisorCount(n)');
@@ -174,16 +294,23 @@ function solveDiscreteFormula(mode, values) {
     if (n < 1) throw new Error('n must be a positive integer.');
     let remaining = n;
     let count = 1;
+    const factorization = [];
     for (let prime = 2; prime * prime <= remaining; prime += 1) {
       let exponent = 0;
       while (remaining % prime === 0) {
         remaining /= prime;
         exponent += 1;
       }
-      count *= exponent + 1;
+      if (exponent > 0) {
+        factorization.push(`${prime}^${exponent}`);
+        count *= exponent + 1;
+      }
     }
-    if (remaining > 1) count *= 2;
-    return `If n = ∏pᵢ^aᵢ, then τ(n) = ∏(aᵢ + 1). Therefore τ(${n}) = ${count}. Units: divisor count.`;
+    if (remaining > 1) {
+      factorization.push(`${remaining}^1`);
+      count *= 2;
+    }
+    return `Step 1: Prime-factorize ${n}: ${factorization.join(' × ')}.\nStep 2: For n = ∏pᵢ^aᵢ, use τ(n) = ∏(aᵢ + 1).\nStep 3: Multiply the exponent choices: ${factorization.map((factor) => `(${factor.split('^')[1]} + 1)`).join(' × ')} = ${count}.\nConclusion: τ(${n}) = ${count}. Units: divisor count.`;
   }
   if (mode === 'multisetcombinations') {
     requireArgs(2, 'multisetCombinations(n, r)');
@@ -191,7 +318,7 @@ function solveDiscreteFormula(mode, values) {
     requireNonnegative(n, 'n');
     requireNonnegative(r, 'r');
     const result = chooseBigInt(n + r - 1, r);
-    return `Combinations with repetition: C(n + r - 1, r) = C(${n + r - 1}, ${r}) = ${result}. Units: number of combinations.`;
+    return `Step 1: Use the combinations-with-repetition formula C(n + r - 1, r).\nStep 2: Substitute n = ${n} and r = ${r}: C(${n + r - 1}, ${r}).\nConclusion: Combinations with repetition = ${result}. Units: number of combinations.`;
   }
   if (mode === 'starsandbars') {
     requireArgs(2, 'starsAndBars(total, parts)');
@@ -199,25 +326,27 @@ function solveDiscreteFormula(mode, values) {
     requireNonnegative(total, 'Total');
     if (parts < 1) throw new Error('Parts must be a positive integer.');
     const result = chooseBigInt(total + parts - 1, parts - 1);
-    return `Non-negative integer solutions: C(total + parts - 1, parts - 1) = C(${total + parts - 1}, ${parts - 1}) = ${result}. Units: number of solutions.`;
+    return `Step 1: Use stars and bars: C(total + parts - 1, parts - 1).\nStep 2: Substitute total = ${total} and parts = ${parts}: C(${total + parts - 1}, ${parts - 1}).\nConclusion: Non-negative integer solutions = ${result}. Units: number of solutions.`;
   }
   if (mode === 'circularpermutations') {
     requireArgs(1, 'circularPermutations(n)');
     const [n] = values;
     if (n < 1) throw new Error('n must be a positive integer.');
-    return `Distinct circular arrangements: (n - 1)! = ${n - 1}! = ${factorialBigInt(n - 1)}. Units: number of arrangements.`;
+    return `Step 1: Fix one object to remove rotations that represent the same arrangement.\nStep 2: Arrange the remaining ${n - 1} objects in (${n} - 1)! = ${n - 1}! ways.\nConclusion: Distinct circular arrangements = ${factorialBigInt(n - 1)}. Units: number of arrangements.`;
   }
   if (mode === 'derangements') {
     requireArgs(1, 'derangements(n)');
     const [n] = values;
     requireNonnegative(n, 'n');
     let previous = 1n;
-    if (n === 0) return 'Derangements: !0 = 1. Units: number of arrangements.';
+    if (n === 0) return 'Step 1: The empty arrangement has one derangement.\nConclusion: Derangements: !0 = 1. Units: number of arrangements.';
     let current = 0n;
+    const recurrenceSteps = ['!0 = 1', '!1 = 0'];
     for (let index = 2; index <= n; index += 1) {
       [previous, current] = [current, BigInt(index - 1) * (current + previous)];
+      recurrenceSteps.push(`!${index} = ${index - 1} × (!${index - 1} + !${index - 2}) = ${current}`);
     }
-    return `Derangements satisfy !n = (n - 1)(!(n - 1) + !(n - 2)); !${n} = ${current}. Units: number of arrangements.`;
+    return `Step 1: Start with ${recurrenceSteps.slice(0, 2).join(' and ')}.\nStep 2: Apply !n = (n - 1)(!(n - 1) + !(n - 2)): ${recurrenceSteps.slice(2).join('; ')}.\nConclusion: !${n} = ${current}. Units: number of arrangements.`;
   }
   throw new Error('Unknown number theory or combinatorics formula.');
 }
