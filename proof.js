@@ -186,11 +186,18 @@ function solveContradictionProof(statement) {
 // ---------- New proof types ----------
 
 function DeductionTheorem(premise1, premise2) {
-  if (premise1 === 'If P then Q' && premise2 === 'P') {
-    return 'Q';
-  } else {
-    throw new Error('Invalid premises for Deduction Theorem.');
+  const normalize = (value) => value.trim().replace(/\s+/g, ' ').toLowerCase();
+  const implication = premise1.trim().match(/^(?:if\s+(.+?)\s+then\s+(.+)|(.+?)\s*(?:->|=>|→)\s*(.+))$/i);
+
+  if (implication) {
+    const antecedent = (implication[1] || implication[3]).trim();
+    const consequent = (implication[2] || implication[4]).trim();
+    if (normalize(antecedent) === normalize(premise2)) {
+      return consequent;
+    }
   }
+
+  throw new Error('Invalid premises for Deduction Theorem.');
 }
 
 function solveInequalityProof(statement) {
