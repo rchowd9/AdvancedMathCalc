@@ -1108,4 +1108,4 @@ export {
     splitInformation,
     specificity,
     tTest
-}
+};
