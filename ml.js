@@ -352,6 +352,7 @@ function bootStrapAccuracy(yTrue, yPred, numSamples = 1000)
     }
     const meanAccuracy = accuracies.reduce((sum, acc) => sum + acc, 0) / numSamples;
     const variance = accuracies.reduce((sum, acc) => sum + (acc - meanAccuracy) ** 2, 0) / numSamples;
+    const stdDev = Math.sqrt(variance);
 
 function trueNegativeRate(yTrue, yPred)
 {
