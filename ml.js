@@ -341,7 +341,7 @@ function bootStrapAccuracy(yTrue, yPred, numSamples = 1000)
     if (yTrue.length !== yPred.length) {
         throw new Error('Input arrays must have the same length.');
     }
-    
+    const n = yT.length;
 
 function trueNegativeRate(yTrue, yPred)
 {
