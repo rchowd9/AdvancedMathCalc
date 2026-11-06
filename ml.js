@@ -336,7 +336,7 @@ function truePositiveRate(yTrue, yPred)
     return actualPositive === 0 ? 0 : truePositive / actualPositive;
 }
 
-
+function bootStrapAccuracy
 
 function trueNegativeRate(yTrue, yPred)
 {
