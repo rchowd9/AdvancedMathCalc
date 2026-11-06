@@ -337,6 +337,7 @@ function truePositiveRate(yTrue, yPred)
 }
 
 function bootStrapAccuracy(yTrue, yPred, numSamples = 1000)
+{
 
 function trueNegativeRate(yTrue, yPred)
 {
