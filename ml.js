@@ -347,6 +347,7 @@ function bootStrapAccuracy(yTrue, yPred, numSamples = 1000)
         startingIndex = Math.floor(Math.random() * n);
         const sampleIndices = Array.from({ length: n }, (_, idx) => (startingIndex + idx) % n);
         const sampleYTrue = sampleIndices.map(idx => yTrue[idx]);
+        const sampleYPred = sampleIndices.map(idx => yPred[idx]);
 
 function trueNegativeRate(yTrue, yPred)
 {
