@@ -1,10 +1,16 @@
 function matrixProduct(A, B) {
+    if (A[0].length !== B.length) {
+        throw new Error(
+            "Matrix dimensions are incompatible."
+        );
+    }
+
     const rows = A.length;
     const cols = B[0].length;
     const common = B.length;
 
     const result = Array(rows)
-        .fill()
+        .fill(null)
         .map(() => Array(cols).fill(0));
 
     for (let i = 0; i < rows; i++) {
