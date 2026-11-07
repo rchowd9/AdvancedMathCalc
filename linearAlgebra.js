@@ -8,4 +8,5 @@ function matrixProduct(A, B)
             }
             A[i][j] = sum;
         }  
+    }
 }
