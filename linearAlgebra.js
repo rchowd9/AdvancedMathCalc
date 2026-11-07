@@ -223,5 +223,10 @@ function nullSpace(matrix)
 
 function rankNullityTheorem(matrix)
 {
+
+}
+
+function identityMatrix(size)
+{
     
 }
