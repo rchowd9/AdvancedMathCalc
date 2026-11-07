@@ -1,1 +1,4 @@
-function matrixProduct
+function matrixProduct(A, B)
+{
+    
+}
