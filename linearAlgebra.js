@@ -32,3 +32,31 @@ function findScalar(matrix, row, col)
         matrix[row][j] /= scalar;
     }
 }
+
+function rowEchelonForm(matrix)
+{
+    const rows = matrix.length;
+    const cols = matrix[0].length;
+    let lead = 0;
+    for (let r = 0; r < rows; r++)
+    {
+        if (lead >= cols)
+        {
+            return matrix;
+        }
+        let i = r;
+        while (matrix[i][lead] === 0)
+        {
+            i++;
+            if (i === rows)
+            {
+                i = r;
+                lead++;
+                if (cols === lead)
+                {
+                    return matrix;
+                }
+            }
+        }
+    }
+}
