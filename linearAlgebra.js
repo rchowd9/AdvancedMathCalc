@@ -218,5 +218,10 @@ function basis(matrix)
 
 function nullSpace(matrix)
 {
+
+}
+
+function rankNullityTheorem(matrix)
+{
     
 }
