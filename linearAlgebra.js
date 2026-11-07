@@ -206,9 +206,26 @@ function vectorSpace(vectors)
 
 }
 
-function columnSpace(matrix)
-{
+function columnSpace(matrix) {
+    const rref = reducedRowEchelonForm(
+        matrix.map(row => [...row])
+    );
 
+    const pivotColumns = [];
+
+    for (let i = 0; i < rref.length; i++) {
+        const pivot = rref[i].findIndex(
+            value => Math.abs(value) > 1e-10
+        );
+
+        if (pivot !== -1) {
+            pivotColumns.push(pivot);
+        }
+    }
+
+    return pivotColumns.map(col =>
+        matrix.map(row => row[col])
+    );
 }
 
 function basis(matrix)
