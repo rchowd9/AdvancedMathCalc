@@ -232,9 +232,51 @@ function basis(matrix) {
     return columnSpace(matrix);
 }
 
-function nullSpace(matrix)
-{
+function nullSpace(matrix) {
+    const rref = reducedRowEchelonForm(
+        matrix.map(row => [...row])
+    );
 
+    const rows = rref.length;
+    const cols = rref[0].length;
+
+    const pivotCols = new Set();
+
+    for (let i = 0; i < rows; i++) {
+        const pivot = rref[i].findIndex(
+            value => Math.abs(value) > 1e-10
+        );
+
+        if (pivot !== -1) {
+            pivotCols.add(pivot);
+        }
+    }
+
+    const freeCols = [];
+
+    for (let j = 0; j < cols; j++) {
+        if (!pivotCols.has(j)) {
+            freeCols.push(j);
+        }
+    }
+
+    const basis = [];
+
+    for (const free of freeCols) {
+        const vector = Array(cols).fill(0);
+        vector[free] = 1;
+
+        let rowIndex = 0;
+
+        for (const pivot of pivotCols) {
+            vector[pivot] = -rref[rowIndex][free];
+            rowIndex++;
+        }
+
+        basis.push(vector);
+    }
+
+    return basis;
 }
 
 function rankNullityTheorem(matrix)
