@@ -10,3 +10,16 @@ function matrixProduct(A, B)
         }  
     }
 }
+
+function equationtoMatrix(equations)
+{
+    const matrix = [];
+    for (const equation of equations)
+    {
+        const row = [];
+        for (const variable in equation)
+        {
+            row.push(equation[variable]);
+        }
+    }
+}
