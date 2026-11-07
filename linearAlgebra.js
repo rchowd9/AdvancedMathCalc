@@ -203,5 +203,10 @@ function solveSystem(equations, variables) {
 function vectorSpace(vectors)
 {
     vectors = vectors.map(vec => math.mad(vec, 1));
+
+}
+
+function columnSpace(matrix)
+{
     
 }
