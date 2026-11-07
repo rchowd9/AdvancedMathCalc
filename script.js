@@ -30,6 +30,7 @@ const plotPointsInput = document.getElementById('plotPoints');
 const plotScaleInput = document.getElementById('plotScale');
 const plotReferenceLinesInput = document.getElementById('plotReferenceLines');
 const plotGridToggleInput = document.getElementById('plotGridToggle');
+const plotInsightsEl = document.getElementById('plotInsights');
 const plotFitBtn = document.getElementById('plotFitBtn');
 const plotDownloadBtn = document.getElementById('plotDownloadBtn');
 const plotEl = document.getElementById('plot');
@@ -1300,6 +1301,59 @@ function downloadCurrentPlot() {
   });
 }
 
+function analyzeSampledCurve(xValues, yValues) {
+  const maxima = [];
+  const minima = [];
+  let signedArea = 0;
+  let absoluteArea = 0;
+  let startSlope = null;
+  let endSlope = null;
+  let steepestSlope = null;
+
+  for (let index = 0; index < yValues.length - 1; index += 1) {
+    const left = yValues[index];
+    const right = yValues[index + 1];
+    if (left === null || right === null) continue;
+
+    const width = xValues[index + 1] - xValues[index];
+    const slope = (right - left) / width;
+    if (index === 0) startSlope = slope;
+    endSlope = slope;
+    if (steepestSlope === null || Math.abs(slope) > Math.abs(steepestSlope.value)) {
+      steepestSlope = { value: slope, x: (xValues[index] + xValues[index + 1]) / 2 };
+    }
+    signedArea += ((left + right) / 2) * width;
+    absoluteArea += ((Math.abs(left) + Math.abs(right)) / 2) * width;
+  }
+
+  for (let index = 1; index < yValues.length - 1;) {
+    if (yValues[index] === null) {
+      index += 1;
+      continue;
+    }
+
+    let end = index;
+    while (end + 1 < yValues.length && yValues[end + 1] === yValues[index]) end += 1;
+    const previous = yValues[index - 1];
+    const next = yValues[end + 1];
+    if (previous !== null && next !== null) {
+      const point = { x: (xValues[index] + xValues[end]) / 2, y: yValues[index] };
+      if (point.y >= previous && point.y >= next && (point.y > previous || point.y > next)) {
+        maxima.push(point);
+      } else if (point.y <= previous && point.y <= next && (point.y < previous || point.y < next)) {
+        minima.push(point);
+      }
+    }
+    index = end + 1;
+  }
+
+  return { maxima, minima, signedArea, absoluteArea, startSlope, endSlope, steepestSlope };
+}
+
+function formatGraphNumber(value) {
+  return Number(value.toPrecision(5)).toString();
+}
+
 // Newton’s method solver
 function newtonSolve(fnStr, variable, guess = 1) {
   const f = (x) => mathInstance.evaluate(fnStr, { [variable]: x });
@@ -1578,6 +1632,7 @@ function plotFunction() {
 
     const stepData = (upper - lower) / (pointCount - 1);
     const traces2 = [];
+    const curveSummaries = [];
 
     expressions.forEach((expression, expressionIndex) => {
       const compiled = mode === 'derivative'
@@ -1637,6 +1692,33 @@ function plotFunction() {
       }
       const uniqueRoots = roots.filter((root, index) => index === 0 || Math.abs(root - roots[index - 1]) > stepData / 2);
       rootCount += uniqueRoots.length;
+      if (plotType === 'function') {
+        const analysis = analyzeSampledCurve(xValues, yValues);
+        curveSummaries.push({ expression, ...analysis });
+
+        if (analysis.maxima.length) {
+          traces2.push({
+            x: analysis.maxima.map(({ x }) => x),
+            y: analysis.maxima.map(({ y }) => y),
+            type: 'scatter',
+            mode: 'markers',
+            name: `Local maxima (${expression})`,
+            marker: { color: palette[expressionIndex], size: 10, symbol: 'triangle-up', line: { color: '#fff', width: 1 } },
+            hovertemplate: `Local maximum<br>${variable} = %{x:.5g}<br>y = %{y:.5g}<extra>${expression}</extra>`
+          });
+        }
+        if (analysis.minima.length) {
+          traces2.push({
+            x: analysis.minima.map(({ x }) => x),
+            y: analysis.minima.map(({ y }) => y),
+            type: 'scatter',
+            mode: 'markers',
+            name: `Local minima (${expression})`,
+            marker: { color: palette[expressionIndex], size: 10, symbol: 'triangle-down', line: { color: '#fff', width: 1 } },
+            hovertemplate: `Local minimum<br>${variable} = %{x:.5g}<br>y = %{y:.5g}<extra>${expression}</extra>`
+          });
+        }
+      }
       if (plotType === 'function' && uniqueRoots.length && scale === 'linear') {
         traces2.push({
           x: uniqueRoots,
@@ -1675,6 +1757,22 @@ function plotFunction() {
       ? `; ${rootCount} ${mode === 'derivative' ? 'stationary point(s)' : 'x-intercept(s)'} detected${interceptNote}`
       : '';
     setPlotStatus(`${plotTypeLabel}: ${graphSummary}, ${scale} y-scale${rootSummary} over [${lower}, ${upper}].`);
+    if (plotInsightsEl) {
+      plotInsightsEl.textContent = curveSummaries.map((summary) => {
+        const maxima = summary.maxima.length
+          ? summary.maxima.map(({ x, y }) => `(${formatGraphNumber(x)}, ${formatGraphNumber(y)})`).join(', ')
+          : 'none';
+        const minima = summary.minima.length
+          ? summary.minima.map(({ x, y }) => `(${formatGraphNumber(x)}, ${formatGraphNumber(y)})`).join(', ')
+          : 'none';
+        const slopeAtStart = summary.startSlope === null ? 'unavailable' : formatGraphNumber(summary.startSlope);
+        const slopeAtEnd = summary.endSlope === null ? 'unavailable' : formatGraphNumber(summary.endSlope);
+        const steepestSlope = summary.steepestSlope
+          ? `${formatGraphNumber(summary.steepestSlope.value)} near ${variable}=${formatGraphNumber(summary.steepestSlope.x)}`
+          : 'unavailable';
+        return `${summary.expression}: local maxima ${maxima}; local minima ${minima}; slope near start ${slopeAtStart}, near end ${slopeAtEnd}; steepest sampled slope ${steepestSlope}; signed area ≈ ${formatGraphNumber(summary.signedArea)}, absolute area ≈ ${formatGraphNumber(summary.absoluteArea)} (trapezoidal estimate).`;
+      }).join('\n');
+    }
     state.xp += 15;
     saveGameState();
     updateGameHud();
@@ -1691,6 +1789,7 @@ function clearPlot() {
   if (plotEl && plotEl.data) {
     Plotly.purge(plotEl);
   }
+  if (plotInsightsEl) plotInsightsEl.textContent = '';
 }
 
 function setPlotStatus(message) {

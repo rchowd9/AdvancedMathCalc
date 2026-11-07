@@ -357,6 +357,7 @@ function App() {
         </div>
 
         <div id="plot" aria-label="Function graph" />
+        <p id="plotInsights" className="plot-insights" aria-live="polite" />
         <p id="plotStatus" className="plot-status" role="status" />
       </section>
 
