@@ -1367,6 +1367,7 @@ function newtonSolve(fnStr, variable, guess = 1) {
 
 // Plotting
 function plotFunction() {
+  if (plotInsightsEl) plotInsightsEl.textContent = '';
   const rawExpressions = plotExprInput.value.split(';').map((expression) => expression.trim());
   const variable = plotVariableInput.value.trim();
   const lower = Number(plotMinInput.value);
