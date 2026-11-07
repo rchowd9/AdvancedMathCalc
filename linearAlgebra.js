@@ -174,7 +174,7 @@ function luDecomposition(matrix) {
     return { L, U };
 }
 
-const math = require('mathjs');
+import { mad } from 'mathjs';
 
 function solveLinearSystem(A, b) {
     const solution =
@@ -188,7 +188,7 @@ function solveLinearSystem(A, b) {
 
 function vectorSpace(vectors)
 {
-    vectors = vectors.map(vec => math.mad(vec, 1));
+    vectors = vectors.map(vec => mad(vec, 1));
 
 }
 
