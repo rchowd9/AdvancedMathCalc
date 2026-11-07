@@ -228,9 +228,8 @@ function columnSpace(matrix) {
     );
 }
 
-function basis(matrix)
-{
-
+function basis(matrix) {
+    return columnSpace(matrix);
 }
 
 function nullSpace(matrix)
