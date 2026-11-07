@@ -199,3 +199,5 @@ function solveSystem(equations, variables) {
         return null;
     }
 }
+
+function vectorSpace
