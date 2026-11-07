@@ -119,3 +119,51 @@ function reducedRowEchelonForm(matrix) {
 
     return matrix;
 }
+
+function luDecomposition(matrix) {
+    // Validate input
+    if (!Array.isArray(matrix) || matrix.length === 0) {
+        throw new Error("Input must be a non-empty 2D array.");
+    }
+    const n = matrix.length;
+    if (!matrix.every(row => Array.isArray(row) && row.length === n)) {
+        throw new Error("Matrix must be square (n x n).");
+    }
+    if (!matrix.every(row => row.every(val => typeof val === "number"))) {
+        throw new Error("Matrix elements must be numbers.");
+    }
+
+    // Initialize L and U matrices
+    const L = Array.from({ length: n }, () => Array(n).fill(0));
+    const U = Array.from({ length: n }, () => Array(n).fill(0));
+
+    // Doolittle's algorithm
+    for (let i = 0; i < n; i++) {
+        // Upper Triangular
+        for (let k = i; k < n; k++) {
+            let sum = 0;
+            for (let j = 0; j < i; j++) {
+                sum += L[i][j] * U[j][k];
+            }
+            U[i][k] = matrix[i][k] - sum;
+        }
+
+        // Lower Triangular
+        for (let k = i; k < n; k++) {
+            if (i === k) {
+                L[i][i] = 1; // Diagonal as 1
+            } else {
+                let sum = 0;
+                for (let j = 0; j < i; j++) {
+                    sum += L[k][j] * U[j][i];
+                }
+                if (U[i][i] === 0) {
+                    throw new Error("Zero pivot encountered; consider pivoting.");
+                }
+                L[k][i] = (matrix[k][i] - sum) / U[i][i];
+            }
+        }
+    }
+
+    return { L, U };
+}
