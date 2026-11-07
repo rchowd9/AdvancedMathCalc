@@ -257,3 +257,19 @@ function identityMatrix(size) {
 
     return identity;
 }
+
+function matrixRank(matrix) {
+    const rref = reducedRowEchelonForm(
+        matrix.map(row => [...row])
+    );
+
+    let rank = 0;
+
+    for (const row of rref) {
+        if (row.some(value => Math.abs(value) > 1e-10)) {
+            rank++;
+        }
+    }
+
+    return rank;
+}
