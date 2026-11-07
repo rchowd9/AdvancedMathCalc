@@ -211,3 +211,7 @@ function columnSpace(matrix)
 
 }
 
+function basis(matrix)
+{
+    
+}
