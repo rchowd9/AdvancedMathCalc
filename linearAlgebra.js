@@ -208,5 +208,6 @@ function vectorSpace(vectors)
 
 function columnSpace(matrix)
 {
-    
+
 }
+
