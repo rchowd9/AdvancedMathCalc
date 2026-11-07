@@ -176,34 +176,14 @@ function luDecomposition(matrix) {
 
 const math = require('mathjs');
 
-function solveSystem(equations, variables) {
-    try {
-        // Parse equations into math.js format
-        const parsedEquations = equations.map(eq => math.parse(eq));
-
-        // Create an array of expressions
-        const exprs = parsedEquations.map(eq => eq.toString());
-
-        // Solve the system
-        const solution = math.lusolve(
-            math.matrix(parsedEquations.map(eq => {
-                // Extract coefficients for each variable
-                return variables.map(v => eq.coefficients(v)[0]);
-            })),
-            math.matrix(parsedEquations.map(eq => eq.constants()[0]))
+function solveLinearSystem(A, b) {
+    const solution =
+        mathInstance.multiply(
+            mathInstance.inv(A),
+            b
         );
 
-        // Map solution to variable names
-        const result = {};
-        variables.forEach((v, i) => {
-            result[v] = solution[i][0];
-        });
-
-        return result;
-    } catch (error) {
-        console.error("Error solving system:", error.message);
-        return null;
-    }
+    return solution;
 }
 
 function vectorSpace(vectors)
