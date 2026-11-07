@@ -23,3 +23,13 @@ function equationtoMatrix(equations)
         }
     }
 }
+
+function findScalar(matrix, row, col)
+{
+    const scalar = matrix[row][col];
+    for (let j = 0; j < matrix[row])
+    {
+        matrix[row][j] /= scalar;
+        
+    }
+}
