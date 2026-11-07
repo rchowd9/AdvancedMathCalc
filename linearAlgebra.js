@@ -200,4 +200,8 @@ function solveSystem(equations, variables) {
     }
 }
 
-function vectorSpace
+function vectorSpace(vectors)
+{
+    vectors = vectors.map(vec => math.mad(vec, 1));
+    
+}
