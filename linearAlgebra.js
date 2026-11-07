@@ -279,9 +279,18 @@ function nullSpace(matrix) {
     return basis;
 }
 
-function rankNullityTheorem(matrix)
-{
+function rankNullityTheorem(matrix) {
+    const rank = matrixRank(matrix);
+    const columns = matrix[0].length;
+    const nullity = columns - rank;
 
+    return {
+        rank,
+        nullity,
+        columns,
+        theoremSatisfied:
+            rank + nullity === columns
+    };
 }
 
 function identityMatrix(size) {
