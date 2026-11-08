@@ -328,5 +328,10 @@ function rowSpace(matrix)
 
 function orthogonalComplement(matrix)
 {
+
+}
+
+function rank1Matrices(matrix)
+{
     
 }
