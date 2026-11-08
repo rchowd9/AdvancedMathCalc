@@ -318,5 +318,10 @@ function linearIndependence(vector)
 
 function nullSpace(matrix)
 {
+
+}
+
+function span(vectors)
+{
     
 }
