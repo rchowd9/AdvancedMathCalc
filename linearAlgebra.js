@@ -323,5 +323,10 @@ function span(vectors)
 
 function rowSpace(matrix)
 {
+
+}
+
+function orthogonalComplement(matrix)
+{
     
 }
