@@ -327,9 +327,12 @@ function linearIndependence(vectors) {
     };
 }
 
-function span(vectors)
-{
-
+function span(vectors) {
+    return {
+        vectors,
+        basis: basis(math.transpose(vectors)),
+        dimension: matrixRank(math.transpose(vectors))
+    };
 }
 
 function rowSpace(matrix)
