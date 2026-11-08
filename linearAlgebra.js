@@ -310,3 +310,8 @@ function matrixRank(matrix) {
 
     return rank;
 }
+
+function linearIndependence(vector)
+{
+    
+}
