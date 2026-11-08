@@ -335,9 +335,14 @@ function span(vectors) {
     };
 }
 
-function rowSpace(matrix)
-{
+function rowSpace(matrix) {
+    const rref = reducedRowEchelonForm(
+        matrix.map(row => [...row])
+    );
 
+    return rref.filter(row =>
+        row.some(value => Math.abs(value) > 1e-10)
+    );
 }
 
 function orthogonalComplement(matrix)
