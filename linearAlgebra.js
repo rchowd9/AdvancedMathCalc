@@ -345,9 +345,10 @@ function rowSpace(matrix) {
     );
 }
 
-function orthogonalComplement(matrix)
-{
-
+function orthogonalComplement(matrix) {
+    return {
+        orthogonalComplement: nullSpace(matrix)
+    };
 }
 
 function rank1Matrices(matrix)
