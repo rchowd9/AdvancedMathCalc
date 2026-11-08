@@ -362,7 +362,33 @@ function rank1Matrices(matrix) {
 }
 
 
-function incidenceMatrices(graph)
-{
+function incidenceMatrices(graph) {
+    const vertices = graph.vertices;
+    const edges = graph.edges;
 
+    const matrix = Array(vertices.length)
+        .fill(null)
+        .map(() =>
+            Array(edges.length).fill(0)
+        );
+
+    edges.forEach((edge, edgeIndex) => {
+        const [u, v] = edge;
+
+        const uIndex = vertices.indexOf(u);
+        const vIndex = vertices.indexOf(v);
+
+        if (uIndex === -1 || vIndex === -1) {
+            throw new Error("Edge contains unknown vertex.");
+        }
+
+        matrix[uIndex][edgeIndex] = -1;
+        matrix[vIndex][edgeIndex] = 1;
+    });
+
+    return {
+        vertices,
+        edges,
+        incidenceMatrix: matrix
+    };
 }
