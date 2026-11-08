@@ -311,9 +311,20 @@ function matrixRank(matrix) {
     return rank;
 }
 
-function linearIndependence(vector)
-{
+function linearIndependence(vectors) {
+    if (!Array.isArray(vectors) || vectors.length === 0) {
+        throw new Error("A non-empty array of vectors is required.");
+    }
 
+    const matrix = math.transpose(vectors);
+    const rank = matrixRank(matrix);
+
+    return {
+        vectors,
+        rank,
+        numberOfVectors: vectors.length,
+        linearlyIndependent: rank === vectors.length
+    };
 }
 
 function span(vectors)
@@ -338,5 +349,5 @@ function rank1Matrices(matrix)
 
 function incidenceMatrices(graph)
 {
-    
+
 }
