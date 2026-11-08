@@ -351,10 +351,16 @@ function orthogonalComplement(matrix) {
     };
 }
 
-function rank1Matrices(matrix)
-{
+function rank1Matrices(matrix) {
+    const rank = matrixRank(matrix);
 
+    return {
+        matrix,
+        rank,
+        isRank1: rank === 1
+    };
 }
+
 
 function incidenceMatrices(graph)
 {
