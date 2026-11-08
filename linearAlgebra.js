@@ -313,5 +313,10 @@ function matrixRank(matrix) {
 
 function linearIndependence(vector)
 {
+
+}
+
+function nullSpace(matrix)
+{
     
 }
