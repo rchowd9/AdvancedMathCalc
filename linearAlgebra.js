@@ -320,3 +320,8 @@ function span(vectors)
 {
 
 }
+
+function rowSpace(matrix)
+{
+    
+}
