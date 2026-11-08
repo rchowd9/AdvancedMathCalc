@@ -333,5 +333,10 @@ function orthogonalComplement(matrix)
 
 function rank1Matrices(matrix)
 {
+
+}
+
+function incidenceMatrices(graph)
+{
     
 }
