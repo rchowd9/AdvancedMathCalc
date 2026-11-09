@@ -441,9 +441,23 @@ function linetoSubspace(line, subspaceBasis) {
 }
 
 
-function projectionMatrix(subspaceBasis)
-{
+function projectionMatrix(subspaceBasis) {
 
+    const A =
+        math.transpose(subspaceBasis);
+
+    const At =
+        math.transpose(A);
+
+    return math.multiply(
+        A,
+        math.multiply(
+            math.inv(
+                math.multiply(At, A)
+            ),
+            At
+        )
+    );
 }
 
 function errorVector(vector, subspaceBasis)
