@@ -402,3 +402,5 @@ function orthogonalProjection(vector, subspaceBasis)
 {
 
 }
+
+function linetoSubspace(line, subspaceBasis)
