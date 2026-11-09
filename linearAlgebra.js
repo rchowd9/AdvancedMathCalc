@@ -460,9 +460,18 @@ function projectionMatrix(subspaceBasis) {
     );
 }
 
-function errorVector(vector, subspaceBasis)
-{
+function errorVector(vector, subspaceBasis) {
 
+    const projection =
+        orthogonalProjection(
+            vector,
+            subspaceBasis
+        );
+
+    return math.subtract(
+        vector,
+        projection
+    );
 }
 
 function gramSchmidt(vectors, normalize = false)
