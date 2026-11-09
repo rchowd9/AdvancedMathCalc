@@ -400,9 +400,23 @@ function orthogonalSubspace(matrix) {
     };
 }
 
-function orthogonalProjection(vector, subspaceBasis)
-{
+function orthogonalProjection(vector, subspaceBasis) {
+    const A = math.transpose(subspaceBasis);
 
+    const At = math.transpose(A);
+
+    const projection =
+        math.multiply(
+            A,
+            math.multiply(
+                math.inv(
+                    math.multiply(At, A)
+                ),
+                math.multiply(At, vector)
+            )
+        );
+
+    return projection;
 }
 
 function linetoSubspace(line, subspaceBasis)
