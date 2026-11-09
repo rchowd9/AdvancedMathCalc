@@ -392,3 +392,8 @@ function incidenceMatrices(graph) {
         incidenceMatrix: matrix
     };
 }
+
+function orthogonalSubspace(matrix)
+{
+    
+}
