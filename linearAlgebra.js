@@ -393,9 +393,11 @@ function incidenceMatrices(graph) {
     };
 }
 
-function orthogonalSubspace(matrix)
-{
-
+function orthogonalSubspace(matrix) {
+    return {
+        orthogonalSubspace: nullSpace(matrix),
+        dimension: nullSpace(matrix).length
+    };
 }
 
 function orthogonalProjection(vector, subspaceBasis)
