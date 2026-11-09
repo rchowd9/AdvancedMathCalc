@@ -399,3 +399,6 @@ function orthogonalSubspace(matrix)
 }
 
 function orthogonalProjection(vector, subspaceBasis)
+{
+
+}
