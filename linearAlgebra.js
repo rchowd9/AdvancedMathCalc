@@ -419,10 +419,27 @@ function orthogonalProjection(vector, subspaceBasis) {
     return projection;
 }
 
-function linetoSubspace(line, subspaceBasis)
-{
+function linetoSubspace(line, subspaceBasis) {
 
+    const proj =
+        orthogonalProjection(
+            line,
+            subspaceBasis
+        );
+
+    const error =
+        math.subtract(line, proj);
+
+    const distance =
+        math.norm(error);
+
+    return {
+        projection: proj,
+        errorVector: error,
+        distance
+    };
 }
+
 
 function projectionMatrix(subspaceBasis)
 {
