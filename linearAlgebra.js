@@ -412,3 +412,5 @@ function projectionMatrix(subspaceBasis)
 {
 
 }
+
+function errorVector(vector, subspaceBasis)
