@@ -395,5 +395,7 @@ function incidenceMatrices(graph) {
 
 function orthogonalSubspace(matrix)
 {
-    
+
 }
+
+function orthogonalProjection(vector, subspaceBasis)
