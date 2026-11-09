@@ -474,9 +474,46 @@ function errorVector(vector, subspaceBasis) {
     );
 }
 
-function gramSchmidt(vectors, normalize = false)
-{
+function gramSchmidt(vectors, normalize = false) {
 
+    const basis = [];
+
+    for (const v of vectors) {
+
+        let u = [...v];
+
+        for (const b of basis) {
+
+            const projectionScalar =
+                math.dot(u, b) /
+                math.dot(b, b);
+
+            const projection =
+                math.multiply(
+                    projectionScalar,
+                    b
+                );
+
+            u = math.subtract(
+                u,
+                projection
+            );
+        }
+
+        if (math.norm(u) > 1e-10) {
+
+            if (normalize) {
+                u = math.divide(
+                    u,
+                    math.norm(u)
+                );
+            }
+
+            basis.push(u);
+        }
+    }
+
+    return basis;
 }
 
 function QRFactorization(matrix)
