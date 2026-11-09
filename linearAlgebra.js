@@ -516,9 +516,32 @@ function gramSchmidt(vectors, normalize = false) {
     return basis;
 }
 
-function QRFactorization(matrix)
-{
+function QRFactorization(matrix) {
 
+    const columns =
+        math.transpose(matrix);
+
+    const orthonormalBasis =
+        gramSchmidt(
+            columns,
+            true
+        );
+
+    const Q =
+        math.transpose(
+            orthonormalBasis
+        );
+
+    const R =
+        math.multiply(
+            math.transpose(Q),
+            matrix
+        );
+
+    return {
+        Q,
+        R
+    };
 }
 
 function projectionOntoSubspace(vector, subspaceBasis)
