@@ -427,3 +427,5 @@ function QRFactorization(matrix)
 {
 
 }
+
+function projectionOntoSubspace(vector, subspaceBasis)
