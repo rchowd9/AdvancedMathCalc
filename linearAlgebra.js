@@ -407,3 +407,5 @@ function linetoSubspace(line, subspaceBasis)
 {
 
 }
+
+function projectionMatrix(subspaceBasis)
