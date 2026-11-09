@@ -544,8 +544,13 @@ function QRFactorization(matrix) {
     };
 }
 
-function projectionOntoSubspace(vector, subspaceBasis)
-{
-
+function projectionOntoSubspace(
+    vector,
+    subspaceBasis
+) {
+    return orthogonalProjection(
+        vector,
+        subspaceBasis
+    );
 }
 
