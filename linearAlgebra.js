@@ -560,4 +560,6 @@ function determinantofScalarmultiple(matrix, scalar)
 }
 
 function cofactorMatrix(matrix)
+{
 
+}
