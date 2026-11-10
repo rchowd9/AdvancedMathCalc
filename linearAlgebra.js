@@ -554,9 +554,19 @@ function projectionOntoSubspace(
     );
 }
 
-function determinantofScalarmultiple(matrix, scalar)
-{
+function determinantofScalarmultiple(matrix, scalar) {
 
+    const n = matrix.length;
+
+    const det = math.det(matrix);
+
+    return {
+        determinantOriginal: det,
+        scalar,
+        size: n,
+        determinantScaled:
+            Math.pow(scalar, n) * det
+    };
 }
 
 function cofactorMatrix(matrix)
