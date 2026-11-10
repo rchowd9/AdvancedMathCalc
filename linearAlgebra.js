@@ -661,7 +661,31 @@ function cramersRule(A, B) {
 }
 
 
-function trace(matrix)
-{
+function trace(matrix) {
 
+    if (
+        !Array.isArray(matrix) ||
+        matrix.length === 0
+    ) {
+        throw new Error(
+            "Matrix must be non-empty."
+        );
+    }
+
+    const rows = matrix.length;
+    const cols = matrix[0].length;
+
+    if (rows !== cols) {
+        throw new Error(
+            "Trace requires a square matrix."
+        );
+    }
+
+    let sum = 0;
+
+    for (let i = 0; i < rows; i++) {
+        sum += matrix[i][i];
+    }
+
+    return sum;
 }
