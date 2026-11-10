@@ -573,3 +573,5 @@ function CramerRule(A, B)
 {
 
 }
+
+function trace(matrix)
