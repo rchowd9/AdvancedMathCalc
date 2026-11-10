@@ -569,10 +569,54 @@ function minorMatrix(matrix, row, col)
 
 }
 
-function CramerRule(A, B)
-{
+function cramersRule(A, B) {
+    const n = A.length;
 
+    // Validate matrix dimensions
+    if (!Array.isArray(A) || !Array.isArray(B) || B.length !== n) {
+        throw new Error("Invalid input: A must be n x n matrix and B must be length n.");
+    }
+    for (let row of A) {
+        if (!Array.isArray(row) || row.length !== n) {
+            throw new Error("Invalid input: A must be n x n matrix.");
+        }
+    }
+
+    // Helper: Calculate determinant using recursion (Laplace expansion)
+    function determinant(matrix) {
+        const size = matrix.length;
+        if (size === 1) return matrix[0][0];
+        if (size === 2) return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+
+        let det = 0;
+        for (let col = 0; col < size; col++) {
+            const subMatrix = matrix.slice(1).map(row => row.filter((_, idx) => idx !== col));
+            det += (col % 2 === 0 ? 1 : -1) * matrix[0][col] * determinant(subMatrix);
+        }
+        return det;
+    }
+
+    // Main determinant
+    const detA = determinant(A);
+    if (detA === 0) {
+        return null; // No unique solution
+    }
+
+    // Calculate each variable's determinant
+    const solutions = [];
+    for (let i = 0; i < n; i++) {
+        const Ai = A.map((row, rowIndex) => {
+            const newRow = [...row];
+            newRow[i] = B[rowIndex];
+            return newRow;
+        });
+        const detAi = determinant(Ai);
+        solutions.push(detAi / detA);
+    }
+
+    return solutions;
 }
+
 
 function trace(matrix)
 {
