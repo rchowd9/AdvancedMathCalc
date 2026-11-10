@@ -569,9 +569,35 @@ function determinantofScalarmultiple(matrix, scalar) {
     };
 }
 
-function cofactorMatrix(matrix)
-{
+function cofactorMatrix(matrix) {
 
+    const n = matrix.length;
+
+    const cofactors =
+        Array(n)
+            .fill(null)
+            .map(() =>
+                Array(n).fill(0)
+            );
+
+    for (let i = 0; i < n; i++) {
+
+        for (let j = 0; j < n; j++) {
+
+            const minor =
+                minorMatrix(
+                    matrix,
+                    i,
+                    j
+                );
+
+            cofactors[i][j] =
+                Math.pow(-1, i + j) *
+                minor;
+        }
+    }
+
+    return cofactors;
 }
 
 function minorMatrix(matrix, row, col) {
