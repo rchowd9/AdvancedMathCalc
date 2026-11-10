@@ -565,3 +565,6 @@ function cofactorMatrix(matrix)
 }
 
 function minorMatrix(matrix, row, col)
+{
+
+}
