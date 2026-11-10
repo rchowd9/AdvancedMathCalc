@@ -574,9 +574,16 @@ function cofactorMatrix(matrix)
 
 }
 
-function minorMatrix(matrix, row, col)
-{
+function minorMatrix(matrix, row, col) {
 
+    const subMatrix =
+        matrix
+            .filter((_, i) => i !== row)
+            .map(r =>
+                r.filter((_, j) => j !== col)
+            );
+
+    return math.det(subMatrix);
 }
 
 function cramersRule(A, B) {
