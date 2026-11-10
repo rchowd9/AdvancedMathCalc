@@ -570,3 +570,6 @@ function minorMatrix(matrix, row, col)
 }
 
 function CramerRule(A, B)
+{
+
+}
