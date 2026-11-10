@@ -554,3 +554,5 @@ function projectionOntoSubspace(
     );
 }
 
+function determinantofScalarmultiple
+
