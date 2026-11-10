@@ -555,5 +555,7 @@ function projectionOntoSubspace(
 }
 
 function determinantofScalarmultiple(matrix, scalar)
-
+{
+    
+}
 
