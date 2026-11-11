@@ -689,3 +689,5 @@ function trace(matrix) {
 
     return sum;
 }
+
+function diagonalization(matrix)
