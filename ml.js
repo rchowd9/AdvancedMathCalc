@@ -749,6 +749,28 @@ function unweightedErrorRate(yTrue, yPred)
     return errorCount / yTrue.length;
 }
 
+function weightedCoefficient(x, y, weights)
+{
+    if (x.length !== y.length || x.length !== weights.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    const n = x.length;
+    const weightedMeanX = x.reduce((sum, value, index) => sum + value * weights[index], 0) / weights.reduce((sum, w) => sum + w, 0);
+    const weightedMeanY = y.reduce((sum, value, index) => sum + value * weights[index], 0) / weights.reduce((sum, w) => sum + w, 0);
+    let numerator = 0;
+    let denominatorX = 0;
+    let denominatorY = 0;
+    for (let i = 0; i < n; i++) {
+        const diffX = x[i] - weightedMeanX;
+        const diffY = y[i] - weightedMeanY;
+        numerator += weights[i] * diffX * diffY;
+        denominatorX += weights[i] * diffX * diffX;
+        denominatorY += weights[i] * diffY * diffY;
+    }
+    const denominator = Math.sqrt(denominatorX * denominatorY);
+    return denominator === 0 ? 0 : numerator / denominator;
+}
+
 
 
 const machineLearningFunctions = {
