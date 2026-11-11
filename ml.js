@@ -735,6 +735,10 @@ function weightedErrorRate(yTrue, yPred, weights)
     return totalWeight === 0 ? 0 : weightedError / totalWeight;
 }
 
+function unweightedErrorRate(yTrue, yPred)
+{
+    
+
 
 const machineLearningFunctions = {
     euclideanDistance,
