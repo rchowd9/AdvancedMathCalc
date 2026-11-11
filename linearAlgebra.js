@@ -762,10 +762,30 @@ function markovMatrix(matrix) {
 }
 
 
-function symmetricMatrix(matrix)
-{
+function symmetricMatrix(matrix) {
 
+    const rows = matrix.length;
+    const cols = matrix[0].length;
+
+    if (rows !== cols) {
+        return false;
+    }
+
+    for (let i = 0; i < rows; i++) {
+        for (let j = i + 1; j < cols; j++) {
+
+            if (
+                Math.abs(matrix[i][j] - matrix[j][i])
+                > 1e-10
+            ) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
+
 
 function positiveDefiniteMatrix(matrix)
 {
