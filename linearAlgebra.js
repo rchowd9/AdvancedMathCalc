@@ -692,5 +692,10 @@ function trace(matrix) {
 
 function diagonalization(matrix)
 {
+
+}
+
+function markovMatrix(matrix)
+{
     
 }
