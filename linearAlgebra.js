@@ -691,3 +691,6 @@ function trace(matrix) {
 }
 
 function diagonalization(matrix)
+{
+    
+}
