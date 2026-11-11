@@ -111,8 +111,69 @@ function orIntroduction(premise, additionalPremise) {
   return `${normalizeLogicalText(premise)} or ${normalizeLogicalText(additionalPremise)}`;
 }
 
-function disjunctiveNormalForm(clause) 
-{
+function disjunctiveNormalForm(clause) {
+
+    clause = clause.replace(/\s+/g, '');
+
+    // Remove implications
+    clause = clause.replace(
+        /([A-Za-z])=>\(([^\)]+)\)/g,
+        '(~$1|($2))'
+    );
+
+    clause = clause.replace(
+        /\(([^\)]+)\)=>([A-Za-z])/g,
+        '(~($1)|$2)'
+    );
+
+    // Double negation
+    while (clause.includes('~~')) {
+        clause = clause.replace(/~~/g, '');
+    }
+
+    // De Morgan: ~(A&B) = ~A | ~B
+    clause = clause.replace(
+        /~\(([A-Za-z])&([A-Za-z])\)/g,
+        '(~$1|~$2)'
+    );
+
+    // De Morgan: ~(A|B) = ~A & ~B
+    clause = clause.replace(
+        /~\(([A-Za-z])\|([A-Za-z])\)/g,
+        '(~$1&~$2)'
+    );
+
+    // Distribution:
+    // A&(B|C) -> (A&B)|(A&C)
+
+    let changed = true;
+
+    while (changed) {
+
+        changed = false;
+
+        const distributed = clause.replace(
+            /([A-Za-z])&\(([A-Za-z])\|([A-Za-z])\)/g,
+            '($1&$2)|($1&$3)'
+        );
+
+        if (distributed !== clause) {
+            changed = true;
+            clause = distributed;
+        }
+
+        const distributed2 = clause.replace(
+            /\(([A-Za-z])\|([A-Za-z])\)&([A-Za-z])/g,
+            '($1&$3)|($2&$3)'
+        );
+
+        if (distributed2 !== clause) {
+            changed = true;
+            clause = distributed2;
+        }
+    }
+
+    return clause;
 }
 
 window.DISCRETE_LOGIC_MODE_NAMES = new Set([
