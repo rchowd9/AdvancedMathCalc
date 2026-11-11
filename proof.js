@@ -237,7 +237,9 @@ function solveDeductionTheoremProof(argumentsList) {
 }
 
 function proofByResolution(premise1, premise2)
-
+{
+  
+}
 
 function solveInequalityProof(statement) {
   const comparison = parseComparison(statement);
