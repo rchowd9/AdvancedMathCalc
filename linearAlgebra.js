@@ -690,9 +690,41 @@ function trace(matrix) {
     return sum;
 }
 
-function diagonalization(matrix)
-{
+function diagonalization(matrix) {
+    try {
+        const eig = math.eigs(matrix);
 
+        const eigenvalues = eig.values;
+        const eigenvectors = eig.eigenvectors;
+
+        if (!eigenvectors || eigenvectors.length !== matrix.length) {
+            return {
+                diagonalizable: false,
+                reason: "Not enough independent eigenvectors."
+            };
+        }
+
+        const P = eigenvectors.map(v => v.vector);
+        const Pmatrix = math.transpose(P);
+
+        const D = eigenvalues.map((value, i) =>
+            eigenvalues.map((_, j) => i === j ? value : 0)
+        );
+
+        return {
+            diagonalizable: true,
+            P: Pmatrix,
+            D,
+            PInverse: math.inv(Pmatrix)
+        };
+
+    } catch (error) {
+
+        return {
+            diagonalizable: false,
+            error: error.message
+        };
+    }
 }
 
 function markovMatrix(matrix)
