@@ -787,7 +787,36 @@ function symmetricMatrix(matrix) {
 }
 
 
-function positiveDefiniteMatrix(matrix)
-{
+function positiveDefiniteMatrix(matrix) {
 
+    if (!symmetricMatrix(matrix)) {
+
+        return {
+            positiveDefinite: false,
+            reason: "Matrix is not symmetric."
+        };
+    }
+
+    for (let k = 1; k <= matrix.length; k++) {
+
+        const principalMinor =
+            matrix
+            .slice(0, k)
+            .map(row => row.slice(0, k));
+
+        const det = math.det(principalMinor);
+
+        if (det <= 0) {
+
+            return {
+                positiveDefinite: false,
+                failingMinor: k,
+                determinant: det
+            };
+        }
+    }
+
+    return {
+        positiveDefinite: true
+    };
 }
