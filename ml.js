@@ -719,6 +719,8 @@ function pearsonCorrelation(x,y)
     }
 }
 
+function weightedErrorRate(yTrue, yPred, weights)
+
 
 const machineLearningFunctions = {
     euclideanDistance,
