@@ -112,7 +112,9 @@ function orIntroduction(premise, additionalPremise) {
 }
 
 function disjunctiveNormalForm(expression)
-
+{
+  
+}
 
 window.DISCRETE_LOGIC_MODE_NAMES = new Set([
   'modusponens',
