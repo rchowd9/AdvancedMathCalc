@@ -727,9 +727,38 @@ function diagonalization(matrix) {
     }
 }
 
-function markovMatrix(matrix)
-{
+function markovMatrix(matrix) {
 
+    const tolerance = 1e-10;
+
+    for (let i = 0; i < matrix.length; i++) {
+
+        let rowSum = 0;
+
+        for (let j = 0; j < matrix[i].length; j++) {
+
+            if (matrix[i][j] < 0) {
+                return {
+                    isMarkov: false,
+                    reason: "Negative probabilities detected."
+                };
+            }
+
+            rowSum += matrix[i][j];
+        }
+
+        if (Math.abs(rowSum - 1) > tolerance) {
+            return {
+                isMarkov: false,
+                reason: `Row ${i + 1} does not sum to 1.`
+            };
+        }
+    }
+
+    return {
+        isMarkov: true,
+        states: matrix.length
+    };
 }
 
 
