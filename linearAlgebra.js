@@ -697,5 +697,8 @@ function diagonalization(matrix)
 
 function markovMatrix(matrix)
 {
-    
+
 }
+
+
+function symmetricMatrix(matrix)
