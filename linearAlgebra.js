@@ -702,3 +702,6 @@ function markovMatrix(matrix)
 
 
 function symmetricMatrix(matrix)
+{
+
+}
