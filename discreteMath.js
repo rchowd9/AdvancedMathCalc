@@ -111,9 +111,8 @@ function orIntroduction(premise, additionalPremise) {
   return `${normalizeLogicalText(premise)} or ${normalizeLogicalText(additionalPremise)}`;
 }
 
-function disjunctiveNormalForm(expression)
+function disjunctiveNormalForm(clause) 
 {
-  
 }
 
 window.DISCRETE_LOGIC_MODE_NAMES = new Set([
