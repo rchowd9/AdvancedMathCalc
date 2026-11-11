@@ -720,6 +720,20 @@ function pearsonCorrelation(x,y)
 }
 
 function weightedErrorRate(yTrue, yPred, weights)
+{
+    if (yTrue.length !== yPred.length || yTrue.length !== weights.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+    let weightedError = 0;
+    let totalWeight = 0;
+    for (let i = 0; i < yTrue.length; i++) {
+        totalWeight += weights[i];
+        if (yTrue[i] !== yPred[i]) {
+            weightedError += weights[i];
+        }
+    }
+    return totalWeight === 0 ? 0 : weightedError / totalWeight;
+}
 
 
 const machineLearningFunctions = {
