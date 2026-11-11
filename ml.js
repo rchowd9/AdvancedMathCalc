@@ -737,7 +737,11 @@ function weightedErrorRate(yTrue, yPred, weights)
 
 function unweightedErrorRate(yTrue, yPred)
 {
-    
+    if (yTrue.length !== yPred.length || yTrue.length !== weights.length) {
+        throw new Error('Input arrays must have the same length.');
+    }
+}
+
 
 
 const machineLearningFunctions = {
