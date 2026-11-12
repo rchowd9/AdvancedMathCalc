@@ -983,9 +983,31 @@ function similarityMatrix(A, B) {
     };
 }
 
-function jordanBlockForm(matrix)
-{
+function jordanBlockForm(matrix) {
 
+    const eig =
+        math.eigs(matrix);
+
+    const jordan = [];
+
+    for (let i = 0; i < eig.values.length; i++) {
+
+        jordan.push(
+            eig.values.map(
+                (_, j) =>
+                    i === j
+                        ? eig.values[i]
+                        : 0
+            )
+        );
+    }
+
+    return {
+        note:
+            "Diagonal Jordan form approximation. Full Jordan chains not implemented.",
+        jordanForm: jordan,
+        eigenvalues: eig.values
+    };
 }
 
 function singularValueDecomposition(matrix)
