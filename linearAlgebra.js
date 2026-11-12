@@ -842,3 +842,6 @@ function complexMatrix(matrix)
 }
 
 function principalAxisTheorem(matrix)
+{
+
+}
