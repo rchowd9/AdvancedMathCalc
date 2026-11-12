@@ -823,5 +823,7 @@ function positiveDefiniteMatrix(matrix) {
 
 function fourierMatrix(n)
 {
-    
+
 }
+
+function hermitianMatrix(matrix)
