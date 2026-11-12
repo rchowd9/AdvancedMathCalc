@@ -847,3 +847,6 @@ function principalAxisTheorem(matrix)
 }
 
 function similarityMatrix(A, B)
+{
+
+}
