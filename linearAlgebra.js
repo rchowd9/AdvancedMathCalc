@@ -899,9 +899,22 @@ function fastFourierTransform(vector)
 
 }
 
-function complexMatrix(matrix)
-{
+function complexMatrix(matrix) {
 
+    for (const row of matrix) {
+
+        for (const value of row) {
+
+            if (
+                math.typeOf(value) ===
+                "Complex"
+            ) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 function principalAxisTheorem(matrix)
