@@ -894,9 +894,50 @@ function hermitianMatrix(matrix) {
     };
 }
 
-function fastFourierTransform(vector)
-{
+function fastFourierTransform(vector) {
 
+    const N = vector.length;
+
+    if (N <= 1) {
+        return vector;
+    }
+
+    const even =
+        fastFourierTransform(
+            vector.filter((_, i) => i % 2 === 0)
+        );
+
+    const odd =
+        fastFourierTransform(
+            vector.filter((_, i) => i % 2 !== 0)
+        );
+
+    const result = Array(N);
+
+    for (let k = 0; k < N / 2; k++) {
+
+        const twiddle =
+            math.exp(
+                math.complex(
+                    0,
+                    (-2 * Math.PI * k) / N
+                )
+            );
+
+        const t =
+            math.multiply(
+                twiddle,
+                odd[k]
+            );
+
+        result[k] =
+            math.add(even[k], t);
+
+        result[k + N / 2] =
+            math.subtract(even[k], t);
+    }
+
+    return result;
 }
 
 function complexMatrix(matrix) {
