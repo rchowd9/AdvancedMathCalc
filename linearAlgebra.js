@@ -827,3 +827,6 @@ function fourierMatrix(n)
 }
 
 function hermitianMatrix(matrix)
+{
+
+}
