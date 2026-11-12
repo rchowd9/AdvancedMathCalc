@@ -950,9 +950,37 @@ function principalAxisTheorem(matrix) {
     };
 }
 
-function similarityMatrix(A, B)
-{
+function similarityMatrix(A, B) {
 
+    const eigA =
+        math.eigs(A).values
+            .slice()
+            .sort();
+
+    const eigB =
+        math.eigs(B).values
+            .slice()
+            .sort();
+
+    let similar = true;
+
+    for (let i = 0; i < eigA.length; i++) {
+
+        if (
+            Math.abs(
+                eigA[i] - eigB[i]
+            ) > 1e-10
+        ) {
+            similar = false;
+            break;
+        }
+    }
+
+    return {
+        similar,
+        eigenvaluesA: eigA,
+        eigenvaluesB: eigB
+    };
 }
 
 function jordanBlockForm(matrix)
