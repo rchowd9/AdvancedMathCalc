@@ -821,9 +821,31 @@ function positiveDefiniteMatrix(matrix) {
     };
 }
 
-function fourierMatrix(n)
-{
+function fourierMatrix(n) {
 
+    const F = [];
+
+    for (let j = 0; j < n; j++) {
+
+        const row = [];
+
+        for (let k = 0; k < n; k++) {
+
+            const angle =
+                (-2 * Math.PI * j * k) / n;
+
+            row.push(
+                math.complex({
+                    re: Math.cos(angle) / Math.sqrt(n),
+                    im: Math.sin(angle) / Math.sqrt(n)
+                })
+            );
+        }
+
+        F.push(row);
+    }
+
+    return F;
 }
 
 function hermitianMatrix(matrix)
