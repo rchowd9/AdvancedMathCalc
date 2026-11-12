@@ -850,3 +850,5 @@ function similarityMatrix(A, B)
 {
 
 }
+
+function jordanBlockForm(matrix)
