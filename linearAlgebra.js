@@ -820,3 +820,5 @@ function positiveDefiniteMatrix(matrix) {
         positiveDefinite: true
     };
 }
+
+function fourierMatrix(n)
