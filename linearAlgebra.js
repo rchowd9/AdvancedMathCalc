@@ -832,3 +832,6 @@ function hermitianMatrix(matrix)
 }
 
 function fastFourierTransform(vector)
+{
+
+}
