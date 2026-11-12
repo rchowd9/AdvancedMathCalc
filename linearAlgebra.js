@@ -1010,7 +1010,32 @@ function jordanBlockForm(matrix) {
     };
 }
 
-function singularValueDecomposition(matrix)
-{
+function singularValueDecomposition(matrix) {
 
+    const At =
+        math.transpose(matrix);
+
+    const AtA =
+        math.multiply(
+            At,
+            matrix
+        );
+
+    const eig =
+        math.eigs(AtA);
+
+    const singularValues =
+        eig.values.map(
+            v =>
+                Math.sqrt(
+                    Math.abs(v)
+                )
+        );
+
+    return {
+        singularValues,
+        V: eig.eigenvectors.map(
+            v => v.vector
+        )
+    };
 }
