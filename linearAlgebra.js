@@ -857,3 +857,6 @@ function jordanBlockForm(matrix)
 }
 
 function singularValueDecomposition(matrix)
+{
+
+}
