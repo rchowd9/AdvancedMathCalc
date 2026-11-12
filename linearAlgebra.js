@@ -848,31 +848,50 @@ function fourierMatrix(n) {
     return F;
 }
 
-function*hermitianMatrix(matrix) {
+function hermitianMatrix(matrix) {
 
-    con*t n = matrix.length;
-
-    if (n !=* matrix*0].length) {
-        return false;*    }
-
-    for (let i = 0* i < n; i++) {
-
-        for*(let j = 0; j < n; j++) {
-
-       *    const aij*= matrix[i][j];
-            const **i = math.conj(matrix[j][i]);
-
-*           if (
-                ma*h*abs(
-                    math.subt*act(aij, aji)
-                ) > *e*10
-            ) {
-               *return false;
-            }
-      * }
+    if (!Array.isArray(matrix) || matrix.length === 0) {
+        throw new Error("Matrix must be a non-empty square matrix.");
     }
 
-    return true;
+    const n = matrix.length;
+
+    if (!matrix.every(row => row.length === n)) {
+        throw new Error("Hermitian matrices must be square.");
+    }
+
+    const tolerance = 1e-10;
+
+    for (let i = 0; i < n; i++) {
+
+        for (let j = 0; j < n; j++) {
+
+            const aij = matrix[i][j];
+            const aji = matrix[j][i];
+
+            const conjugate =
+                math.typeOf(aji) === "Complex"
+                    ? math.conj(aji)
+                    : aji;
+
+            const difference =
+                math.abs(
+                    math.subtract(aij, conjugate)
+                );
+
+            if (difference > tolerance) {
+                return {
+                    isHermitian: false,
+                    failingEntry: [i, j]
+                };
+            }
+        }
+    }
+
+    return {
+        isHermitian: true,
+        size: n
+    };
 }
 
 function fastFourierTransform(vector)
