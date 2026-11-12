@@ -917,9 +917,37 @@ function complexMatrix(matrix) {
     return false;
 }
 
-function principalAxisTheorem(matrix)
-{
+function principalAxisTheorem(matrix) {
 
+    if (!symmetricMatrix(matrix)) {
+
+        throw new Error(
+            "Matrix must be symmetric."
+        );
+    }
+
+    const eig =
+        math.eigs(matrix);
+
+    const Q =
+        eig.eigenvectors.map(
+            v => v.vector
+        );
+
+    const D =
+        eig.values.map(
+            (value, i) =>
+                eig.values.map(
+                    (_, j) =>
+                        i === j ? value : 0
+                )
+        );
+
+    return {
+        orthogonalMatrix:
+            math.transpose(Q),
+        diagonalMatrix: D
+    };
 }
 
 function similarityMatrix(A, B)
