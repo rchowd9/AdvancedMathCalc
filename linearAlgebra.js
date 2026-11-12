@@ -848,9 +848,31 @@ function fourierMatrix(n) {
     return F;
 }
 
-function hermitianMatrix(matrix)
-{
+function*hermitianMatrix(matrix) {
 
+    con*t n = matrix.length;
+
+    if (n !=* matrix*0].length) {
+        return false;*    }
+
+    for (let i = 0* i < n; i++) {
+
+        for*(let j = 0; j < n; j++) {
+
+       *    const aij*= matrix[i][j];
+            const **i = math.conj(matrix[j][i]);
+
+*           if (
+                ma*h*abs(
+                    math.subt*act(aij, aji)
+                ) > *e*10
+            ) {
+               *return false;
+            }
+      * }
+    }
+
+    return true;
 }
 
 function fastFourierTransform(vector)
