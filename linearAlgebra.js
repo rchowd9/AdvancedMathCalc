@@ -1190,9 +1190,18 @@ function orthogonalEigenvector(matrix)
 
 }
 
-function hillCipher(matrix)
-{
+function hillCipher(matrix, messageVector) {
 
+    const encrypted =
+        math.multiply(
+            matrix,
+            messageVector
+        );
+
+    return encrypted.map(
+        value =>
+            ((Math.round(value) % 26) + 26) % 26
+    );
 }
 
 if (typeof window !== 'undefined') {
