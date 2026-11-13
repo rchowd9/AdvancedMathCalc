@@ -1086,4 +1086,7 @@ function linearTransformation(matrix, vector)
 
 }
 
-function changeOfBasis(oldBasis, newBasis, vector) {
+function changeOfBasis(oldBasis, newBasis, vector)
+{
+
+}
