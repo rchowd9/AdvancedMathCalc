@@ -1116,9 +1116,20 @@ function changeOfBasis(
     );
 }
 
-function fullColumnRank(matrix)
-{
+function fullColumnRank(matrix) {
 
+    const rank =
+        matrixRank(matrix);
+
+    const columns =
+        matrix[0].length;
+
+    return {
+        rank,
+        columns,
+        fullColumnRank:
+            rank === columns
+    };
 }
 
 function fullRowRank(matrix)
