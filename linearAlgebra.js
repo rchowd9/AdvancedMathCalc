@@ -1102,3 +1102,6 @@ function fullRowRank(matrix)
 }
 
 function rightInverse(matrix)
+{
+
+}
