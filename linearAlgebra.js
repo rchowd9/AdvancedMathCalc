@@ -1132,9 +1132,20 @@ function fullColumnRank(matrix) {
     };
 }
 
-function fullRowRank(matrix)
-{
+function fullRowRank(matrix) {
 
+    const rank =
+        matrixRank(matrix);
+
+    const rows =
+        matrix.length;
+
+    return {
+        rank,
+        rows,
+        fullRowRank:
+            rank === rows
+    };
 }
 
 function rightInverse(matrix)
