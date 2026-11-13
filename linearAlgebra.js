@@ -1090,3 +1090,5 @@ function changeOfBasis(oldBasis, newBasis, vector)
 {
 
 }
+
+function fullColumnRank(matrix)
