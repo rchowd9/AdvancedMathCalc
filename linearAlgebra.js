@@ -1185,9 +1185,20 @@ function psuedoInverse(matrix)
 
 }
 
-function orthogonalEigenvector(matrix)
-{
+function orthogonalEigenvector(matrix) {
 
+    const eig =
+        math.eigs(matrix);
+
+    const vectors =
+        eig.eigenvectors.map(
+            e => e.vector
+        );
+
+    return gramSchmidt(
+        vectors,
+        true
+    );
 }
 
 function hillCipher(matrix, messageVector) {
