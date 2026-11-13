@@ -1110,3 +1110,5 @@ function leftInverse(matrix)
 {
 
 }
+
+function psuedoInverse(matrix)
