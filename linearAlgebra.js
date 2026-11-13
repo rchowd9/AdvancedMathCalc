@@ -1082,3 +1082,6 @@ function singularValueDecomposition(matrix) {
 }
 
 function linearTransformation(matrix, vector)
+{
+    
+}
