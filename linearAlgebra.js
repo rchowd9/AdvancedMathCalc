@@ -1120,3 +1120,5 @@ function orthogonalEigenvector(matrix)
 {
 
 }
+
+function hillCipher(matrix)
