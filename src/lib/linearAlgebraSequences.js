@@ -1,22 +1,219 @@
 const MAX_SEQUENCE_TERMS = 1000;
 
+function formatMatrix(value) {
+  return JSON.stringify(value);
+}
+
+function explainLinearAlgebra(label, steps, result) {
+  return [
+    `Linear algebra: ${label}`,
+    ...steps.map((step, index) => `Step ${index + 1}: ${step}`),
+    `Result: ${result}`
+  ].join('\n');
+}
+
 export function solveLinearAlgebra(name, args, math) {
   const matrix = args[0];
-  const matrixText = (value) => JSON.stringify(value);
+  const normalizedName = name.toLowerCase();
 
-  switch (name.toLowerCase()) {
-    case 'transpose':
-      return `Transpose Aᵀ = ${matrixText(math.transpose(matrix))}`;
-    case 'rank':
-      return `Rank(A) = ${matrixRank(matrix)}`;
-    case 'trace':
-      return `Trace(A) = Σ diagonal entries = ${math.trace(matrix)}`;
-    case 'matrixmultiply':
-      return `AB = ${matrixText(math.multiply(matrix, args[1]))}`;
-    case 'matrixadd':
-      return `A + B = ${matrixText(math.add(matrix, args[1]))}`;
-    case 'scalarmultiply':
-      return `cA = ${matrixText(math.multiply(args[1], matrix))}`;
+  switch (normalizedName) {
+    case 'transpose': {
+      const result = math.transpose(matrix);
+      return explainLinearAlgebra(
+        'Transpose',
+        [
+          'Swap each element aᵢⱼ with aⱼᵢ so rows become columns.',
+          `A = ${formatMatrix(matrix)}`,
+          `Aᵀ = ${formatMatrix(result)}`
+        ],
+        `Aᵀ = ${formatMatrix(result)}`
+      );
+    }
+    case 'rank': {
+      const rank = matrixRank(matrix);
+      return explainLinearAlgebra(
+        'Rank',
+        [
+          'Reduce the matrix to row-echelon form.',
+          'Count the non-zero pivot rows.',
+          `A = ${formatMatrix(matrix)}`
+        ],
+        `Rank(A) = ${rank}`
+      );
+    }
+    case 'trace': {
+      const traceValue = math.trace(matrix);
+      const diagonal = matrix.map((row, index) => row[index]);
+      return explainLinearAlgebra(
+        'Trace',
+        [
+          'Select the diagonal entries.',
+          `Diagonal entries: ${diagonal.join(', ')}`,
+          `Add them: ${diagonal.join(' + ')} = ${traceValue}`
+        ],
+        `Trace(A) = Σ diagonal entries = ${traceValue}`
+      );
+    }
+    case 'matrixmultiply': {
+      const result = math.multiply(matrix, args[1]);
+      return explainLinearAlgebra(
+        'Matrix multiplication',
+        [
+          'Multiply each entry in a row of A by the matching entry in a column of B.',
+          `A = ${formatMatrix(matrix)}`,
+          `B = ${formatMatrix(args[1])}`,
+          'Sum the products for each entry in the result.'
+        ],
+        `AB = ${formatMatrix(result)}`
+      );
+    }
+    case 'matrixadd': {
+      const result = math.add(matrix, args[1]);
+      return explainLinearAlgebra(
+        'Matrix addition',
+        [
+          'Add corresponding entries from A and B.',
+          `A = ${formatMatrix(matrix)}`,
+          `B = ${formatMatrix(args[1])}`
+        ],
+        `A + B = ${formatMatrix(result)}`
+      );
+    }
+    case 'scalarmultiply': {
+      const result = math.multiply(args[1], matrix);
+      return explainLinearAlgebra(
+        'Scalar multiplication',
+        [
+          'Multiply each entry of A by the scalar c.',
+          `c = ${args[1]}`,
+          `A = ${formatMatrix(matrix)}`
+        ],
+        `cA = ${formatMatrix(result)}`
+      );
+    }
+    case 'det':
+    case 'determinant': {
+      const det = math.det(matrix);
+      if (Array.isArray(matrix) && matrix.length === 2 && matrix[0].length === 2) {
+        const [[a, b], [c, d]] = matrix;
+        return explainLinearAlgebra(
+          'Determinant',
+          [
+            'For a 2×2 matrix, use det(A) = ad - bc.',
+            `A = ${formatMatrix(matrix)}`,
+            `det(A) = (${a} × ${d}) - (${b} × ${c}) = ${a * d} - ${b * c}`
+          ],
+          `det(A) = ${det}`
+        );
+      }
+      return explainLinearAlgebra(
+        'Determinant',
+        [
+          'Apply the cofactor expansion or row-reduction method.',
+          `A = ${formatMatrix(matrix)}`,
+          'Combine the products of the chosen row/column terms and signs.'
+        ],
+        `det(A) = ${det}`
+      );
+    }
+    case 'inv':
+    case 'inverse': {
+      const det = math.det(matrix);
+      const inverse = math.inv(matrix);
+      if (Array.isArray(matrix) && matrix.length === 2 && matrix[0].length === 2) {
+        const [[a, b], [c, d]] = matrix;
+        const formula = `1/(${a * d - b * c}) × [[${d}, ${-b}], [${-c}, ${a}]]`;
+        return explainLinearAlgebra(
+          'Inverse',
+          [
+            'A matrix is invertible only when det(A) ≠ 0.',
+            `det(A) = ${det}`,
+            `For a 2×2 matrix: A⁻¹ = 1/(ad - bc) × [[d, -b], [-c, a]]`,
+            `A⁻¹ = ${formula}`
+          ],
+          `A⁻¹ = ${formatMatrix(inverse)}`
+        );
+      }
+      return explainLinearAlgebra(
+        'Inverse',
+        [
+          'Check that det(A) ≠ 0.',
+          'Use the adjugate formula or Gauss-Jordan elimination.',
+          `A = ${formatMatrix(matrix)}`
+        ],
+        `A⁻¹ = ${formatMatrix(inverse)}`
+      );
+    }
+    case 'eigenvalues': {
+      const eigen = math.eigs(matrix);
+      const eigenValues = Array.isArray(eigen.values) ? eigen.values : [eigen.values];
+      return explainLinearAlgebra(
+        'Eigenvalues',
+        [
+          'Solve det(A - λI) = 0.',
+          'This creates the characteristic polynomial.',
+          'The roots of that polynomial are the eigenvalues.'
+        ],
+        `Eigenvalues: ${formatMatrix(eigenValues)}`
+      );
+    }
+    case 'nullspace': {
+      const rref = math.rref(matrix);
+      const pivotColumns = [];
+      for (let row = 0; row < rref.length; row += 1) {
+        for (let col = 0; col < rref[0].length; col += 1) {
+          if (Math.abs(rref[row][col]) > 1e-10) {
+            pivotColumns.push(col);
+            break;
+          }
+        }
+      }
+      return explainLinearAlgebra(
+        'Null space',
+        [
+          'Row-reduce the matrix to find pivot columns.',
+          'Free variables correspond to non-pivot columns.',
+          `Pivot columns: ${pivotColumns.join(', ') || 'none'}`
+        ],
+        `Nullspace basis is determined by the free variables in RREF(A).`
+      );
+    }
+    case 'basis':
+    case 'columnspace':
+    case 'rowspace': {
+      const description = normalizedName === 'basis'
+        ? 'basis vectors' : normalizedName === 'columnspace' ? 'column space' : 'row space';
+      return explainLinearAlgebra(
+        description,
+        [
+          'Find the pivot columns or pivot rows in the reduced matrix.',
+          'Use the corresponding vectors as a basis for the subspace.',
+          `A = ${formatMatrix(matrix)}`
+        ],
+        `${description.charAt(0).toUpperCase() + description.slice(1)} is spanned by the pivot vectors.`
+      );
+    }
+    case 'orthogonalprojection':
+    case 'projection': {
+      const vector = args[1];
+      const subspaceBasis = args[2] || args[1];
+      const projection = math.multiply(
+        math.transpose(subspaceBasis),
+        math.multiply(
+          math.inv(math.multiply(math.transpose(subspaceBasis), subspaceBasis)),
+          math.multiply(math.transpose(subspaceBasis), vector)
+        )
+      );
+      return explainLinearAlgebra(
+        'Orthogonal projection',
+        [
+          'Project v onto the span of the subspace basis.',
+          'Use proj_W(v) = A(AᵀA)⁻¹Aᵀv.',
+          `v = ${formatMatrix(vector)}`
+        ],
+        `proj_W(v) = ${formatMatrix(projection)}`
+      );
+    }
     default:
       throw new Error(`Unknown linear algebra formula: ${name}`);
   }
