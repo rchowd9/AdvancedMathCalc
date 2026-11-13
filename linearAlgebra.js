@@ -1092,9 +1092,28 @@ function linearTransformation(matrix, vector) {
     return math.multiply(matrix, vector);
 }
 
-function changeOfBasis(oldBasis, newBasis, vector)
-{
+function changeOfBasis(
+    oldBasis,
+    newBasis,
+    vector
+) {
 
+    const Pold =
+        math.transpose(oldBasis);
+
+    const Pnew =
+        math.transpose(newBasis);
+
+    const standardVector =
+        math.multiply(
+            Pold,
+            vector
+        );
+
+    return math.multiply(
+        math.inv(Pnew),
+        standardVector
+    );
 }
 
 function fullColumnRank(matrix)
