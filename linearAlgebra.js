@@ -1180,9 +1180,35 @@ function leftInverse(matrix) {
     );
 }
 
-function psuedoInverse(matrix)
-{
+function psuedoInverse(matrix) {
 
+    const At =
+        math.transpose(matrix);
+
+    try {
+
+        return math.multiply(
+            math.inv(
+                math.multiply(
+                    At,
+                    matrix
+                )
+            ),
+            At
+        );
+
+    } catch {
+
+        return math.multiply(
+            At,
+            math.inv(
+                math.multiply(
+                    matrix,
+                    At
+                )
+            )
+        );
+    }
 }
 
 function orthogonalEigenvector(matrix) {
