@@ -38,6 +38,7 @@ A powerful, interactive math calculator built with JavaScript, [Math.js](https:/
 - Transpose, rank, and trace — `transpose(A)`, `rank(A)`, `trace(A)`
 - Matrix addition and multiplication — `matrixAdd(A, B)`, `matrixMultiply(A, B)`
 - Scalar multiplication — `scalarMultiply(A, c)`
+- Every supported matrix formula now returns a worked explanation with step-by-step reasoning and the final result.
 
 ### Equation Solvers
 - Linear systems — `solveSystem(A, b)`
