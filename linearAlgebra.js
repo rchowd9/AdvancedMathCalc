@@ -1125,3 +1125,16 @@ function hillCipher(matrix)
 {
 
 }
+
+if (typeof window !== 'undefined') {
+    const discoveredLinearAlgebraModes = new Set([
+        'transpose', 'rank', 'trace', 'matrixmultiply', 'matrixadd', 'scalarmultiply',
+        'det', 'determinant', 'inv', 'inverse', 'eigenvalues', 'nullspace',
+        'basis', 'columnspace', 'rowspace', 'projection', 'orthogonalprojection'
+    ]);
+
+    window.LINEAR_ALGEBRA_MODE_NAMES ??= new Set();
+    for (const formulaName of discoveredLinearAlgebraModes) {
+        window.LINEAR_ALGEBRA_MODE_NAMES.add(formulaName);
+    }
+}
