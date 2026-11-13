@@ -13,6 +13,7 @@ const legacyAssets = [
   'business.js',
   'calculus.js',
   'discreteMath.js',
+  'linearAlgebra.js',
   'script.js',
   'realAnalysis.js',
   'topology.js'
