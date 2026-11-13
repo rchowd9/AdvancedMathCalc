@@ -1115,3 +1115,8 @@ function psuedoInverse(matrix)
 {
 
 }
+
+function orthogonalEigenvector(matrix)
+{
+
+}
