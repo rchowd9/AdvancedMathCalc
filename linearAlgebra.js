@@ -1148,9 +1148,20 @@ function fullRowRank(matrix) {
     };
 }
 
-function rightInverse(matrix)
-{
+function rightInverse(matrix) {
 
+    const At =
+        math.transpose(matrix);
+
+    return math.multiply(
+        At,
+        math.inv(
+            math.multiply(
+                matrix,
+                At
+            )
+        )
+    );
 }
 
 function leftInverse(matrix)
