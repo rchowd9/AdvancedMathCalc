@@ -1164,9 +1164,20 @@ function rightInverse(matrix) {
     );
 }
 
-function leftInverse(matrix)
-{
+function leftInverse(matrix) {
 
+    const At =
+        math.transpose(matrix);
+
+    return math.multiply(
+        math.inv(
+            math.multiply(
+                At,
+                matrix
+            )
+        ),
+        At
+    );
 }
 
 function psuedoInverse(matrix)
