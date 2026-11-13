@@ -1083,5 +1083,7 @@ function singularValueDecomposition(matrix) {
 
 function linearTransformation(matrix, vector)
 {
-    
+
 }
+
+function changeOfBasis(oldBasis, newBasis, vector) {
