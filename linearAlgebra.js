@@ -1081,9 +1081,15 @@ function singularValueDecomposition(matrix) {
     };
 }
 
-function linearTransformation(matrix, vector)
-{
+function linearTransformation(matrix, vector) {
 
+    if (matrix[0].length !== vector.length) {
+        throw new Error(
+            "Matrix and vector dimensions do not match."
+        );
+    }
+
+    return math.multiply(matrix, vector);
 }
 
 function changeOfBasis(oldBasis, newBasis, vector)
