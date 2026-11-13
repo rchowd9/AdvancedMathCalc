@@ -1105,3 +1105,8 @@ function rightInverse(matrix)
 {
 
 }
+
+function leftInverse(matrix)
+{
+
+}
