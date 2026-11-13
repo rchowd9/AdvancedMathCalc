@@ -37,7 +37,25 @@ window.COMPUTER_SCIENCE_EXPLANATIONS = computerScienceFunctions.COMPUTER_SCIENCE
 window.BINARY_EXPLANATIONS = binaryFunctions.BINARY_EXPLANATIONS;
 window.DIFFERENTIAL_EQUATION_MODE_NAMES = DIFFERENTIAL_EQUATION_MODE_NAMES;
 window.solveDifferentialEquation = (expression) => solveDifferentialEquation(expression, window.math.create({ matrix: 'Array' }));
-window.LINEAR_ALGEBRA_MODE_NAMES = new Set(['transpose', 'rank', 'trace', 'matrixmultiply', 'matrixadd', 'scalarmultiply']);
+window.LINEAR_ALGEBRA_MODE_NAMES = new Set([
+  'transpose',
+  'rank',
+  'trace',
+  'matrixmultiply',
+  'matrixadd',
+  'scalarmultiply',
+  'det',
+  'determinant',
+  'inv',
+  'inverse',
+  'eigenvalues',
+  'nullspace',
+  'basis',
+  'columnspace',
+  'rowspace',
+  'projection',
+  'orthogonalprojection'
+]);
 window.SEQUENCE_MODE_NAMES = new Set(['arithmeticsequence', 'geometricsequence', 'harmonicsequence', 'alternatingharmonic', 'pseries', 'fibonaccisequence']);
 window.solveLinearAlgebra = solveLinearAlgebra;
 window.solveSequence = solveSequence;
@@ -84,7 +102,7 @@ const loadLegacyScripts = async () => {
   window.__mathcalcLegacyLoaded = true;
 
   try {
-    const legacyScripts = ['wordProblems.js', 'proof.js', 'geometryProofs.js', 'chemistry.js', 'physics.js', 'engineering.js', 'business.js', 'calculus.js', 'discreteMath.js', 'realAnalysis.js', 'topology.js', 'script.js'];
+    const legacyScripts = ['wordProblems.js', 'proof.js', 'geometryProofs.js', 'chemistry.js', 'physics.js', 'engineering.js', 'business.js', 'calculus.js', 'discreteMath.js', 'realAnalysis.js', 'topology.js', 'linearAlgebra.js', 'script.js'];
     for (const src of legacyScripts) {
       await loadScript(`${import.meta.env.BASE_URL}${src}`);
     }
