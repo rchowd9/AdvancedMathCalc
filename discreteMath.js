@@ -397,8 +397,10 @@ function solveDiscreteFormula(mode, values) {
     const [total, parts] = values;
     requireNonnegative(total, 'Total');
     if (parts < 1) throw new Error('Parts must be a positive integer.');
-    const result = chooseBigInt(total + parts - 1, parts - 1);
-    return `Step 1: Use stars and bars: C(total + parts - 1, parts - 1).\nStep 2: Substitute total = ${total} and parts = ${parts}: C(${total + parts - 1}, ${parts - 1}).\nConclusion: Non-negative integer solutions = ${result}. Units: number of solutions.`;
+    const combinationTotal = total + parts - 1;
+    const combinationParts = parts - 1;
+    const result = chooseBigInt(combinationTotal, combinationParts);
+    return `Step 1: Use stars and bars: C(total + parts - 1, parts - 1).\nStep 2: Substitute total = ${total} and parts = ${parts}: C(${combinationTotal}, ${combinationParts}) = ${result}.\nConclusion: Non-negative integer solutions = ${result}. Units: number of solutions.`;
   }
   if (mode === 'circularpermutations') {
     requireArgs(1, 'circularPermutations(n)');
