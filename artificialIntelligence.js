@@ -74,7 +74,15 @@ function universalQuantifier(
     return set.every(predicate);
 }
 
-function existentialQuantifier()
-{
-    
+// ================================
+// Existential Quantifier
+// ∃x P(x)
+// ================================
+
+function existentialQuantifier(
+    set,
+    predicate
+) {
+
+    return set.some(predicate);
 }
