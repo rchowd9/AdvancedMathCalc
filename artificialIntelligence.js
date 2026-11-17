@@ -4,3 +4,6 @@ function unaryRelation()
 }
 
 function nAryRelation()
+{
+
+}
