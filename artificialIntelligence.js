@@ -32,9 +32,33 @@ function nAryRelation(...sets) {
     return relation;
 }
 
-function funcRelation()
-{
-    
+// ================================
+// Function Relation
+// Tests if relation represents a function
+// ================================
+
+function funcRelation(relation) {
+
+    const domain = new Map();
+
+    for (const [x, y] of relation) {
+
+        if (
+            domain.has(x) &&
+            domain.get(x) !== y
+        ) {
+
+            return {
+                isFunction: false
+            };
+        }
+
+        domain.set(x, y);
+    }
+
+    return {
+        isFunction: true
+    };
 }
 
 function universalQuantifier()
