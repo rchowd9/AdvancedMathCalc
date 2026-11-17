@@ -61,9 +61,17 @@ function funcRelation(relation) {
     };
 }
 
-function universalQuantifier()
-{
-    
+// ================================
+// Universal Quantifier
+// ∀x P(x)
+// ================================
+
+function universalQuantifier(
+    set,
+    predicate
+) {
+
+    return set.every(predicate);
 }
 
 function existentialQuantifier()
