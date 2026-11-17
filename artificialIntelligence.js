@@ -7,3 +7,8 @@ function nAryRelation()
 {
 
 }
+
+function functionRelation()
+{
+
+}
