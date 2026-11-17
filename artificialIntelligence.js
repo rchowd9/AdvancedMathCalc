@@ -13,3 +13,7 @@ function functionRelation()
 
 }
 
+function universalQuantifier()
+{
+
+}
