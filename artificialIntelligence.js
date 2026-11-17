@@ -1,4 +1,6 @@
 function unaryRelation()
 {
-    
+
 }
+
+function nAryRelation()
