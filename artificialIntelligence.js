@@ -140,9 +140,38 @@ function DeMorgan(expression) {
     return expression;
 }
 
-function generalizedDeMorgan()
-{
-    
+function generalizedDeMorgan(
+    operator,
+    propositions
+) {
+
+    if (operator === "AND") {
+
+        return (
+            "~(" +
+            propositions.join(" AND ") +
+            ") = " +
+            propositions
+                .map(p => `~${p}`)
+                .join(" OR ")
+        );
+    }
+
+    if (operator === "OR") {
+
+        return (
+            "~(" +
+            propositions.join(" OR ") +
+            ") = " +
+            propositions
+                .map(p => `~${p}`)
+                .join(" AND ")
+        );
+    }
+
+    throw new Error(
+        "Operator must be AND or OR."
+    );
 }
 
 function Axiom()
