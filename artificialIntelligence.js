@@ -86,3 +86,6 @@ function existentialQuantifier(
 
     return set.some(predicate);
 }
+
+
+function nestedQuantifier()
