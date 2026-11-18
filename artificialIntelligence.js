@@ -88,9 +88,36 @@ function existentialQuantifier(
 }
 
 
-function nestedQuantifier()
-{
-    
+// ======================================
+// Nested Quantifier
+// Example:
+// ∀x ∈ A ∃y ∈ B : P(x,y)
+// ======================================
+
+function nestedQuantifier(
+    setA,
+    setB,
+    predicate
+) {
+
+    for (const x of setA) {
+
+        let found = false;
+
+        for (const y of setB) {
+
+            if (predicate(x, y)) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 function DeMorgan()
