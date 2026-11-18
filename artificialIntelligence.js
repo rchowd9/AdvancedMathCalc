@@ -109,3 +109,6 @@ function Axiom()
 }
 
 function substituteQuantifier()
+{
+    
+}
