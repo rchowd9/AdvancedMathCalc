@@ -110,5 +110,7 @@ function Axiom()
 
 function substituteQuantifier()
 {
-    
+
 }
+
+function skolemConstant()
