@@ -102,3 +102,5 @@ function generalizedDeMorgan()
 {
     
 }
+
+function Axiom()
