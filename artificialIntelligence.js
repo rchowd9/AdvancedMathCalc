@@ -104,3 +104,6 @@ function generalizedDeMorgan()
 }
 
 function Axiom()
+{
+    
+}
