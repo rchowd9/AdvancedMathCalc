@@ -120,9 +120,24 @@ function nestedQuantifier(
     return true;
 }
 
-function DeMorgan()
-{
-    
+function DeMorgan(expression) {
+
+    expression =
+        expression.replace(/\s+/g, '');
+
+    expression =
+        expression.replace(
+            /~\(([A-Za-z])&([A-Za-z])\)/g,
+            '(~$1|~$2)'
+        );
+
+    expression =
+        expression.replace(
+            /~\(([A-Za-z])\|([A-Za-z])\)/g,
+            '(~$1&~$2)'
+        );
+
+    return expression;
 }
 
 function generalizedDeMorgan()
