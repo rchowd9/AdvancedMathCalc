@@ -201,7 +201,19 @@ function substituteQuantifier(
     );
 }
 
-function skolemConstant()
-{
+function skolemConstant(
+    existentialVariable,
+    constantName = "c"
+) {
 
+    return {
+        originalVariable:
+            existentialVariable,
+
+        skolemConstant:
+            constantName,
+
+        transformation:
+            `∃${existentialVariable} P(${existentialVariable}) → P(${constantName})`
+    };
 }
