@@ -94,3 +94,6 @@ function nestedQuantifier()
 }
 
 function DeMorgan()
+{
+    
+}
