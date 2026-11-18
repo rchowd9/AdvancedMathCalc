@@ -183,9 +183,22 @@ function Axiom(statement) {
     };
 }
 
-function substituteQuantifier()
-{
+function substituteQuantifier(
+    expression,
+    variable,
+    replacement
+) {
 
+    const regex =
+        new RegExp(
+            `\\b${variable}\\b`,
+            'g'
+        );
+
+    return expression.replace(
+        regex,
+        replacement
+    );
 }
 
 function skolemConstant()
