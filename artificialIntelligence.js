@@ -114,3 +114,6 @@ function substituteQuantifier()
 }
 
 function skolemConstant()
+{
+
+}
