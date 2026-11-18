@@ -174,9 +174,13 @@ function generalizedDeMorgan(
     );
 }
 
-function Axiom()
-{
-    
+function Axiom(statement) {
+
+    return {
+        type: "Axiom",
+        accepted: true,
+        statement
+    };
 }
 
 function substituteQuantifier()
