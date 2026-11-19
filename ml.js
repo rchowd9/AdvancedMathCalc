@@ -11,9 +11,16 @@ function euclideanDistance(point1, point2)
     return Math.sqrt(sumOfSquares);
 }
 
-function primalProblem()
-{
+function primalProblem(c, A, b) {
 
+    return {
+        objective: "maximize",
+        objectiveFunction: c,
+        constraints: A,
+        bounds: b,
+        standardForm:
+            "Maximize c^T x subject to Ax ≤ b"
+    };
 }
 
 function dualProblem()
