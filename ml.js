@@ -35,6 +35,8 @@ function dualProblem(c, A, b) {
     };
 }
 
+function slackVar()
+
 function manhattanDistance(point1, point2)
 {
     if (point1.length !== point2.length) {
