@@ -48,9 +48,41 @@ function slackVar(coefficients, rhs) {
     };
 }
 
-function kernel()
-{
-    
+function kernel(x, y, type = "linear", parameter = 2) {
+
+    switch(type.toLowerCase()) {
+
+        case "linear":
+            return math.dot(x, y);
+
+        case "polynomial":
+            return Math.pow(
+                math.dot(x, y) + 1,
+                parameter
+            );
+
+        case "rbf":
+            const diff =
+                math.subtract(x, y);
+
+            const norm =
+                math.dot(diff, diff);
+
+            return Math.exp(
+                -parameter * norm
+            );
+
+        case "sigmoid":
+            return Math.tanh(
+                parameter *
+                math.dot(x, y)
+            );
+
+        default:
+            throw new Error(
+                "Unknown kernel type."
+            );
+    }
 }
 
 function kernelTrick()
