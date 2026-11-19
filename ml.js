@@ -35,9 +35,17 @@ function dualProblem(c, A, b) {
     };
 }
 
-function slackVar()
-{
+function slackVar(coefficients, rhs) {
 
+    return {
+        coefficients,
+        slackVariable: 1,
+        rhs,
+        equation:
+            `${coefficients.join(" + ")} + s = ${rhs}`,
+        note:
+            "Added slack variable s ≥ 0."
+    };
 }
 
 function kernel()
