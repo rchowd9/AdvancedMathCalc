@@ -23,9 +23,16 @@ function primalProblem(c, A, b) {
     };
 }
 
-function dualProblem()
-{
+function dualProblem(c, A, b) {
 
+    return {
+        objective: "minimize",
+        objectiveFunction: b,
+        constraints: math.transpose(A),
+        bounds: c,
+        standardForm:
+            "Minimize b^T y subject to A^T y ≥ c"
+    };
 }
 
 function manhattanDistance(point1, point2)
