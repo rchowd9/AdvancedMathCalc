@@ -36,6 +36,9 @@ function dualProblem(c, A, b) {
 }
 
 function slackVar()
+{
+    
+}
 
 function manhattanDistance(point1, point2)
 {
