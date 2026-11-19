@@ -11,6 +11,8 @@ function euclideanDistance(point1, point2)
     return Math.sqrt(sumOfSquares);
 }
 
+function primalProblem()
+
 function manhattanDistance(point1, point2)
 {
     if (point1.length !== point2.length) {
