@@ -17,6 +17,9 @@ function primalProblem()
 }
 
 function dualProblem()
+{
+
+}
 
 function manhattanDistance(point1, point2)
 {
