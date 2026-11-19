@@ -50,6 +50,11 @@ function kernelTrick()
     
 }
 
+function decisionFunction()
+{
+    
+}
+
 function manhattanDistance(point1, point2)
 {
     if (point1.length !== point2.length) {
