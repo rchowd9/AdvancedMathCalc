@@ -115,9 +115,23 @@ function kernelTrick(
     return K;
 }
 
-function decisionFunction()
-{
-    
+function decisionFunction(
+    weights,
+    vector,
+    bias = 0
+) {
+
+    const score =
+        math.dot(
+            weights,
+            vector
+        ) + bias;
+
+    return {
+        score,
+        prediction:
+            score >= 0 ? 1 : -1
+    };
 }
 
 function manhattanDistance(point1, point2)
