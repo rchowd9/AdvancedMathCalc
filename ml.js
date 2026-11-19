@@ -13,8 +13,10 @@ function euclideanDistance(point1, point2)
 
 function primalProblem()
 {
-    
+
 }
+
+function dualProblem()
 
 function manhattanDistance(point1, point2)
 {
