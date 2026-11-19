@@ -85,9 +85,34 @@ function kernel(x, y, type = "linear", parameter = 2) {
     }
 }
 
-function kernelTrick()
-{
-    
+function kernelTrick(
+    data,
+    type = "rbf",
+    parameter = 1
+) {
+
+    const K =
+        Array(data.length)
+            .fill(null)
+            .map(() =>
+                Array(data.length).fill(0)
+            );
+
+    for (let i = 0; i < data.length; i++) {
+
+        for (let j = 0; j < data.length; j++) {
+
+            K[i][j] =
+                kernel(
+                    data[i],
+                    data[j],
+                    type,
+                    parameter
+                );
+        }
+    }
+
+    return K;
 }
 
 function decisionFunction()
