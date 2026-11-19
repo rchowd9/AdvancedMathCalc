@@ -37,6 +37,11 @@ function dualProblem(c, A, b) {
 
 function slackVar()
 {
+
+}
+
+function kernel()
+{
     
 }
 
