@@ -525,6 +525,18 @@ function App() {
               <li>minmaxscaling([[1, 10], [2, 20], [3, 30]])</li>
               <li>entropy([0, 0, 1, 1])</li>
               <li>gradientDescent(["2*x"], [3], 0.1, 5)</li>
+              <li>kernel([1, 2], [3, 4], "rbf", 1)</li>
+              <li>decisionFunction([1, -1], [2, 3], 0)</li>
+            </ul>
+          </div>
+          <div className="examples-group">
+            <h3>Artificial Intelligence</h3>
+            <ul>
+              <li>DeMorgan("~(A&B)")</li>
+              <li>generalizedDeMorgan("AND", ["A", "B", "C"])</li>
+              <li>funcRelation([[1, "a"], [2, "b"]])</li>
+              <li>nAryRelation([1, 2], ["a", "b"])</li>
+              <li>skolemConstant("x", "c")</li>
             </ul>
           </div>
           <div className="examples-group">
