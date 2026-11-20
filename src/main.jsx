@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { all, create } from 'mathjs';
 import Plotly from 'plotly.js-dist-min';
 import { solveLinearAlgebra, solveSequence } from './lib/linearAlgebraSequences.js';
+import { LEGACY_SCRIPTS } from './legacyScripts.js';
 import { MACHINE_LEARNING_MODE_NAMES, solveMachineLearning } from '../ml.js';
 import {
   ARTIFICIAL_INTELLIGENCE_MODE_NAMES,
@@ -108,8 +109,7 @@ const loadLegacyScripts = async () => {
   window.__mathcalcLegacyLoaded = true;
 
   try {
-    const legacyScripts = ['wordProblems.js', 'proof.js', 'geometryProofs.js', 'chemistry.js', 'physics.js', 'engineering.js', 'business.js', 'calculus.js', 'discreteMath.js', 'realAnalysis.js', 'topology.js', 'linearAlgebra.js', 'biology.js', 'computer.js', 'civil.js', 'electrical.js', 'mechanical.js', 'script.js'];
-    for (const src of legacyScripts) {
+    for (const src of LEGACY_SCRIPTS) {
       await loadScript(`${import.meta.env.BASE_URL}${src}`);
     }
   } catch (error) {

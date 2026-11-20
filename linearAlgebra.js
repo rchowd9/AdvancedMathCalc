@@ -174,8 +174,6 @@ function luDecomposition(matrix) {
     return { L, U };
 }
 
-import { mad } from 'mathjs';
-
 function solveLinearSystem(A, b) {
     const solution =
         mathInstance.multiply(
@@ -186,10 +184,23 @@ function solveLinearSystem(A, b) {
     return solution;
 }
 
-function vectorSpace(vectors)
-{
-    vectors = vectors.map(vec => mad(vec, 1));
+// Returns a basis for the span of the given vectors (the vectors are
+// placed as matrix columns, so the pivot columns form the basis).
+function vectorSpace(vectors) {
+    if (!Array.isArray(vectors) || vectors.length === 0) {
+        throw new Error("vectorSpace requires at least one vector.");
+    }
 
+    const dimension = vectors[0].length;
+    if (vectors.some(vec => !Array.isArray(vec) || vec.length !== dimension)) {
+        throw new Error("All vectors must have the same dimension.");
+    }
+
+    const matrix = Array.from({ length: dimension }, (_, row) =>
+        vectors.map(vec => vec[row])
+    );
+
+    return columnSpace(matrix);
 }
 
 function columnSpace(matrix) {

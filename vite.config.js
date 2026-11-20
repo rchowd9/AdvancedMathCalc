@@ -2,29 +2,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { LEGACY_SCRIPTS } from './src/legacyScripts.js';
 
-const legacyAssets = [
-  'wordProblems.js',
-  'proof.js',
-  'geometryProofs.js',
-  'chemistry.js',
-  'physics.js',
-  'engineering.js',
-  'business.js',
-  'calculus.js',
-  'discreteMath.js',
-  'linearAlgebra.js',
-  'script.js',
-  'realAnalysis.js',
-  'topology.js'
-];
 
 function copyLegacyAssets() {
   return {
     name: 'copy-legacy-assets',
     closeBundle() {
       const outputDirectory = path.resolve('dist');
-      for (const asset of legacyAssets) {
+      for (const asset of LEGACY_SCRIPTS) {
         fs.copyFileSync(path.resolve(asset), path.join(outputDirectory, asset));
       }
     }
