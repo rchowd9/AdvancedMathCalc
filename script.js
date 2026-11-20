@@ -81,6 +81,18 @@ evalBtn.addEventListener('click', () => {
   try {
     let solvedMessage = '';
 
+    const artificialIntelligenceMatch = expr.match(/^([a-zA-Z]\w*)\(/);
+    if (artificialIntelligenceMatch &&
+        window.ARTIFICIAL_INTELLIGENCE_MODE_NAMES?.has(artificialIntelligenceMatch[1].toLowerCase())) {
+      const call = mathInstance.parse(expr);
+      if (call.type !== 'FunctionNode') throw new Error('Enter a valid artificial-intelligence formula call.');
+      const values = call.args.map((argument) => argument.compile().evaluate());
+      solvedMessage = window.solveArtificialIntelligence(artificialIntelligenceMatch[1], values);
+      awardProgress(40, 'AI logic formula solved!', 'artificialintelligence');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
     if (expr.startsWith("proof(") || expr.startsWith("prove(")) {
       solvedMessage = solveProof(expr);
       awardProgress(45, 'Proof complete!', 'proofs');

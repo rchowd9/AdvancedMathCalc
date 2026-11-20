@@ -1294,7 +1294,9 @@ export function solveMachineLearning(mode, values, mathInstance) {
             calculationDetails = `Sorted values: ${formatMLValue([...data].sort((left, right) => left - right))}; total = ${formatMLValue(data.reduce((sum, value) => sum + value, 0))}.`;
         }
     } else {
-        throw new Error(`${canonicalName} is not available in the calculator yet.`);
+        result = machineLearningFunctions[canonicalName](...values);
+        formula = `${canonicalName} applies the machine-learning formula to the supplied arguments`;
+        interpretation = `Input values: ${formatMLValue(values)}.`;
     }
 
     return [
