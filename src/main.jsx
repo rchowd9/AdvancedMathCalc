@@ -4,6 +4,10 @@ import { all, create } from 'mathjs';
 import Plotly from 'plotly.js-dist-min';
 import { solveLinearAlgebra, solveSequence } from './lib/linearAlgebraSequences.js';
 import { MACHINE_LEARNING_MODE_NAMES, solveMachineLearning } from '../ml.js';
+import {
+  ARTIFICIAL_INTELLIGENCE_MODE_NAMES,
+  solveArtificialIntelligence
+} from '../artificialIntelligence.js';
 import { STATISTICS_MODE_NAMES, solveStatistics } from '../statistics.js';
 import { DIFFERENTIAL_EQUATION_MODE_NAMES, solveDifferentialEquation } from '../differentialEquations.js';
 import { GENETICS_FORMULAS, solveGenetics } from '../genetics.js';
@@ -29,6 +33,8 @@ window.STATISTICS_MODE_NAMES = STATISTICS_MODE_NAMES;
 window.solveStatistics = solveStatistics;
 window.MACHINE_LEARNING_MODE_NAMES = MACHINE_LEARNING_MODE_NAMES;
 window.solveMachineLearning = solveMachineLearning;
+window.ARTIFICIAL_INTELLIGENCE_MODE_NAMES = ARTIFICIAL_INTELLIGENCE_MODE_NAMES;
+window.solveArtificialIntelligence = solveArtificialIntelligence;
 window.GENETICS_FORMULAS = GENETICS_FORMULAS;
 window.solveGenetics = solveGenetics;
 window.COMPUTER_SCIENCE_FUNCTIONS = computerScienceFunctions;
@@ -102,7 +108,7 @@ const loadLegacyScripts = async () => {
   window.__mathcalcLegacyLoaded = true;
 
   try {
-    const legacyScripts = ['wordProblems.js', 'proof.js', 'geometryProofs.js', 'chemistry.js', 'physics.js', 'engineering.js', 'business.js', 'calculus.js', 'discreteMath.js', 'realAnalysis.js', 'topology.js', 'linearAlgebra.js', 'script.js'];
+    const legacyScripts = ['wordProblems.js', 'proof.js', 'geometryProofs.js', 'chemistry.js', 'physics.js', 'engineering.js', 'business.js', 'calculus.js', 'discreteMath.js', 'realAnalysis.js', 'topology.js', 'linearAlgebra.js', 'biology.js', 'computer.js', 'civil.js', 'electrical.js', 'mechanical.js', 'script.js'];
     for (const src of legacyScripts) {
       await loadScript(`${import.meta.env.BASE_URL}${src}`);
     }
