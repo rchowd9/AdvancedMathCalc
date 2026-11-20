@@ -203,6 +203,25 @@ evalBtn.addEventListener('click', () => {
       return;
     }
 
+    const standaloneFormulaGroups = [
+      { formulas: window.BIOLOGY_FORMULAS, solver: 'solveBiology', category: 'biology', message: 'Biology formula solved!' },
+      { formulas: window.COMPUTER_FORMULAS, solver: 'solveComputer', category: 'computerengineering', message: 'Computer engineering formula solved!' },
+      { formulas: window.CIVIL_FORMULAS, solver: 'solveCivil', category: 'civilengineering', message: 'Civil engineering formula solved!' },
+      { formulas: window.ELECTRICAL_FORMULAS, solver: 'solveElectrical', category: 'electricalengineering', message: 'Electrical engineering formula solved!' },
+      { formulas: window.MECHANICAL_FORMULAS, solver: 'solveMechanical', category: 'mechanicalengineering', message: 'Mechanical engineering formula solved!' },
+    ];
+    if (subjectModeMatch) {
+      const standaloneGroup = standaloneFormulaGroups.find(({ formulas }) =>
+        formulas?.has(subjectModeMatch[1].toLowerCase())
+      );
+      if (standaloneGroup) {
+        solvedMessage = window[standaloneGroup.solver](expr);
+        awardProgress(40, standaloneGroup.message, standaloneGroup.category);
+        resultEl.textContent = solvedMessage;
+        return;
+      }
+    }
+
     const disciplineFunctionName = physicsNameMatch?.[1]?.toLowerCase();
     const disciplineFunction = window.ENGINEERING_DISCIPLINE_FUNCTIONS?.[disciplineFunctionName];
     if (disciplineFunction) {
