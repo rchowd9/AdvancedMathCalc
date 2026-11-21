@@ -157,9 +157,38 @@ function cyclicGroup(g, n) {
         group: elements
     };
 }
-function quadraticResidue()
-{
 
+function quadraticResidue(
+    a,
+    n
+) {
+
+    a =
+        modularArithmetic(
+            a,
+            n
+        );
+
+    for (
+        let x = 0;
+        x < n;
+        x++
+    ) {
+
+        if (
+            (x*x)%n === a
+        ) {
+
+            return {
+                residue: true,
+                witness: x
+            };
+        }
+    }
+
+    return {
+        residue: false
+    };
 }
 
 function generator()
