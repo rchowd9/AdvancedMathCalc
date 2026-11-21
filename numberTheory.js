@@ -32,3 +32,8 @@ function extendedEuclid()
 {
 
 }
+
+function generalSolution()
+{
+
+}
