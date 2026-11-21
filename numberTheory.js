@@ -280,3 +280,10 @@ function generalSolution(
         particularSolution:x0
     };
 }
+
+function compositeModuli()
+{
+
+}
+
+function wilsonTheorem()
