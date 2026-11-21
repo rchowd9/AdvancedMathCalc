@@ -1,6 +1,6 @@
-function modularArithmetic()
-{
+function modularArithmetic(a, n) {
 
+    return ((a % n) + n) % n;
 }
 
 function chineseRemainderTheorem()
@@ -37,3 +37,4 @@ function generalSolution()
 {
 
 }
+
