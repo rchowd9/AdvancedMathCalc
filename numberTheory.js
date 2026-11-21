@@ -12,3 +12,8 @@ function millerRabinTest()
 {
 
 }
+
+function cyclicGroup()
+{
+
+}
