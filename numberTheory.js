@@ -17,3 +17,8 @@ function cyclicGroup()
 {
 
 }
+
+function quadraticResidue()
+{
+
+}
