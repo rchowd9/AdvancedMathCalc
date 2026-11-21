@@ -533,6 +533,9 @@ function App() {
               <li>entropy([0, 0, 1, 1])</li>
               <li>gradientDescent(["2*x"], [3], 0.1, 5)</li>
               <li>kernel([1, 2], [3, 4], "rbf", 1)</li>
+              <li>polynomialKernel([1, 2], [3, 4], 2)</li>
+              <li>radialBasisKernel([1, 2], [3, 4], 1)</li>
+              <li>sigmoidKernel([1, 2], [3, 4], 1, 0)</li>
               <li>decisionFunction([1, -1], [2, 3], 0)</li>
             </ul>
           </div>
