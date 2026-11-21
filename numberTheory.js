@@ -313,7 +313,29 @@ function compositeModuli(n) {
     };
 }
 
-function wilsonTheorem()
-{
+function wilsonTheorem(p) {
 
+    if (p < 2) {
+        return {
+            valid: false,
+            reason: "p must be ≥ 2"
+        };
+    }
+
+    let factorial = 1;
+
+    for (let i = 2; i < p; i++) {
+        factorial = (factorial * i) % p;
+    }
+
+    const result =
+        factorial === p - 1;
+
+    return {
+        p,
+        factorialModP: factorial,
+        prime: result,
+        theorem:
+            "(p-1)! ≡ -1 (mod p)"
+    };
 }
