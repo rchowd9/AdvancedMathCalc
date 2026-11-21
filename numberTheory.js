@@ -287,3 +287,6 @@ function compositeModuli()
 }
 
 function wilsonTheorem()
+{
+    
+}
