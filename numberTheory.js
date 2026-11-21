@@ -44,9 +44,94 @@ function chineseRemainderTheorem(
     };
 }
 
-function millerRabinTest()
-{
+function millerRabinTest(
+    n,
+    k = 8
+) {
 
+    if (n < 2) return false;
+    if (n === 2 || n === 3) return true;
+    if (n % 2 === 0) return false;
+
+    let r = 0;
+    let d = n - 1;
+
+    while (d % 2 === 0) {
+        r++;
+        d /= 2;
+    }
+
+    function modPow(
+        base,
+        exp,
+        mod
+    ) {
+
+        let result = 1;
+
+        base %= mod;
+
+        while (exp > 0) {
+
+            if (exp & 1) {
+                result =
+                    (result * base) % mod;
+            }
+
+            base =
+                (base * base) % mod;
+
+            exp >>= 1;
+        }
+
+        return result;
+    }
+
+    for (let i = 0; i < k; i++) {
+
+        const a =
+            2 +
+            Math.floor(
+                Math.random() *
+                (n - 4)
+            );
+
+        let x =
+            modPow(a, d, n);
+
+        if (
+            x === 1 ||
+            x === n - 1
+        ) {
+            continue;
+        }
+
+        let continueOuter =
+            false;
+
+        for (
+            let j = 0;
+            j < r - 1;
+            j++
+        ) {
+
+            x =
+                (x * x) % n;
+
+            if (x === n - 1) {
+                continueOuter = true;
+                break;
+            }
+        }
+
+        if (continueOuter) {
+            continue;
+        }
+
+        return false;
+    }
+
+    return true;
 }
 
 function cyclicGroup()
