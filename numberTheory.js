@@ -191,9 +191,34 @@ function quadraticResidue(
     };
 }
 
-function generator()
-{
+function generator(
+    g,
+    n
+) {
 
+    const seen =
+        new Set();
+
+    let current = 1;
+
+    do {
+
+        current =
+            (current * g) % n;
+
+        seen.add(current);
+
+    } while (
+        current !== 1
+    );
+
+    return {
+        generator: g,
+        order:
+            seen.size,
+        elements:
+            [...seen]
+    };
 }
 
 function extendedEuclid(a, b) {
