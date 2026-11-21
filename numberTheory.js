@@ -246,8 +246,37 @@ function extendedEuclid(a, b) {
     };
 }
 
-function generalSolution()
-{
+function generalSolution(
+    a,
+    b,
+    n
+) {
 
+    const eg =
+        extendedEuclid(
+            a,
+            n
+        );
+
+    if (
+        b % eg.gcd !== 0
+    ) {
+
+        return {
+            solvable:false
+        };
+    }
+
+    const x0 =
+        modularArithmetic(
+            eg.x *
+            (b / eg.gcd),
+            n
+        );
+
+    return {
+        solvable:true,
+        gcd:eg.gcd,
+        particularSolution:x0
+    };
 }
-
