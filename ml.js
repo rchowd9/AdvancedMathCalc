@@ -1150,7 +1150,9 @@ export function solveMachineLearning(mode, values, mathInstance) {
         calculationDetails = `Contributions: ${formatMLValue(terms)}; sum = ${formatMLValue(sum)}${modeName === 'euclideandistance' ? `; square root = ${formatMLValue(result)}` : modeName === 'minkowskidistance' ? `; 1/p power = ${formatMLValue(result)}` : ''}.`;
     } else if (modeName === 'kernel' || modeName === 'polynomialkernel' ||
         modeName === 'radialbasiskernel' || modeName === 'sigmoidkernel') {
-        const expectedArgs = modeName === 'sigmoidkernel' ? 4 : 3;
+        const expectedArgs = modeName === 'kernel' ? 4
+            : modeName === 'sigmoidkernel' ? 4
+                : 3;
         requireArgs(expectedArgs);
         const [left, right, parameter, bias] = values;
         result = machineLearningFunctions[canonicalName](...values);
