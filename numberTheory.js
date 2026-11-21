@@ -27,3 +27,8 @@ function generator()
 {
 
 }
+
+function extendedEuclid()
+{
+
+}
