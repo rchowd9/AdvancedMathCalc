@@ -3,7 +3,9 @@ function modularArithmetic()
 
 }
 
-funcion chineseRemainderTheorem()
+function chineseRemainderTheorem()
 {
 
 }
+
+function millerRabinTest()
