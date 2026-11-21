@@ -134,11 +134,29 @@ function millerRabinTest(
     return true;
 }
 
-function cyclicGroup()
-{
+function cyclicGroup(g, n) {
 
+    const elements = [];
+
+    let current = 1;
+
+    do {
+
+        elements.push(current);
+
+        current =
+            (current * g) % n;
+
+    } while (
+        current !== 1
+    );
+
+    return {
+        generator: g,
+        modulus: n,
+        group: elements
+    };
 }
-
 function quadraticResidue()
 {
 
