@@ -22,3 +22,8 @@ function quadraticResidue()
 {
 
 }
+
+function generator()
+{
+
+}
