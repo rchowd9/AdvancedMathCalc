@@ -4,3 +4,6 @@ function modularArithmetic()
 }
 
 funcion chineseRemainderTheorem()
+{
+
+}
