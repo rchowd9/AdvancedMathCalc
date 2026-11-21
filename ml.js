@@ -56,33 +56,54 @@ function kernel(x, y, type = "linear", parameter = 2) {
             return math.dot(x, y);
 
         case "polynomial":
-            return Math.pow(
-                math.dot(x, y) + 1,
-                parameter
-            );
+            return polynomialKernel(x, y, parameter);
 
         case "rbf":
-            const diff =
-                math.subtract(x, y);
-
-            const norm =
-                math.dot(diff, diff);
-
-            return Math.exp(
-                -parameter * norm
-            );
+        case "radialbasis":
+        case "radialbasisfunction":
+            return radialBasisKernel(x, y, parameter);
 
         case "sigmoid":
-            return Math.tanh(
-                parameter *
-                math.dot(x, y)
-            );
+            return sigmoidKernel(x, y, parameter);
 
         default:
             throw new Error(
                 "Unknown kernel type."
             );
     }
+}
+
+function assertKernelVectors(x, y) {
+    if (!Array.isArray(x) || !Array.isArray(y) || x.length === 0 || x.length !== y.length ||
+        !x.every(Number.isFinite) || !y.every(Number.isFinite)) {
+        throw new Error('Kernel vectors must be non-empty arrays of finite numbers with the same dimension.');
+    }
+}
+
+function polynomialKernel(x, y, degree = 2) {
+    assertKernelVectors(x, y);
+    if (!Number.isFinite(degree) || !Number.isInteger(degree) || degree < 1) {
+        throw new Error('Polynomial degree must be a positive integer.');
+    }
+    return Math.pow(math.dot(x, y) + 1, degree);
+}
+
+function radialBasisKernel(x, y, gamma = 1) {
+    assertKernelVectors(x, y);
+    if (!Number.isFinite(gamma) || gamma < 0) {
+        throw new Error('RBF gamma must be a finite non-negative number.');
+    }
+    const diff = math.subtract(x, y);
+    const norm = math.dot(diff, diff);
+    return Math.exp(-gamma * norm);
+}
+
+function sigmoidKernel(x, y, alpha = 1, c = 0) {
+    assertKernelVectors(x, y);
+    if (!Number.isFinite(alpha) || !Number.isFinite(c)) {
+        throw new Error('Sigmoid alpha and c must be finite numbers.');
+    }
+    return Math.tanh(alpha * math.dot(x, y) + c);
 }
 
 function kernelTrick(
@@ -904,6 +925,9 @@ const machineLearningFunctions = {
     dualProblem,
     slackVar,
     kernel,
+    polynomialKernel,
+    radialBasisKernel,
+    sigmoidKernel,
     kernelTrick,
     decisionFunction,
     gradientDescent,
@@ -1317,6 +1341,9 @@ export {
     dualProblem,
     slackVar,
     kernel,
+    polynomialKernel,
+    radialBasisKernel,
+    sigmoidKernel,
     kernelTrick,
     decisionFunction,
     gradientDescent,

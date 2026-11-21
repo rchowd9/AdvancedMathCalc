@@ -380,6 +380,13 @@ function App() {
           </label>
         </div>
 
+        <div className="kernel-presets" aria-label="Kernel graph presets">
+          <span>Kernel graphs</span>
+          <button type="button" className="challenge-chip" data-kernel-preset="polynomial" data-expression="(x + 1)^2" data-min="-5" data-max="5">Polynomial</button>
+          <button type="button" className="challenge-chip" data-kernel-preset="rbf" data-expression="exp(-x^2)" data-min="-5" data-max="5">Radial basis (RBF)</button>
+          <button type="button" className="challenge-chip" data-kernel-preset="sigmoid" data-expression="tanh(x)" data-min="-5" data-max="5">Sigmoid</button>
+        </div>
+
         <div id="plot" aria-label="Function graph" />
         <p id="plotInsights" className="plot-insights" aria-live="polite" />
         <p id="plotStatus" className="plot-status" role="status" />
