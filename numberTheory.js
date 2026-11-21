@@ -339,3 +339,8 @@ function wilsonTheorem(p) {
             "(p-1)! ≡ -1 (mod p)"
     };
 }
+
+function rootOfPolynomial()
+{
+    
+}
