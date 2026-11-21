@@ -55,6 +55,19 @@ plotReferenceLinesInput.addEventListener('keydown', (event) => {
 });
 plotTypeInput.addEventListener('change', updatePlotInputHint);
 randomChallengeBtn.addEventListener('click', loadRandomChallenge);
+document.querySelectorAll('[data-kernel-preset]').forEach((button) => {
+  button.addEventListener('click', () => {
+    plotExprInput.value = button.dataset.expression;
+    plotVariableInput.value = 'x';
+    plotMinInput.value = button.dataset.min;
+    plotMaxInput.value = button.dataset.max;
+    plotTypeInput.value = 'function';
+    plotModeInput.value = 'function';
+    plotScaleInput.value = 'linear';
+    updatePlotInputHint();
+    plotFunction();
+  });
+});
 clearBtn.addEventListener('click', () => {
   exprInput.value = '';
   resultEl.textContent = 'Fresh board. Pick a challenge and go!';

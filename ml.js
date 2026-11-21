@@ -1148,6 +1148,23 @@ export function solveMachineLearning(mode, values, mathInstance) {
         const sum = terms.reduce((total, term) => total + term, 0);
         interpretation = `Coordinate differences: ${formatMLValue(differences)}.`;
         calculationDetails = `Contributions: ${formatMLValue(terms)}; sum = ${formatMLValue(sum)}${modeName === 'euclideandistance' ? `; square root = ${formatMLValue(result)}` : modeName === 'minkowskidistance' ? `; 1/p power = ${formatMLValue(result)}` : ''}.`;
+    } else if (modeName === 'kernel' || modeName === 'polynomialkernel' ||
+        modeName === 'radialbasiskernel' || modeName === 'sigmoidkernel') {
+        const expectedArgs = modeName === 'sigmoidkernel' ? 4 : 3;
+        requireArgs(expectedArgs);
+        const [left, right, parameter, bias] = values;
+        result = machineLearningFunctions[canonicalName](...values);
+        formula = modeName === 'kernel'
+            ? 'Select linear, polynomial, RBF, or sigmoid kernel behavior.'
+            : modeName === 'polynomialkernel'
+                ? 'Polynomial kernel = (xᵀy + 1)^d'
+                : modeName === 'radialbasiskernel'
+                    ? 'RBF kernel = exp(−γ‖x − y‖²)'
+                    : 'Sigmoid kernel = tanh(αxᵀy + c)';
+        interpretation = `Kernel value: ${formatMLValue(result)}.`;
+        calculationDetails = `Vectors: ${formatMLValue(left)} and ${formatMLValue(right)}; ${modeName === 'sigmoidkernel'
+            ? `alpha = ${formatMLValue(parameter)}, c = ${formatMLValue(bias)}`
+            : `parameter = ${formatMLValue(parameter)}`}.`;
     } else if (modeName === 'linearregression') {
         requireArgs(2);
         const [features, targets] = values;

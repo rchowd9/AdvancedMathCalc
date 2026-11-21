@@ -415,6 +415,26 @@ pre {
   font-weight: 400;
 }
 
+.kernel-presets {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -4px 0 16px;
+}
+
+.kernel-presets > span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+.kernel-presets .challenge-chip {
+  padding: 7px 11px;
+  font-size: 0.82rem;
+}
+
 #plot {
   width: 100%;
   min-height: 380px;

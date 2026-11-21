@@ -4,6 +4,9 @@ import {
   MACHINE_LEARNING_MODE_NAMES,
   gainRatio,
   linearRegression,
+  polynomialKernel,
+  radialBasisKernel,
+  sigmoidKernel,
   solveMachineLearning
 } from '../../ml.js';
 
@@ -28,6 +31,12 @@ describe('machine-learning calculator formulas', () => {
   it('calculates gain ratio separately for each feature', () => {
     expect(gainRatio([[0, 1], [0, 2], [1, 1], [1, 2]], [0, 0, 1, 1])).toEqual([1, 0]);
     expect(() => gainRatio([[0], [1]], [0])).toThrow('matching the labels');
+  });
+
+  it('calculates polynomial, RBF, and sigmoid kernels', () => {
+    expect(polynomialKernel([1, 2], [3, 4], 2)).toBe(144);
+    expect(radialBasisKernel([0], [1], 1)).toBeCloseTo(Math.exp(-1));
+    expect(sigmoidKernel([1], [1], 1, 0)).toBeCloseTo(Math.tanh(1));
   });
 
   it('returns a worked error-metric explanation', () => {
