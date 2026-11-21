@@ -3,9 +3,45 @@ function modularArithmetic(a, n) {
     return ((a % n) + n) % n;
 }
 
-function chineseRemainderTheorem()
-{
+function chineseRemainderTheorem(
+    remainders,
+    moduli
+) {
 
+    const M =
+        moduli.reduce(
+            (a,b) => a*b,
+            1
+        );
+
+    let solution = 0;
+
+    for (
+        let i = 0;
+        i < moduli.length;
+        i++
+    ) {
+
+        const Mi =
+            M / moduli[i];
+
+        const inverse =
+            extendedEuclid(
+                Mi,
+                moduli[i]
+            ).x;
+
+        solution +=
+            remainders[i] *
+            Mi *
+            inverse;
+    }
+
+    return {
+        solution:
+            ((solution % M) + M) % M,
+        modulus: M
+    };
 }
 
 function millerRabinTest()
