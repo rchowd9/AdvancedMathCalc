@@ -340,7 +340,123 @@ function wilsonTheorem(p) {
     };
 }
 
-function rootOfPolynomial()
-{
-    
+function rootOfPolynomial(coefficients) {
+
+    if (!Array.isArray(coefficients)) {
+        throw new Error(
+            "Input must be an array of coefficients."
+        );
+    }
+
+    const degree =
+        coefficients.length - 1;
+
+    const roots = [];
+
+    function evaluate(x) {
+
+        let result = 0;
+
+        for (
+            let i = 0;
+            i < coefficients.length;
+            i++
+        ) {
+            result =
+                result * x +
+                coefficients[i];
+        }
+
+        return result;
+    }
+
+    function derivative(x) {
+
+        let result = 0;
+
+        for (
+            let i = 0;
+            i < degree;
+            i++
+        ) {
+
+            result =
+                result * x +
+                coefficients[i] *
+                (degree - i);
+        }
+
+        return result;
+    }
+
+    function newton(initialGuess) {
+
+        let x = initialGuess;
+
+        for (
+            let i = 0;
+            i < 100;
+            i++
+        ) {
+
+            const fx =
+                evaluate(x);
+
+            const dfx =
+                derivative(x);
+
+            if (
+                Math.abs(dfx) < 1e-12
+            ) {
+                break;
+            }
+
+            const next =
+                x - fx / dfx;
+
+            if (
+                Math.abs(next - x)
+                < 1e-10
+            ) {
+                return next;
+            }
+
+            x = next;
+        }
+
+        return x;
+    }
+
+    for (
+        let guess = -20;
+        guess <= 20;
+        guess += 1
+    ) {
+
+        const root =
+            newton(guess);
+
+        const alreadyFound =
+            roots.some(
+                r =>
+                    Math.abs(r - root)
+                    < 1e-6
+            );
+
+        if (
+            Math.abs(
+                evaluate(root)
+            ) < 1e-6 &&
+            !alreadyFound
+        ) {
+
+            roots.push(root);
+        }
+    }
+
+    return {
+        degree,
+        coefficients,
+        roots
+    };
 }
