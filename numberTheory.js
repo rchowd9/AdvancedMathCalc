@@ -281,12 +281,39 @@ function generalSolution(
     };
 }
 
-function compositeModuli()
-{
+function compositeModuli(n) {
 
+    if (n < 2) {
+        return {
+            composite: false,
+            factors: []
+        };
+    }
+
+    const factors = [];
+
+    let temp = n;
+
+    for (let i = 2; i * i <= temp; i++) {
+
+        while (temp % i === 0) {
+            factors.push(i);
+            temp /= i;
+        }
+    }
+
+    if (temp > 1) {
+        factors.push(temp);
+    }
+
+    return {
+        modulus: n,
+        composite: factors.length > 1,
+        factors
+    };
 }
 
 function wilsonTheorem()
 {
-    
+
 }
