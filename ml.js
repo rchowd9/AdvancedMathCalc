@@ -53,7 +53,8 @@ function kernel(x, y, type = "linear", parameter = 2) {
     switch(type.toLowerCase()) {
 
         case "linear":
-            return math.dot(x, y);
+            assertKernelVectors(x, y);
+            return x.reduce((sum, value, index) => sum + value * y[index], 0);
 
         case "polynomial":
             return polynomialKernel(x, y, parameter);
@@ -85,7 +86,8 @@ function polynomialKernel(x, y, degree = 2) {
     if (!Number.isFinite(degree) || !Number.isInteger(degree) || degree < 1) {
         throw new Error('Polynomial degree must be a positive integer.');
     }
-    return Math.pow(math.dot(x, y) + 1, degree);
+    const dotProduct = x.reduce((sum, value, index) => sum + value * y[index], 0);
+    return Math.pow(dotProduct + 1, degree);
 }
 
 function radialBasisKernel(x, y, gamma = 1) {
@@ -93,8 +95,7 @@ function radialBasisKernel(x, y, gamma = 1) {
     if (!Number.isFinite(gamma) || gamma < 0) {
         throw new Error('RBF gamma must be a finite non-negative number.');
     }
-    const diff = math.subtract(x, y);
-    const norm = math.dot(diff, diff);
+    const norm = x.reduce((sum, value, index) => sum + (value - y[index]) ** 2, 0);
     return Math.exp(-gamma * norm);
 }
 
@@ -103,7 +104,8 @@ function sigmoidKernel(x, y, alpha = 1, c = 0) {
     if (!Number.isFinite(alpha) || !Number.isFinite(c)) {
         throw new Error('Sigmoid alpha and c must be finite numbers.');
     }
-    return Math.tanh(alpha * math.dot(x, y) + c);
+    const dotProduct = x.reduce((sum, value, index) => sum + value * y[index], 0);
+    return Math.tanh(alpha * dotProduct + c);
 }
 
 function kernelTrick(
