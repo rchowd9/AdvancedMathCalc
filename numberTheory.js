@@ -524,10 +524,20 @@ function discreteLog(g, h, p) {
     return null;
 }
 
-function nonUnit()
-{
+function nonUnit(n) {
 
+    const elements = [];
+
+    for (let i = 0; i < n; i++) {
+
+        if (math.gcd(i, n) !== 1) {
+            elements.push(i);
+        }
+    }
+
+    return elements;
 }
+
 
 function unitOrder()
 {
