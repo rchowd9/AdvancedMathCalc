@@ -495,3 +495,8 @@ function RSA()
 {
 
 }
+
+function FermatTest()
+{
+
+}
