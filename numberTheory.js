@@ -502,3 +502,6 @@ function FermatTest()
 }
 
 function LagrangeTheorem()
+{
+
+}
