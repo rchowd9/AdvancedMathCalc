@@ -490,3 +490,5 @@ function EulerTheorem()
 {
 
 }
+
+function RSA()
