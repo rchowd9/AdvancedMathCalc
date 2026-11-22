@@ -485,3 +485,5 @@ function unitOrder()
 {
 
 }
+
+function EulerTheorem()
