@@ -581,9 +581,45 @@ function EulerTheorem(a, n) {
     };
 }
 
-function RSA()
-{
+function RSA(p, q, e, message) {
 
+    const n = p * q;
+
+    const phi =
+        (p - 1) *
+        (q - 1);
+
+    let d = null;
+
+    for (let i = 1; i < phi; i++) {
+
+        if ((i * e) % phi === 1) {
+
+            d = i;
+            break;
+        }
+    }
+
+    const encrypted =
+        modularExponentiation(
+            message,
+            e,
+            n
+        );
+
+    const decrypted =
+        modularExponentiation(
+            encrypted,
+            d,
+            n
+        );
+
+    return {
+        publicKey: [e, n],
+        privateKey: [d, n],
+        encrypted,
+        decrypted
+    };
 }
 
 function FermatTest()
