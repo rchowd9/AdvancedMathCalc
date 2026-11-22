@@ -500,3 +500,5 @@ function FermatTest()
 {
 
 }
+
+function LagrangeTheorem()
