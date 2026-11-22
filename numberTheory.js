@@ -648,9 +648,14 @@ function LagrangeTheorem(groupOrder, subgroupOrder) {
     };
 }
 
-function groupIsomorphism()
-{
+function groupIsomorphism(G, H) {
 
+    return {
+        orderG: G.length,
+        orderH: H.length,
+        possibleIsomorphism:
+            G.length === H.length
+    };
 }
 
 function coPrime()
