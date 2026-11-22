@@ -555,9 +555,30 @@ function unitOrder(a, n) {
     return null;
 }
 
-function EulerTheorem()
-{
+function EulerTheorem(a, n) {
 
+    if (math.gcd(a, n) !== 1) {
+
+        return {
+            valid: false,
+            reason: "a and n must be coprime."
+        };
+    }
+
+    const phi = totient(n);
+
+    const value =
+        modularExponentiation(
+            a,
+            phi,
+            n
+        );
+
+    return {
+        phi,
+        result: value,
+        theoremHolds: value === 1
+    };
 }
 
 function RSA()
