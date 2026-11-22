@@ -508,9 +508,20 @@ function modularExponentiation(base, exponent, modulus) {
     return result;
 }
 
-function discreteLog()
-{
+function discreteLog(g, h, p) {
 
+    let value = 1;
+
+    for (let x = 0; x < p; x++) {
+
+        if (value === h) {
+            return x;
+        }
+
+        value = (value * g) % p;
+    }
+
+    return null;
 }
 
 function nonUnit()
