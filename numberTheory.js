@@ -486,9 +486,26 @@ function totient(n) {
     return result;
 }
 
-function modularExponentiation()
-{
+function modularExponentiation(base, exponent, modulus) {
 
+    if (modulus === 1) return 0;
+
+    let result = 1;
+
+    base %= modulus;
+
+    while (exponent > 0) {
+
+        if (exponent & 1) {
+            result = (result * base) % modulus;
+        }
+
+        exponent >>= 1;
+
+        base = (base * base) % modulus;
+    }
+
+    return result;
 }
 
 function discreteLog()
