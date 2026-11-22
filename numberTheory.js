@@ -470,3 +470,5 @@ function modularExponentiation()
 {
 
 }
+
+function discreteLog()
