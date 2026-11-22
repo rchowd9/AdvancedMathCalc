@@ -539,9 +539,20 @@ function nonUnit(n) {
 }
 
 
-function unitOrder()
-{
+function unitOrder(a, n) {
 
+    let value = 1;
+
+    for (let k = 1; k <= n; k++) {
+
+        value = (value * a) % n;
+
+        if (value === 1) {
+            return k;
+        }
+    }
+
+    return null;
 }
 
 function EulerTheorem()
