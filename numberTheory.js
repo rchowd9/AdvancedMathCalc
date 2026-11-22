@@ -637,9 +637,15 @@ function FermatTest(n, a = 2) {
     );
 }
 
-function LagrangeTheorem()
-{
+function LagrangeTheorem(groupOrder, subgroupOrder) {
 
+    return {
+        groupOrder,
+        subgroupOrder,
+        divides:
+            groupOrder %
+            subgroupOrder === 0
+    };
 }
 
 function groupIsomorphism()
