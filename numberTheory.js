@@ -462,3 +462,6 @@ function rootOfPolynomial(coefficients) {
 }
 
 function totient()
+{
+    
+}
