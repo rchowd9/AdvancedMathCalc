@@ -622,9 +622,19 @@ function RSA(p, q, e, message) {
     };
 }
 
-function FermatTest()
-{
+function FermatTest(n, a = 2) {
 
+    if (n <= 1) {
+        return false;
+    }
+
+    return (
+        modularExponentiation(
+            a,
+            n - 1,
+            n
+        ) === 1
+    );
 }
 
 function LagrangeTheorem()
