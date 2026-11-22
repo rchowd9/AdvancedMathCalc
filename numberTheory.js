@@ -487,3 +487,6 @@ function unitOrder()
 }
 
 function EulerTheorem()
+{
+
+}
