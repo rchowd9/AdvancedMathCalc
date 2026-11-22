@@ -658,7 +658,7 @@ function groupIsomorphism(G, H) {
     };
 }
 
-function coPrime()
-{
+function coPrime(a, b) {
 
+    return math.gcd(a, b) === 1;
 }
