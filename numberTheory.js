@@ -472,3 +472,6 @@ function modularExponentiation()
 }
 
 function discreteLog()
+{
+
+}
