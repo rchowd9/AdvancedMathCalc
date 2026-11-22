@@ -463,5 +463,10 @@ function rootOfPolynomial(coefficients) {
 
 function totient()
 {
-    
+
+}
+
+function modularExponentiation
+{
+
 }
