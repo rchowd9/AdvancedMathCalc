@@ -505,3 +505,8 @@ function LagrangeTheorem()
 {
 
 }
+
+function groupIsomorphism()
+{
+
+}
