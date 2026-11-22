@@ -461,9 +461,29 @@ function rootOfPolynomial(coefficients) {
     };
 }
 
-function totient()
-{
+function totient(n) {
 
+    let result = n;
+
+    let temp = n;
+
+    for (let p = 2; p * p <= temp; p++) {
+
+        if (temp % p === 0) {
+
+            while (temp % p === 0) {
+                temp /= p;
+            }
+
+            result -= result / p;
+        }
+    }
+
+    if (temp > 1) {
+        result -= result / temp;
+    }
+
+    return result;
 }
 
 function modularExponentiation()
