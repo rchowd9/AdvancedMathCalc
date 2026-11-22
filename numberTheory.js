@@ -460,3 +460,5 @@ function rootOfPolynomial(coefficients) {
         roots
     };
 }
+
+function totient()
