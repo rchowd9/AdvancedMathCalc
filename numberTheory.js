@@ -512,3 +512,6 @@ function groupIsomorphism()
 }
 
 function coPrime()
+{
+
+}
