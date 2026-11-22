@@ -477,3 +477,6 @@ function discreteLog()
 }
 
 function nonUnit()
+{
+
+}
