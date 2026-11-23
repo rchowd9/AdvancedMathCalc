@@ -670,5 +670,7 @@ function legendre()
 
 function guassLemma()
 {
-    
+
 }
+
+function quadraticReciprocity()
