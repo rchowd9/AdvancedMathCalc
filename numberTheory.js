@@ -827,7 +827,57 @@ function carmichael(n) {
     return maxOrder;
 }
 
-function solovayStrassen()
-{
+function solovayStrassen(
+    n,
+    iterations = 10
+) {
 
+    if (n < 2) {
+        return false;
+    }
+
+    if (n === 2) {
+        return true;
+    }
+
+    if (n % 2 === 0) {
+        return false;
+    }
+
+    for (
+        let i = 0;
+        i < iterations;
+        i++
+    ) {
+
+        const a =
+            2 +
+            Math.floor(
+                Math.random() *
+                (n - 3)
+            );
+
+        const x =
+            jacobi(a, n);
+
+        if (x === 0) {
+            return false;
+        }
+
+        const mod =
+            modularExponentiation(
+                a,
+                (n - 1) / 2,
+                n
+            );
+
+        const jac =
+            ((x % n) + n) % n;
+
+        if (mod !== jac) {
+            return false;
+        }
+    }
+
+    return true;
 }
