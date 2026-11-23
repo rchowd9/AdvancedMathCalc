@@ -747,10 +747,57 @@ function quadraticReciprocity(
     };
 }
 
-function jacobi()
-{
+function jacobi(a, n) {
 
+    if (
+        n <= 0 ||
+        n % 2 === 0
+    ) {
+
+        throw new Error(
+            "n must be positive and odd."
+        );
+    }
+
+    a %= n;
+
+    let result = 1;
+
+    while (a !== 0) {
+
+        while (a % 2 === 0) {
+
+            a /= 2;
+
+            const r = n % 8;
+
+            if (
+                r === 3 ||
+                r === 5
+            ) {
+
+                result *= -1;
+            }
+        }
+
+        [a, n] = [n, a];
+
+        if (
+            a % 4 === 3 &&
+            n % 4 === 3
+        ) {
+
+            result *= -1;
+        }
+
+        a %= n;
+    }
+
+    return n === 1
+        ? result
+        : 0;
 }
+
 
 function carmichael()
 {
