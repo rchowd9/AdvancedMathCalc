@@ -669,3 +669,6 @@ function legendre()
 }
 
 function guassLemma()
+{
+    
+}
