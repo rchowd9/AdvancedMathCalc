@@ -665,5 +665,7 @@ function coPrime(a, b) {
 
 function legendre()
 {
-    
+
 }
+
+function guassLemma()
