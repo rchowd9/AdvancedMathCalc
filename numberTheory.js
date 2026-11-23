@@ -677,3 +677,5 @@ function quadraticReciprocity()
 {
 
 }
+
+function jacobi()
