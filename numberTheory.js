@@ -662,3 +662,5 @@ function coPrime(a, b) {
 
     return math.gcd(a, b) === 1;
 }
+
+function legendre()
