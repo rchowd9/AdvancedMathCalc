@@ -688,3 +688,4 @@ function carmichael()
 
 }
 
+function solovayStrassen()
