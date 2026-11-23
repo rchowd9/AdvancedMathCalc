@@ -689,9 +689,33 @@ function legendre(a, p) {
         : result;
 }
 
-function guassLemma()
-{
+function guassLemma(a, p) {
 
+    let negatives = 0;
+
+    for (
+        let k = 1;
+        k <= (p - 1) / 2;
+        k++
+    ) {
+
+        const value =
+            (a * k) % p;
+
+        if (
+            value > p / 2
+        ) {
+            negatives++;
+        }
+    }
+
+    return {
+        negatives,
+        legendre:
+            negatives % 2 === 0
+                ? 1
+                : -1
+    };
 }
 
 function quadraticReciprocity()
