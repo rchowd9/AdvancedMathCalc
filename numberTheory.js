@@ -682,3 +682,5 @@ function jacobi()
 {
 
 }
+
+function carmichael()
