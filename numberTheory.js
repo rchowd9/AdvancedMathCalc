@@ -718,9 +718,33 @@ function guassLemma(a, p) {
     };
 }
 
-function quadraticReciprocity()
-{
+function quadraticReciprocity(
+    p,
+    q
+) {
 
+    const exponent =
+        ((p - 1) *
+         (q - 1)) / 4;
+
+    const sign =
+        exponent % 2 === 0
+            ? 1
+            : -1;
+
+    const left =
+        legendre(p, q);
+
+    const right =
+        legendre(q, p);
+
+    return {
+        legendrePQ: left,
+        legendreQP: right,
+        reciprocitySign: sign,
+        theoremHolds:
+            left * right === sign
+    };
 }
 
 function jacobi()
