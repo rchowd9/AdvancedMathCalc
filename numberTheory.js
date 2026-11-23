@@ -663,9 +663,30 @@ function coPrime(a, b) {
     return math.gcd(a, b) === 1;
 }
 
-function legendre()
-{
+function legendre(a, p) {
 
+    if (p <= 2) {
+        throw new Error(
+            "p must be an odd prime."
+        );
+    }
+
+    a = ((a % p) + p) % p;
+
+    if (a === 0) {
+        return 0;
+    }
+
+    const result =
+        modularExponentiation(
+            a,
+            (p - 1) / 2,
+            p
+        );
+
+    return result === p - 1
+        ? -1
+        : result;
 }
 
 function guassLemma()
@@ -690,5 +711,5 @@ function carmichael()
 
 function solovayStrassen()
 {
-    
+
 }
