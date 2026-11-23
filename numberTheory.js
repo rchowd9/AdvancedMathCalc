@@ -679,3 +679,6 @@ function quadraticReciprocity()
 }
 
 function jacobi()
+{
+
+}
