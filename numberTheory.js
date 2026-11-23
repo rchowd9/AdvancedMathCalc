@@ -799,9 +799,32 @@ function jacobi(a, n) {
 }
 
 
-function carmichael()
-{
+function carmichael(n) {
 
+    let maxOrder = 1;
+
+    for (
+        let a = 1;
+        a < n;
+        a++
+    ) {
+
+        if (
+            math.gcd(a,n) === 1
+        ) {
+
+            const ord =
+                unitOrder(a,n);
+
+            maxOrder =
+                Math.max(
+                    maxOrder,
+                    ord
+                );
+        }
+    }
+
+    return maxOrder;
 }
 
 function solovayStrassen()
