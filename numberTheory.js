@@ -674,3 +674,6 @@ function guassLemma()
 }
 
 function quadraticReciprocity()
+{
+
+}
