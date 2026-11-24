@@ -1059,9 +1059,16 @@ function irreductibilityCriterion(
     };
 }
 
-function rootOfUnity()
-{
+function rootOfUnity(k, n) {
 
+    return math.complex({
+        re: Math.cos(
+            2 * Math.PI * k / n
+        ),
+        im: Math.sin(
+            2 * Math.PI * k / n
+        )
+    });
 }
 
 function binaryQuadraticForm()
