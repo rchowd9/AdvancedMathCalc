@@ -897,7 +897,7 @@ function fermatNumber()
 
 }
 
-function mobiusInversion
+function mobiusInversion()
 {
 
 }
