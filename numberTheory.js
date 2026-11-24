@@ -926,3 +926,8 @@ function irreductibilityCriterion()
 {
 
 }
+
+function rootOfUnity()
+{
+
+}
