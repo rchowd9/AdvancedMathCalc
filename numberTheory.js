@@ -901,3 +901,8 @@ function mobiusInversion()
 {
 
 }
+
+function squareofOddPrime()
+{
+
+}
