@@ -982,9 +982,27 @@ function squareofOddPrime(n) {
     );
 }
 
-function powerOfOddPrime()
-{
+function powerOfOddPrime(n) {
 
+    for (let p = 3; p <= n; p += 2) {
+
+        if (!millerRabinTest(p)) {
+            continue;
+        }
+
+        let value = p;
+
+        while (value <= n) {
+
+            if (value === n) {
+                return true;
+            }
+
+            value *= p;
+        }
+    }
+
+    return false;
 }
 
 function cyclotomicEquation(n) {
@@ -1007,6 +1025,7 @@ function cyclotomicEquation(n) {
 
     return roots;
 }
+
 function irreductibilityCriterion()
 {
 
