@@ -904,10 +904,14 @@ function perfectNumber()
 
 }
 
-function fermatNumber()
-{
+function fermatNumber(n) {
 
+    return Math.pow(
+        2,
+        Math.pow(2, n)
+    ) + 1;
 }
+
 
 function mobiusInversion()
 {
