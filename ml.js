@@ -68,9 +68,33 @@ function centroidCluster(points) {
     return centroid;
 }
 
-function inertiaCluster()
-{
+function inertiaCluster(points) {
 
+    const centroid =
+        centroidCluster(points);
+
+    let inertia = 0;
+
+    for (const point of points) {
+
+        let distanceSquared = 0;
+
+        for (
+            let i = 0;
+            i < point.length;
+            i++
+        ) {
+            distanceSquared +=
+                Math.pow(
+                    point[i] - centroid[i],
+                    2
+                );
+        }
+
+        inertia += distanceSquared;
+    }
+
+    return inertia;
 }
 
 function meanInertia()
