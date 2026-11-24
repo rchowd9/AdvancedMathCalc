@@ -97,9 +97,12 @@ function inertiaCluster(points) {
     return inertia;
 }
 
-function meanInertia()
-{
+function meanInertia(points) {
 
+    return (
+        inertiaCluster(points) /
+        points.length
+    );
 }
 
 function silhouetteCoeff()
