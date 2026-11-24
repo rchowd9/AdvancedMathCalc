@@ -921,3 +921,8 @@ function heptadecagon
 {
 
 }
+
+function irreductibilityCriterion
+{
+
+}
