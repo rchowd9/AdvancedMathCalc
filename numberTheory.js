@@ -887,7 +887,7 @@ function multiplicative()
 
 }
 
-function perfectNumber
+function perfectNumber()
 {
 
 }
