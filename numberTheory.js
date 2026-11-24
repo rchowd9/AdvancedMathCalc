@@ -891,3 +891,8 @@ function perfectNumber()
 {
 
 }
+
+function fermatNumber()
+{
+
+}
