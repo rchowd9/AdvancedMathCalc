@@ -987,16 +987,26 @@ function powerOfOddPrime()
 
 }
 
-function cyclotomicEquation()
-{
+function cyclotomicEquation(n) {
 
+    const roots = [];
+
+    for (let k = 0; k < n; k++) {
+
+        roots.push(
+            math.complex({
+                re: Math.cos(
+                    (2 * Math.PI * k) / n
+                ),
+                im: Math.sin(
+                    (2 * Math.PI * k) / n
+                )
+            })
+        );
+    }
+
+    return roots;
 }
-
-function heptadecagon()
-{
-
-}
-
 function irreductibilityCriterion()
 {
 
