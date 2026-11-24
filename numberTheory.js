@@ -1026,9 +1026,37 @@ function cyclotomicEquation(n) {
     return roots;
 }
 
-function irreductibilityCriterion()
-{
+function irreductibilityCriterion(
+    coefficients,
+    p
+) {
 
+    const constant =
+        coefficients[
+            coefficients.length - 1
+        ];
+
+    const leading =
+        coefficients[0];
+
+    const middle =
+        coefficients.slice(
+            1,
+            coefficients.length - 1
+        );
+
+    const middleCondition =
+        middle.every(
+            c => c % p === 0
+        );
+
+    return {
+        irreducible:
+            middleCondition &&
+            constant % p === 0 &&
+            constant % (p*p) !== 0 &&
+            leading % p !== 0
+    };
 }
 
 function rootOfUnity()
