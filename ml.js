@@ -35,6 +35,8 @@ function dualProblem(c, A, b) {
     };
 }
 
+function centroidCluster()
+
 function slackVar(coefficients, rhs) {
 
     return {
