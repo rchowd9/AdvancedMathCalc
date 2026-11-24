@@ -917,12 +917,12 @@ function cyclotomicEquation()
 
 }
 
-function heptadecagon
+function heptadecagon()
 {
 
 }
 
-function irreductibilityCriterion
+function irreductibilityCriterion()
 {
 
 }
