@@ -882,9 +882,21 @@ function solovayStrassen(
     return true;
 }
 
-function multiplicative()
-{
+function multiplicative(f, a, b) {
 
+    if (math.gcd(a, b) !== 1) {
+        return {
+            multiplicative: false,
+            reason: "a and b are not coprime"
+        };
+    }
+
+    return {
+        left: f(a * b),
+        right: f(a) * f(b),
+        multiplicative:
+            f(a * b) === f(a) * f(b)
+    };
 }
 
 function perfectNumber()
