@@ -1074,9 +1074,22 @@ function equivalentForm()
 
 }
 
-function principalForm()
-{
+function principalForm(D) {
 
+    if (D % 4 === 0) {
+
+        return {
+            a: 1,
+            b: 0,
+            c: -D / 4
+        };
+    }
+
+    return {
+        a: 1,
+        b: 1,
+        c: (1 - D) / 4
+    };
 }
 
 function reducedForm(a, b, c) {
