@@ -202,6 +202,13 @@ evalBtn.addEventListener('click', () => {
     }
 
     const subjectModeMatch = expr.match(/^([a-zA-Z]\w*)\(/);
+    if (subjectModeMatch && window.NUMBER_THEORY_MODE_NAMES?.has(subjectModeMatch[1].toLowerCase())) {
+      solvedMessage = window.solveNumberTheory(expr);
+      awardProgress(40, 'Number theory solved!', 'numbertheory');
+      resultEl.textContent = solvedMessage;
+      return;
+    }
+
     if (subjectModeMatch && window.REAL_ANALYSIS_FORMULAS?.has(subjectModeMatch[1].toLowerCase())) {
       solvedMessage = window.solveRealAnalysis(expr);
       awardProgress(30, 'Real analysis concept unlocked!', 'realanalysis');

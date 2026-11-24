@@ -11,6 +11,7 @@ export const LEGACY_SCRIPTS = [
   'business.js',
   'calculus.js',
   'discreteMath.js',
+  'numberTheory.js',
   'realAnalysis.js',
   'topology.js',
   'linearAlgebra.js',
