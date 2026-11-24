@@ -1071,9 +1071,19 @@ function rootOfUnity(k, n) {
     });
 }
 
-function binaryQuadraticForm()
-{
+function binaryQuadraticForm(
+    a,
+    b,
+    c,
+    x,
+    y
+) {
 
+    return (
+        a * x * x +
+        b * x * y +
+        c * y * y
+    );
 }
 
 function equivalentForm(
