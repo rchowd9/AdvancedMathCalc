@@ -932,17 +932,17 @@ function rootOfUnity()
 
 }
 
-function binaryQuadraticForm
+function binaryQuadraticForm()
 {
 
 }
 
-function equivalentForm
+function equivalentForm()
 {
 
 }
 
-function principalForm
+function principalForm()
 {
 
 }
