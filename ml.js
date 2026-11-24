@@ -41,6 +41,9 @@ function centroidCluster()
 }
 
 function inertiaCluster()
+{
+    
+}
 
 function slackVar(coefficients, rhs) {
 
