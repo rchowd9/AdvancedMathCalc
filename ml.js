@@ -154,9 +154,39 @@ function silhouetteCoeff(
     );
 }
 
-function ward()
-{
+function ward(
+    clusterA,
+    clusterB
+) {
 
+    const centroidA =
+        centroidCluster(clusterA);
+
+    const centroidB =
+        centroidCluster(clusterB);
+
+    let distanceSquared = 0;
+
+    for (
+        let i = 0;
+        i < centroidA.length;
+        i++
+    ) {
+
+        distanceSquared +=
+            Math.pow(
+                centroidA[i] -
+                centroidB[i],
+                2
+            );
+    }
+
+    return (
+        (clusterA.length *
+         clusterB.length) /
+        (clusterA.length +
+         clusterB.length)
+    ) * distanceSquared;
 }
 
 
