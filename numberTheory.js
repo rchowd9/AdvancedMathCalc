@@ -1084,9 +1084,23 @@ function reducedForm()
 
 }
 
-function gaussianPeriod()
-{
+function gaussianPeriod(
+    n,
+    indices
+) {
 
+    let sum =
+        math.complex(0, 0);
+
+    for (const k of indices) {
+
+        sum = math.add(
+            sum,
+            rootOfUnity(k, n)
+        );
+    }
+
+    return sum;
 }
 
 function diophantineEquation(
