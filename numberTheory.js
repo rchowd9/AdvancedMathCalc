@@ -946,3 +946,8 @@ function principalForm
 {
 
 }
+
+function reducedForm
+{
+
+}
