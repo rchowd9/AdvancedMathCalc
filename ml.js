@@ -37,8 +37,10 @@ function dualProblem(c, A, b) {
 
 function centroidCluster()
 {
-    
+
 }
+
+function inertiaCluster()
 
 function slackVar(coefficients, rhs) {
 
