@@ -933,9 +933,38 @@ function fermatNumber(n) {
 }
 
 
-function mobiusInversion()
-{
+function mobiusInversion(n) {
 
+    let primeFactors = 0;
+
+    let temp = n;
+
+    for (let p = 2; p * p <= temp; p++) {
+
+        if (temp % p === 0) {
+
+            let count = 0;
+
+            while (temp % p === 0) {
+                count++;
+                temp /= p;
+            }
+
+            if (count > 1) {
+                return 0;
+            }
+
+            primeFactors++;
+        }
+    }
+
+    if (temp > 1) {
+        primeFactors++;
+    }
+
+    return primeFactors % 2 === 0
+        ? 1
+        : -1;
 }
 
 function squareofOddPrime()
