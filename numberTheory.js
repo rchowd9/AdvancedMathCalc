@@ -916,3 +916,8 @@ function cyclotomicEquation()
 {
 
 }
+
+function heptadecagon
+{
+
+}
