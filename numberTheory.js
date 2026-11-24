@@ -886,3 +886,8 @@ function multiplicative()
 {
 
 }
+
+function perfectNumber
+{
+
+}
