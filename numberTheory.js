@@ -956,3 +956,8 @@ function gaussianPeriod()
 {
 
 }
+
+function diophantineEquation()
+{
+
+}
