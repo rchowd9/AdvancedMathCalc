@@ -899,9 +899,29 @@ function multiplicative(f, a, b) {
     };
 }
 
-function perfectNumber()
-{
+function perfectNumber(n) {
 
+    let sum = 1;
+
+    for (let i = 2; i * i <= n; i++) {
+
+        if (n % i === 0) {
+
+            sum += i;
+
+            if (i !== n / i) {
+                sum += n / i;
+            }
+        }
+    }
+
+    if (n === 1) sum = 0;
+
+    return {
+        number: n,
+        perfect: sum === n,
+        divisorSum: sum
+    };
 }
 
 function fermatNumber(n) {
