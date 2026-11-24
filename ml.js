@@ -35,9 +35,37 @@ function dualProblem(c, A, b) {
     };
 }
 
-function centroidCluster()
-{
+function centroidCluster(points) {
 
+    if (!points.length) {
+        throw new Error("Cluster cannot be empty.");
+    }
+
+    const dimensions = points[0].length;
+
+    const centroid =
+        Array(dimensions).fill(0);
+
+    for (const point of points) {
+
+        for (
+            let i = 0;
+            i < dimensions;
+            i++
+        ) {
+            centroid[i] += point[i];
+        }
+    }
+
+    for (
+        let i = 0;
+        i < dimensions;
+        i++
+    ) {
+        centroid[i] /= points.length;
+    }
+
+    return centroid;
 }
 
 function inertiaCluster()
