@@ -1069,9 +1069,20 @@ function binaryQuadraticForm()
 
 }
 
-function equivalentForm()
-{
+function equivalentForm(
+    form1,
+    form2
+) {
 
+    const d1 =
+        form1.b * form1.b -
+        4 * form1.a * form1.c;
+
+    const d2 =
+        form2.b * form2.b -
+        4 * form2.a * form2.c;
+
+    return d1 === d2;
 }
 
 function principalForm(D) {
