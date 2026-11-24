@@ -967,9 +967,19 @@ function mobiusInversion(n) {
         : -1;
 }
 
-function squareofOddPrime()
-{
+function squareofOddPrime(n) {
 
+    const root =
+        Math.sqrt(n);
+
+    if (!Number.isInteger(root)) {
+        return false;
+    }
+
+    return (
+        root % 2 === 1 &&
+        millerRabinTest(root)
+    );
 }
 
 function powerOfOddPrime()
