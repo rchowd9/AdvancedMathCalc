@@ -952,7 +952,7 @@ function reducedForm()
 
 }
 
-function gaussianPeriod
+function gaussianPeriod()
 {
 
 }
