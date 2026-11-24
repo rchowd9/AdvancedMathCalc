@@ -1079,9 +1079,12 @@ function principalForm()
 
 }
 
-function reducedForm()
-{
+function reducedForm(a, b, c) {
 
+    return (
+        Math.abs(b) <= a &&
+        a <= c
+    );
 }
 
 function gaussianPeriod(
