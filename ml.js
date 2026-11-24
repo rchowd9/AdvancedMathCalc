@@ -55,6 +55,11 @@ function silhouetteCoeff()
 
 }
 
+function ward 
+{
+
+}
+
 
 
 function slackVar(coefficients, rhs) {
