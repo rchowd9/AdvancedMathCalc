@@ -1174,3 +1174,212 @@ function diophantineEquation(
         y: result.y * factor
     };
 }
+
+function splitNumberTheoryArguments(text) {
+    const args = [];
+    let current = '';
+    let depth = 0;
+    let quote = null;
+
+    for (const character of text) {
+        if (quote) {
+            current += character;
+            if (character === quote) quote = null;
+            continue;
+        }
+        if (character === '"' || character === "'") {
+            quote = character;
+            current += character;
+        } else if (character === '[' || character === '{') {
+            depth++;
+            current += character;
+        } else if (character === ']' || character === '}') {
+            depth--;
+            current += character;
+        } else if (character === ',' && depth === 0) {
+            args.push(current.trim());
+            current = '';
+        } else {
+            current += character;
+        }
+    }
+    if (current.trim()) args.push(current.trim());
+    return args;
+}
+
+function parseNumberTheoryArgument(text) {
+    const trimmed = text.trim();
+    if (!trimmed) throw new Error('Number-theory arguments cannot be empty.');
+    if ((trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+        (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
+        return trimmed.slice(1, -1);
+    }
+    if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+        try {
+            return JSON.parse(trimmed);
+        } catch {
+            throw new Error(`Invalid array or object argument: ${trimmed}`);
+        }
+    }
+    const numeric = Number(trimmed);
+    if (trimmed !== '' && Number.isFinite(numeric)) return numeric;
+    throw new Error(`Invalid number-theory argument: ${trimmed}`);
+}
+
+function formatNumberTheoryValue(value) {
+    if (typeof value === 'undefined') return 'undefined';
+    if (typeof value === 'number') return Number.isInteger(value) ? String(value) : String(value);
+    if (typeof value === 'string') return value;
+    if (typeof value === 'boolean') return value ? 'true' : 'false';
+    if (Array.isArray(value) || (value && typeof value === 'object')) {
+        return JSON.stringify(value).replace(/"([^"]+)":/g, '$1:');
+    }
+    return String(value);
+}
+
+function normalizedNumberTheoryName(name) {
+    return name.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function numberTheorySteps(name, args, result) {
+    const steps = [`Function: ${name}(${args.map(formatNumberTheoryValue).join(', ')})`];
+
+    switch (normalizedNumberTheoryName(name)) {
+        case 'modulararithmetic':
+            steps.push(`Step 1: Divide ${args[0]} by ${args[1]} and keep the remainder.`);
+            steps.push(`Step 2: Normalize the remainder into [0, ${args[1]}).`);
+            break;
+        case 'chineseremainder theorem':
+        case 'chineseremainder':
+        case 'chineseremaindertheorem':
+            steps.push('Step 1: Compute M as the product of all moduli.');
+            steps.push('Step 2: For each congruence, compute M_i and its inverse modulo m_i.');
+            steps.push('Step 3: Add the weighted remainders and reduce modulo M.');
+            break;
+        case 'extendedeuclid':
+            steps.push(`Step 1: Run Euclid's algorithm on ${args[0]} and ${args[1]}.`);
+            steps.push('Step 2: Back-substitute to find coefficients x and y.');
+            break;
+        case 'totient':
+            steps.push(`Step 1: Factor ${args[0]} into primes.`);
+            steps.push('Step 2: Apply phi(n) = n * product(1 - 1/p) for each distinct prime p.');
+            break;
+        case 'modularexponentiation':
+            steps.push(`Step 1: Express exponent ${args[1]} in binary.`);
+            steps.push(`Step 2: Square and multiply powers modulo ${args[2]}.`);
+            break;
+        case 'eulertheorem':
+            steps.push(`Step 1: Verify gcd(${args[0]}, ${args[1]}) = 1.`);
+            steps.push(`Step 2: Compute phi(${args[1]}), then calculate ${args[0]}^phi mod ${args[1]}.`);
+            break;
+        case 'legendre':
+            steps.push(`Step 1: Reduce ${args[0]} modulo ${args[1]}.`);
+            steps.push(`Step 2: Compute ${args[0]}^((p-1)/2) mod ${args[1]}.`);
+            break;
+        case 'jacobi':
+            steps.push(`Step 1: Reduce ${args[0]} modulo ${args[1]}.`);
+            steps.push('Step 2: Apply Jacobi symbol reciprocity and factor-removal rules.');
+            break;
+        case 'perfectnumber':
+            steps.push(`Step 1: Find the proper divisors of ${args[0]}.`);
+            steps.push('Step 2: Add the divisors and compare the sum with n.');
+            break;
+        case 'diophantineequation':
+            steps.push(`Step 1: Compute gcd(${args[0]}, ${args[1]}).`);
+            steps.push(`Step 2: Check whether ${args[2]} is divisible by that gcd.`);
+            steps.push(`Step 3: Scale a particular solution of ${args[0]}x + ${args[1]}y = ${args[2]} by c/gcd.`);
+            break;
+        case 'generalsolution':
+            steps.push(`Step 1: Compute gcd(${args[0]}, ${args[2]}).`);
+            steps.push(`Step 2: Check whether ${args[1]} is divisible by the gcd.`);
+            steps.push(`Step 3: Normalize ${args[0]}^-1 * ${args[1]} modulo ${args[2]}.`);
+            break;
+        case 'coprime':
+            steps.push(`Step 1: Run Euclid's algorithm on ${args[0]} and ${args[1]}.`);
+            steps.push('Step 2: The numbers are coprime when the gcd is 1.');
+            break;
+        default:
+            steps.push('Step 1: Substitute the input values into the selected number-theory rule.');
+            steps.push('Step 2: Apply the underlying number-theory computation.');
+            break;
+    }
+    steps.push(`Answer: ${formatNumberTheoryValue(result)}`);
+    return steps.join('\n');
+}
+
+const NUMBER_THEORY_FUNCTIONS = Object.freeze({
+    modularArithmetic,
+    chineseRemainderTheorem,
+    millerRabinTest,
+    cyclicGroup,
+    quadraticResidue,
+    generator,
+    extendedEuclid,
+    generalSolution,
+    compositeModuli,
+    wilsonTheorem,
+    rootOfPolynomial,
+    totient,
+    modularExponentiation,
+    discreteLog,
+    nonUnit,
+    unitOrder,
+    EulerTheorem,
+    RSA,
+    FermatTest,
+    LagrangeTheorem,
+    groupIsomorphism,
+    coPrime,
+    legendre,
+    guassLemma,
+    quadraticReciprocity,
+    jacobi,
+    carmichael,
+    solovayStrassen,
+    multiplicative,
+    perfectNumber,
+    fermatNumber,
+    mobiusInversion,
+    squareofOddPrime,
+    powerOfOddPrime,
+    cyclotomicEquation,
+    irreductibilityCriterion,
+    rootOfUnity,
+    binaryQuadraticForm,
+    equivalentForm,
+    principalForm,
+    reducedForm,
+    gaussianPeriod,
+    diophantineEquation
+});
+
+const NUMBER_THEORY_MODE_NAMES = new Set(
+    Object.keys(NUMBER_THEORY_FUNCTIONS).map(normalizedNumberTheoryName)
+);
+
+function solveNumberTheory(expression) {
+    const match = expression.match(/^([a-zA-Z]\w*)\(([\s\S]*)\)$/);
+    if (!match) throw new Error('Enter a valid number-theory function call.');
+
+    const normalizedName = normalizedNumberTheoryName(match[1]);
+    const canonicalName = Object.keys(NUMBER_THEORY_FUNCTIONS).find(
+        name => normalizedNumberTheoryName(name) === normalizedName
+    );
+    if (!canonicalName) throw new Error(`Unknown number-theory function: ${match[1]}`);
+
+    const args = splitNumberTheoryArguments(match[2]).map(parseNumberTheoryArgument);
+    if (canonicalName === 'multiplicative') {
+        throw new Error('multiplicative(f, a, b) requires a JavaScript callback and cannot be entered as a calculator expression.');
+    }
+
+    try {
+        const result = NUMBER_THEORY_FUNCTIONS[canonicalName](...args);
+        return numberTheorySteps(canonicalName, args, result);
+    } catch (error) {
+        throw new Error(error?.message ? error.message : `Could not solve ${canonicalName}.`);
+    }
+}
+
+window.NUMBER_THEORY_FUNCTIONS = NUMBER_THEORY_FUNCTIONS;
+window.NUMBER_THEORY_MODE_NAMES = NUMBER_THEORY_MODE_NAMES;
+window.solveNumberTheory = solveNumberTheory;

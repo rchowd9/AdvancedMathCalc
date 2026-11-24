@@ -198,6 +198,11 @@ function App() {
           <button className="challenge-chip" data-expression="master_theorem(2, 2, n^2)" type="button">Master theorem</button>
           <button className="challenge-chip" data-expression="binary_to_decimal(1011)" type="button">Binary conversion</button>
           <button className="challenge-chip" data-expression="volumeOfRevolution(x^2, x, 0, 2)" type="button">Solid of revolution</button>
+          <button className="challenge-chip" data-expression="totient(36)" type="button">Euler totient</button>
+          <button className="challenge-chip" data-expression="modularExponentiation(7, 128, 13)" type="button">Modular power</button>
+          <button className="challenge-chip" data-expression="extendedEuclid(48, 18)" type="button">Extended Euclid</button>
+          <button className="challenge-chip" data-expression="diophantineEquation(3, 5, 7)" type="button">Diophantine equation</button>
+          <button className="challenge-chip" data-expression="chineseRemainderTheorem([2,3,2],[3,5,7])" type="button">Chinese remainder</button>
           <button className="challenge-chip" data-expression="proof((x + 1)^2 = x^2 + 2*x + 1)" type="button">Proof drill</button>
           <button className="challenge-chip" data-expression="pigeonhole(100, 50)" type="button">Pigeonhole principle</button>
           <button className="challenge-chip" data-expression="combinatorial(C(n,k)=C(n,n-k))" type="button">Combinatorial proof</button>
@@ -566,6 +571,13 @@ function App() {
               <li>starsAndBars(10, 4)</li>
               <li>circularPermutations(6)</li>
               <li>derangements(6)</li>
+              <li>totient(36)</li>
+              <li>modularExponentiation(7, 128, 13)</li>
+              <li>extendedEuclid(48, 18)</li>
+              <li>diophantineEquation(3, 5, 7)</li>
+              <li>chineseRemainderTheorem([2, 3, 2], [3, 5, 7])</li>
+              <li>legendre(5, 11)</li>
+              <li>perfectNumber(28)</li>
             </ul>
           </div>
           <div className="examples-group">
