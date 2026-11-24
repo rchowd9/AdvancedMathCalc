@@ -50,6 +50,8 @@ function meanInertia()
 
 }
 
+function silhouetteCoeff()
+
 
 function slackVar(coefficients, rhs) {
 
