@@ -896,3 +896,8 @@ function fermatNumber()
 {
 
 }
+
+function mobiusInversion
+{
+
+}
