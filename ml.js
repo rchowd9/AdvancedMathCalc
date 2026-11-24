@@ -105,9 +105,53 @@ function meanInertia(points) {
     );
 }
 
-function silhouetteCoeff()
-{
+function silhouetteCoeff(
+    point,
+    ownCluster,
+    neighborCluster
+) {
 
+    function distance(a, b) {
+
+        let sum = 0;
+
+        for (
+            let i = 0;
+            i < a.length;
+            i++
+        ) {
+            sum +=
+                Math.pow(
+                    a[i] - b[i],
+                    2
+                );
+        }
+
+        return Math.sqrt(sum);
+    }
+
+    const a =
+        ownCluster.reduce(
+            (sum, p) =>
+                sum +
+                distance(point, p),
+            0
+        ) /
+        ownCluster.length;
+
+    const b =
+        neighborCluster.reduce(
+            (sum, p) =>
+                sum +
+                distance(point, p),
+            0
+        ) /
+        neighborCluster.length;
+
+    return (
+        (b - a) /
+        Math.max(a, b)
+    );
 }
 
 function ward()
