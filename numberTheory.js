@@ -947,7 +947,7 @@ function principalForm()
 
 }
 
-function reducedForm
+function reducedForm()
 {
 
 }
