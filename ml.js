@@ -55,7 +55,7 @@ function silhouetteCoeff()
 
 }
 
-function ward 
+function ward()
 {
 
 }
