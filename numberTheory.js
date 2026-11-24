@@ -911,3 +911,5 @@ function powerOfOddPrime()
 {
 
 }
+
+function cyclotomicEquation()
