@@ -906,3 +906,8 @@ function squareofOddPrime()
 {
 
 }
+
+function powerOfOddPrime()
+{
+
+}
