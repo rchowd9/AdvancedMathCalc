@@ -1089,7 +1089,30 @@ function gaussianPeriod()
 
 }
 
-function diophantineEquation()
-{
+function diophantineEquation(
+    a,
+    b,
+    c
+) {
 
+    const result =
+        extendedEuclid(a, b);
+
+    if (
+        c % result.gcd !== 0
+    ) {
+
+        return {
+            solvable: false
+        };
+    }
+
+    const factor =
+        c / result.gcd;
+
+    return {
+        solvable: true,
+        x: result.x * factor,
+        y: result.y * factor
+    };
 }
