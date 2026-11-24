@@ -882,7 +882,7 @@ function solovayStrassen(
     return true;
 }
 
-function multiplicative
+function multiplicative()
 {
-    
+
 }
