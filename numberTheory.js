@@ -931,3 +931,18 @@ function rootOfUnity()
 {
 
 }
+
+function binaryQuadraticForm
+{
+
+}
+
+function equivalentForm
+{
+
+}
+
+function principalForm
+{
+
+}
