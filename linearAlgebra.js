@@ -287,9 +287,14 @@ function quadraticForm(
     );
 }
 
-function kernel
-{
+function kernel(matrix) {
 
+    return {
+        kernel:
+            nullSpace(matrix),
+        dimension:
+            nullSpace(matrix).length
+    };
 }
 
 function range 
