@@ -248,9 +248,29 @@ function orthogonalDecomposition(
     };
 }
 
-function spectralTheorem
-{
+function spectralTheorem(matrix) {
 
+    if (
+        !symmetricMatrix(matrix)
+    ) {
+
+        throw new Error(
+            "Matrix must be symmetric."
+        );
+    }
+
+    const eig =
+        math.eigs(matrix);
+
+    return {
+        eigenvalues:
+            eig.values,
+        eigenvectors:
+            eig.eigenvectors.map(
+                e => e.vector
+            ),
+        diagonalizable: true
+    };
 }
 
 function quadraticForm
