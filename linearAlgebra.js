@@ -297,9 +297,14 @@ function kernel(matrix) {
     };
 }
 
-function range 
-{
+function range(matrix) {
 
+    return {
+        range:
+            columnSpace(matrix),
+        rank:
+            matrixRank(matrix)
+    };
 }
 
 
