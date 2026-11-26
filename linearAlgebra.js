@@ -307,8 +307,6 @@ function range(matrix) {
     };
 }
 
-
-
 function solveLinearSystem(A, b) {
     const solution =
         mathInstance.multiply(
