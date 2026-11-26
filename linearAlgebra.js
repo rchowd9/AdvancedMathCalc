@@ -179,6 +179,12 @@ function characteristicEquation()
 
 }
 
+function characteristicPolynomial
+{
+
+}
+
+
 function solveLinearSystem(A, b) {
     const solution =
         mathInstance.multiply(
