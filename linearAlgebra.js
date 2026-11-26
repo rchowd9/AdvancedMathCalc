@@ -187,9 +187,30 @@ function characteristicEquation(matrix) {
     };
 }
 
-function characteristicPolynomial
-{
+function characteristicPolynomial(matrix) {
 
+    if (
+        matrix.length !== 2 ||
+        matrix[0].length !== 2
+    ) {
+        throw new Error(
+            "Current implementation supports 2x2 matrices."
+        );
+    }
+
+    const a = matrix[0][0];
+    const b = matrix[0][1];
+    const c = matrix[1][0];
+    const d = matrix[1][1];
+
+    const trace = a + d;
+    const determinant =
+        a * d - b * c;
+
+    return {
+        polynomial:
+            `λ² - ${trace}λ + ${determinant}`
+    };
 }
 
 function bestApproximation
