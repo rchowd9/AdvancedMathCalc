@@ -199,7 +199,10 @@ function spectralTheorem
 
 }
 
+function quadraticForm
+{
 
+}
 
 
 function solveLinearSystem(A, b) {
