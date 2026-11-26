@@ -273,9 +273,18 @@ function spectralTheorem(matrix) {
     };
 }
 
-function quadraticForm
-{
+function quadraticForm(
+    matrix,
+    vector
+) {
 
+    return math.multiply(
+        math.transpose([vector]),
+        math.multiply(
+            matrix,
+            vector
+        )
+    );
 }
 
 function kernel
