@@ -213,9 +213,15 @@ function characteristicPolynomial(matrix) {
     };
 }
 
-function bestApproximation
-{
+function bestApproximation(
+    vector,
+    subspaceBasis
+) {
 
+    return orthogonalProjection(
+        vector,
+        subspaceBasis
+    );
 }
 
 function orthogonalDecomposition
