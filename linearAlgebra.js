@@ -174,9 +174,17 @@ function luDecomposition(matrix) {
     return { L, U };
 }
 
-function characteristicEquation()
-{
+function characteristicEquation(matrix) {
 
+    const poly =
+        characteristicPolynomial(
+            matrix
+        );
+
+    return {
+        equation:
+            poly.polynomial + " = 0"
+    };
 }
 
 function characteristicPolynomial
