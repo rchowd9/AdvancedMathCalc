@@ -174,6 +174,9 @@ function luDecomposition(matrix) {
     return { L, U };
 }
 
+function characteristicEquation
+{}
+
 function solveLinearSystem(A, b) {
     const solution =
         mathInstance.multiply(
