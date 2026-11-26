@@ -194,6 +194,12 @@ function orthogonalDecomposition
 
 }
 
+function spectralTheorem
+{
+
+}
+
+
 
 
 function solveLinearSystem(A, b) {
