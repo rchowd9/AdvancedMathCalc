@@ -204,6 +204,17 @@ function quadraticForm
 
 }
 
+function kernel
+{
+
+}
+
+function range 
+{
+
+}
+
+
 
 function solveLinearSystem(A, b) {
     const solution =
