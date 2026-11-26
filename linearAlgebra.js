@@ -224,9 +224,28 @@ function bestApproximation(
     );
 }
 
-function orthogonalDecomposition
-{
+function orthogonalDecomposition(
+    vector,
+    subspaceBasis
+) {
 
+    const projection =
+        orthogonalProjection(
+            vector,
+            subspaceBasis
+        );
+
+    const error =
+        math.subtract(
+            vector,
+            projection
+        );
+
+    return {
+        projection,
+        orthogonalComponent:
+            error
+    };
 }
 
 function spectralTheorem
