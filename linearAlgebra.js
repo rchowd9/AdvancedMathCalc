@@ -184,6 +184,12 @@ function characteristicPolynomial
 
 }
 
+function bestApproximation
+{
+
+}
+
+
 
 function solveLinearSystem(A, b) {
     const solution =
