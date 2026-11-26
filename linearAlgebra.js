@@ -189,6 +189,11 @@ function bestApproximation
 
 }
 
+function orthogonalDecomposition
+{
+
+}
+
 
 
 function solveLinearSystem(A, b) {
