@@ -171,9 +171,25 @@ function permutationMultiplication
     
 }
 
-function transposition
-{
-    
+function transposition(
+    permutation,
+    i,
+    j
+) {
+
+    const result =
+        [...permutation];
+
+    [
+        result[i],
+        result[j]
+    ] =
+    [
+        result[j],
+        result[i]
+    ];
+
+    return result;
 }
 
 function disjointCycle(
