@@ -151,9 +151,17 @@ function bijection
     
 }
 
-function invertible
-{
-    
+function invertible(
+    func,
+    domain,
+    codomain
+) {
+
+    return bijection(
+        func,
+        domain,
+        codomain
+    );
 }
 
 function identityPermutation
@@ -166,9 +174,26 @@ function inversePermutation
     
 }
 
-function permutationMultiplication
-{
-    
+function permutationMultiplication(
+    p1,
+    p2
+) {
+
+    const result = [];
+
+    for (
+        let i = 0;
+        i < p1.length;
+        i++
+    ) {
+
+        result[i] =
+            p1[
+                p2[i]-1
+            ];
+    }
+
+    return result;
 }
 
 function transposition(
