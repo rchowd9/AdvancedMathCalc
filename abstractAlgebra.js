@@ -73,3 +73,7 @@ function invertible
     
 }
 
+function identityPermutation
+{
+    
+}
