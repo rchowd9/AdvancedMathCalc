@@ -47,9 +47,12 @@ function subset
     
 }
 
-function relation
-{
-    
+function relation(pairs) {
+
+    return {
+        relation: pairs,
+        size: pairs.length
+    };
 }
 
 function transitivty 
