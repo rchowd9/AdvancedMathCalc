@@ -186,7 +186,14 @@ function permutationGroup
     
 }
 
-function corollary
-{
-    
+function corollary(
+    theorem,
+    statement
+) {
+
+    return {
+        theorem,
+        corollary: statement,
+        derived: true
+    };
 }
