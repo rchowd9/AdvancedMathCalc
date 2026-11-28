@@ -136,9 +136,16 @@ function preimage
     
 }
 
-function injection
-{
-    
+function injection(
+    func,
+    domain
+) {
+
+    const outputs =
+        domain.map(func);
+
+    return new Set(outputs).size
+        === outputs.length;
 }
 
 function surjection(
