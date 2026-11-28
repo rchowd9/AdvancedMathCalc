@@ -17,3 +17,8 @@ function russellParadox
 {
     
 }
+
+function complement
+{
+    
+}
