@@ -62,3 +62,8 @@ function surjection
 {
     
 }
+
+function bijection
+{
+    
+}
