@@ -176,9 +176,51 @@ function transposition
     
 }
 
-function disjointCycle
-{
-    
+function disjointCycle(
+    permutation
+) {
+
+    const visited =
+        Array(
+            permutation.length
+        ).fill(false);
+
+    const cycles = [];
+
+    for (
+        let i = 0;
+        i < permutation.length;
+        i++
+    ) {
+
+        if (!visited[i]) {
+
+            let current = i;
+            const cycle = [];
+
+            while (
+                !visited[current]
+            ) {
+
+                visited[current] = true;
+
+                cycle.push(
+                    current+1
+                );
+
+                current =
+                    permutation[current]-1;
+            }
+
+            if (
+                cycle.length > 1
+            ) {
+                cycles.push(cycle);
+            }
+        }
+    }
+
+    return cycles;
 }
 
 function permutationGroup(n) {
