@@ -77,3 +77,13 @@ function identityPermutation
 {
     
 }
+
+function inversePermutation
+{
+    
+}
+
+function permutationMultiplication
+{
+    
+}
