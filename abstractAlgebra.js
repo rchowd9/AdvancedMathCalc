@@ -208,9 +208,25 @@ function identityPermutation(n) {
         );
 }
 
-function inversePermutation
-{
-    
+function inversePermutation(
+    permutation
+) {
+
+    const inverse =
+        Array(permutation.length);
+
+    for (
+        let i = 0;
+        i < permutation.length;
+        i++
+    ) {
+
+        inverse[
+            permutation[i]-1
+        ] = i+1;
+    }
+
+    return inverse;
 }
 
 function permutationMultiplication(
