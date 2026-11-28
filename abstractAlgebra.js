@@ -48,3 +48,7 @@ function image
     
 }
 
+function preimage
+{
+    
+}
