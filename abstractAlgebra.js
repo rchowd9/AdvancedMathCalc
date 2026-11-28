@@ -82,9 +82,43 @@ function transitivity(rel) {
     return true;
 }
 
-function equivalenceRelation
-{
-    
+function equivalenceRelation(
+    rel,
+    universe
+) {
+
+    const reflexive =
+        universe.every(
+            x =>
+                rel.some(
+                    ([a,b]) =>
+                        a===x &&
+                        b===x
+                )
+        );
+
+    const symmetric =
+        rel.every(
+            ([a,b]) =>
+                rel.some(
+                    ([c,d]) =>
+                        c===b &&
+                        d===a
+                )
+        );
+
+    const transitive =
+        transitivity(rel);
+
+    return {
+        reflexive,
+        symmetric,
+        transitive,
+        equivalence:
+            reflexive &&
+            symmetric &&
+            transitive
+    };
 }
 
 function image 
