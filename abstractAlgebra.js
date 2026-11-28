@@ -87,3 +87,8 @@ function permutationMultiplication
 {
     
 }
+
+function transposition
+{
+    
+}
