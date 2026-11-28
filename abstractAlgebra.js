@@ -2,3 +2,8 @@ function cardinality
 {
     
 }
+
+function emptySet 
+{
+    
+}
