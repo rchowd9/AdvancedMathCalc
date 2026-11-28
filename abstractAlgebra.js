@@ -26,10 +26,16 @@ function russellParadox
     
 }
 
-function complement
-{
-    
+function complement(
+    universalSet,
+    subset
+) {
+
+    return universalSet.filter(
+        x => !subset.includes(x)
+    );
 }
+
 
 function subset
 {
