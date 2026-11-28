@@ -42,9 +42,11 @@ function complement(
 }
 
 
-function subset
-{
-    
+function subset(A, B) {
+
+    return A.every(
+        x => B.includes(x)
+    );
 }
 
 function relation(pairs) {
