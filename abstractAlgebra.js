@@ -92,3 +92,8 @@ function transposition
 {
     
 }
+
+function disjointCycle
+{
+    
+}
