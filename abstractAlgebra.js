@@ -146,9 +146,20 @@ function surjection
     
 }
 
-function bijection
-{
-    
+function bijection(
+    func,
+    domain,
+    codomain
+) {
+
+    return (
+        injection(func, domain) &&
+        surjection(
+            func,
+            domain,
+            codomain
+        )
+    );
 }
 
 function invertible(
