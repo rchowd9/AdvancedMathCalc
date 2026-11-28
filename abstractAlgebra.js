@@ -6,10 +6,15 @@ function cardinality(set) {
     };
 }
 
-function emptySet 
-{
-    
+function emptySet() {
+
+    return {
+        set: [],
+        cardinality: 0,
+        empty: true
+    };
 }
+
 
 function set 
 {
