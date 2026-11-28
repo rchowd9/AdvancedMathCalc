@@ -21,9 +21,14 @@ function set(elements) {
     return [...new Set(elements)];
 }
 
-function russellParadox
-{
-    
+function russellParadox() {
+
+    return {
+        statement:
+            "R = {x | x ∉ x}",
+        paradox:
+            "If R ∈ R then R ∉ R. If R ∉ R then R ∈ R."
+    };
 }
 
 function complement(
