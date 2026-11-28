@@ -141,9 +141,20 @@ function injection
     
 }
 
-function surjection
-{
-    
+function surjection(
+    func,
+    domain,
+    codomain
+) {
+
+    const outputs =
+        new Set(
+            domain.map(func)
+        );
+
+    return codomain.every(
+        y => outputs.has(y)
+    );
 }
 
 function bijection(
