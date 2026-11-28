@@ -37,3 +37,14 @@ function transitivty
 {
     
 }
+
+function equivalenceRelation
+{
+    
+}
+
+function image 
+{
+    
+}
+
