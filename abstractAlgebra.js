@@ -199,9 +199,13 @@ function invertible(
     );
 }
 
-function identityPermutation
-{
-    
+function identityPermutation(n) {
+
+    return Array
+        .from(
+            {length:n},
+            (_,i)=>i+1
+        );
 }
 
 function inversePermutation
