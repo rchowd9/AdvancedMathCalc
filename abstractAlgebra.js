@@ -1,6 +1,9 @@
-function cardinality
-{
-    
+function cardinality(set) {
+
+    return {
+        set,
+        cardinality: new Set(set).size
+    };
 }
 
 function emptySet 
