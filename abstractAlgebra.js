@@ -102,3 +102,8 @@ function permutationGroup
 {
     
 }
+
+function corollary
+{
+    
+}
