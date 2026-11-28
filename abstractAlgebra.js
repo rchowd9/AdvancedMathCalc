@@ -52,3 +52,8 @@ function preimage
 {
     
 }
+
+function injection
+{
+    
+}
