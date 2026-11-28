@@ -12,3 +12,8 @@ function set
 {
     
 }
+
+function russellParadox
+{
+    
+}
