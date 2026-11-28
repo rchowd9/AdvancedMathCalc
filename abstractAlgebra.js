@@ -16,9 +16,9 @@ function emptySet() {
 }
 
 
-function set 
-{
-    
+function set(elements) {
+
+    return [...new Set(elements)];
 }
 
 function russellParadox
