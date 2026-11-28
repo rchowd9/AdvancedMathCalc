@@ -57,3 +57,8 @@ function injection
 {
     
 }
+
+function surjection
+{
+    
+}
