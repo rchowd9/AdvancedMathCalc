@@ -57,9 +57,29 @@ function relation(pairs) {
     };
 }
 
-function transitivty 
-{
-    
+function transitivity(rel) {
+
+    for (const [a,b] of rel) {
+
+        for (const [c,d] of rel) {
+
+            if (b === c) {
+
+                const exists =
+                    rel.some(
+                        ([x,y]) =>
+                            x === a &&
+                            y === d
+                    );
+
+                if (!exists) {
+                    return false;
+                }
+            }
+        }
+    }
+
+    return true;
 }
 
 function equivalenceRelation
