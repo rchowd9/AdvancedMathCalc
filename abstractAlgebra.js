@@ -121,9 +121,14 @@ function equivalenceRelation(
     };
 }
 
-function image 
-{
-    
+function image(
+    func,
+    domain
+) {
+
+    return domain.map(
+        x => func(x)
+    );
 }
 
 function preimage
