@@ -131,9 +131,15 @@ function image(
     );
 }
 
-function preimage
-{
-    
+function preimage(
+    func,
+    codomainValue,
+    domain
+) {
+
+    return domain.filter(
+        x => func(x) === codomainValue
+    );
 }
 
 function injection(
