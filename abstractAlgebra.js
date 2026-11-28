@@ -97,3 +97,8 @@ function disjointCycle
 {
     
 }
+
+function permutationGroup
+{
+    
+}
